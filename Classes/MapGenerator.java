@@ -86,12 +86,13 @@ public class MapGenerator {
             // Skip if this tile would overlap the player spawn
             if (rect.intersects(playerSpawn)) continue;
 
-            // Skip if this tile would overlap any entrances
+            // Skip if this tile would overlap or block an entrance
             boolean isEntranceOverlap = entrances.stream().anyMatch(e -> e.intersects(rect));
-            if (isNearEntrance(rect)) continue;
+            if (isEntranceOverlap || isNearEntrance(rect)) continue;
 
             // Skip if this tile would overlap any existing obstacle
-            if (isNearEntrance(rect)) continue;
+            boolean isObstacleOverlap = obstacles.stream().anyMatch(o -> o.intersects(rect));
+            if (isObstacleOverlap) continue;
 
             // Safe to place obstacle
             obstacles.add(new Rectangle(rect.x, rect.y, tileSize, tileSize));
