@@ -496,6 +496,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
               item.draw(g2, xOffset, yOffset);
       }
 
+      // Draw power-ups
+      for (PowerUpItem item : powerUpItems) {
+              item.draw(g2, xOffset, yOffset);
+      }
+
       // Draw bullets
       for (Bullet b : bullets) {
               b.draw(g2, xOffset, yOffset);
@@ -525,6 +530,32 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.setColor(Color.WHITE);
 			g2.drawRect(bar1X, barY, barLength, barHeight);
 			g2.drawString("HP", bar1X + 5, barY - 5);
+
+      // Shield bar (right)
+      g2.setColor(Color.CYAN);
+      int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
+      g2.fillRect(bar2X, barY, shieldFill, barHeight);
+      g2.setColor(Color.WHITE);
+      g2.drawRect(bar2X, barY, barLength, barHeight);
+      g2.drawString("SH", bar2X + 5, barY - 5);
+
+      // Draw collected power-up icons
+      int iconSize = 40;
+      int invY = barY + barHeight + 40;
+      int idx = 0;
+      for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+              int drawY = invY + idx * (iconSize + 30);
+              boolean show = !ip.active || COUNTER % 20 < 10;
+              if (show) {
+                      if (ip.icon != null)
+                              g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
+              }
+              if (ip.active) {
+                      g2.setColor(Color.WHITE);
+                      g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
+              }
+              idx++;
+      }
 
       // Shield bar (right)
       g2.setColor(Color.CYAN);
