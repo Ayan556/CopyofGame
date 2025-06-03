@@ -37,30 +37,34 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// State fields
 	private Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-        private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
-        private ArrayList<Bullet> bullets = new ArrayList<>();
-        private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
+  private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
+  private ArrayList<Bullet> bullets = new ArrayList<>();
+  private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
+
 
 	// Game objects
 	private Player player;
 	private MapGenerator map;
 	private Score score;
+	private DrawingPanel draw;
+	private Graphics2D g2;
 
 	//enemy identifier
 	private int enemyNums;
 
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
-        private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
-        private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
-        private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
+  private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
+  private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
+  private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
+	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
+
 
 	// Dimensions
 	private int panW = GAME_WIDTH, panH = GAME_HEIGHT;
 
 	// Timer
 	private Timer timer;
-	private Graphics2D g2;
 
 	/**
 	 * Entry point for the program.
@@ -99,7 +103,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		resume = true;
 
 		// Drawing panel handles rendering
-		DrawingPanel draw = new DrawingPanel(screenSize.width, screenSize.height);
+		draw = new DrawingPanel(screenSize.width, screenSize.height);
 
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -234,6 +238,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                         PowerUpItem item = powerUpItems.get(i);
                         if (player.intersects(item)) {
                                 player.addPowerUp(item.getPowerUp(), item.getImage());
+                                player.usePowerUp();
                                 powerUpItems.remove(i);
                         }
                 }
@@ -478,26 +483,6 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			yOffset = (getHeight() - GAME_HEIGHT) / 2;
 
 
-			if (paused) {
-				g.setColor(Color.BLACK);
-				g.drawRect(0 + xOffset, 0 + yOffset, 900 + xOffset, 900 + yOffset);
-				g.setColor(Color.WHITE);
-				g.drawString("Paused", 450 + xOffset, 450 + yOffset);
-
-				if (resume) {
-					g.setColor(Color.WHITE);
-					g.drawString("Resume", 450 + xOffset, 500 + yOffset);
-					g.setColor(Color.GRAY);
-					g.drawString("Exit", 450 + xOffset, 550 + yOffset);
-				} else {
-					g.setColor(Color.GRAY);
-					g.drawString("Resume", 450 + xOffset, 500 + yOffset);
-					g.setColor(Color.WHITE);
-					g.drawString("Exit", 450 + xOffset, 550 + yOffset);
-				}
-				return;
-			}
-
 			// Draw background
 			g2.drawImage(background, xOffset, yOffset, null);
 
@@ -505,16 +490,21 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			for (Rectangle tile : map.getObstacles()) {
 				g2.drawImage(obstacle, tile.x + xOffset, tile.y + yOffset, null);
 			}
+      
+      // Draw power-ups
+      for (PowerUpItem item : powerUpItems) {
+              item.draw(g2, xOffset, yOffset);
+      }
 
-                        // Draw power-ups
-                        for (PowerUpItem item : powerUpItems) {
-                                item.draw(g2, xOffset, yOffset);
-                        }
+      // Draw power-ups
+      for (PowerUpItem item : powerUpItems) {
+              item.draw(g2, xOffset, yOffset);
+      }
 
-                        // Draw bullets
-                        for (Bullet b : bullets) {
-                                b.draw(g2, xOffset, yOffset);
-                        }
+      // Draw bullets
+      for (Bullet b : bullets) {
+              b.draw(g2, xOffset, yOffset);
+      }
 
 			// Draw player
 			player.drawCharacter(g2, xOffset, yOffset);
@@ -541,42 +531,85 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.drawRect(bar1X, barY, barLength, barHeight);
 			g2.drawString("HP", bar1X + 5, barY - 5);
 
-                        // Shield bar (right)
-                        g2.setColor(Color.CYAN);
-                        int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
-                        g2.fillRect(bar2X, barY, shieldFill, barHeight);
-                        g2.setColor(Color.WHITE);
-                        g2.drawRect(bar2X, barY, barLength, barHeight);
-                        g2.drawString("SH", bar2X + 5, barY - 5);
+      // Shield bar (right)
+      g2.setColor(Color.CYAN);
+      int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
+      g2.fillRect(bar2X, barY, shieldFill, barHeight);
+      g2.setColor(Color.WHITE);
+      g2.drawRect(bar2X, barY, barLength, barHeight);
+      g2.drawString("SH", bar2X + 5, barY - 5);
 
-                        // Draw collected power-up icons
-                        int iconSize = 40;
-                        int invY = barY + barHeight + 40;
-                        int idx = 0;
-                        for (Player.InventoryPowerUp ip : player.getPowerUps()) {
-                                int drawY = invY + idx * (iconSize + 30);
-                                boolean show = !ip.active || COUNTER % 20 < 10;
-                                if (show) {
-                                        if (ip.icon != null)
-                                                g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
-                                }
-                                if (ip.active) {
-                                        g2.setColor(Color.WHITE);
-                                        g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
-                                }
-                                idx++;
-                        }
+      // Draw collected power-up icons
+      int iconSize = 40;
+      int invY = barY + barHeight + 40;
+      int idx = 0;
+      for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+              int drawY = invY + idx * (iconSize + 30);
+              boolean show = !ip.active || COUNTER % 20 < 10;
+              if (show) {
+                      if (ip.icon != null)
+                              g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
+              }
+              if (ip.active) {
+                      g2.setColor(Color.WHITE);
+                      g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
+              }
+              idx++;
+      }
+
+      // Shield bar (right)
+      g2.setColor(Color.CYAN);
+      int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
+      g2.fillRect(bar2X, barY, shieldFill, barHeight);
+      g2.setColor(Color.WHITE);
+      g2.drawRect(bar2X, barY, barLength, barHeight);
+      g2.drawString("SH", bar2X + 5, barY - 5);
+
+      // Draw collected power-up icons
+      int iconSize = 40;
+      int invY = barY + barHeight + 40;
+      int idx = 0;
+      for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+              int drawY = invY + idx * (iconSize + 30);
+              boolean show = !ip.active || COUNTER % 20 < 10;
+              if (show) {
+                      if (ip.icon != null)
+                              g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
+              }
+              if (ip.active) {
+                      g2.setColor(Color.WHITE);
+                      g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
+              }
+              idx++;
+      }
 
 			score.trackScore();
 			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
 
-			if (!waveInProgress && !timer.isRunning()) {
+			if (!waveInProgress) {
 				g2.setColor(Color.WHITE);
 				g2.drawString("Wave " + wave, 500, 400);
-				g2.drawString("Press D to continue", 600, 400);
+				g2.drawString("Press X to continue", 600, 400);
+			}
+
+			if (paused) {
+				g2.drawImage(pauseBackground, 0, 0, 1200 + xOffset, 1200 + yOffset, null);
+				g2.setColor(Color.WHITE);
+				g2.drawString("Paused", 450 + xOffset, 450 + yOffset);
+
+				if (resume) {
+					g2.setColor(Color.WHITE);
+					g2.drawString("Resume", 450 + xOffset, 500 + yOffset);
+					g2.setColor(Color.GRAY);
+					g2.drawString("Exit", 450 + xOffset, 550 + yOffset);
+				} else {
+					g2.setColor(Color.GRAY);
+					g2.drawString("Resume", 450 + xOffset, 500 + yOffset);
+					g2.setColor(Color.WHITE);
+					g2.drawString("Exit", 450 + xOffset, 550 + yOffset);
+				}
 			}
 		}
-
 	}
 
 	private class Score {

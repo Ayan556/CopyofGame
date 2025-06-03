@@ -52,7 +52,7 @@ public class DeathScreen extends JFrame implements KeyListener{
             repaint();
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_U) {
+        if (e.getKeyCode() == KeyEvent.VK_J) {
             switch (retry) {
                 case 1:
                     this.dispose();
