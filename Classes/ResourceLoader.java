@@ -11,7 +11,7 @@ public class ResourceLoader {
      * @return The loaded BufferedImage, or null if not found
      */
     public static BufferedImage loadImage(String filename) {
-        try (InputStream is = ResourceLoader.class.getResourceAsStream("images\\" + filename)) {
+        try (InputStream is = ResourceLoader.class.getResourceAsStream("/images/" + filename)) {
             if (is == null) {
                 throw new IOException("Image not found: /images/" + filename);
             }
