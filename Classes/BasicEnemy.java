@@ -131,26 +131,24 @@ public class BasicEnemy extends Enemy {
 				this.x = originalX;
 				this.y = originalY;
 
+				//X movement only
+				if (dx == 0) moveX = 0;
+				else if (dx < 0) moveX = (int) -speed;
+				else moveX = (int) speed;
+
 				this.x += moveX;
 				if (collides(map)) this.x = originalX;//collidesWithOthers(others)
 
+				//Y movement onlyAdd commentMore actions
+				if (dy == 0) moveY = 0;
+				else if (dy < 0) moveY = (int) -speed;
+				else moveY = (int) speed;
+
 				this.y += moveY;
-				if (collides(map)) this.y = originalY;//collidesWithOthers(others)
+				if (collides(map)) this.y = originalY;
 			}
 
-			//Direction
-			if (this.x > originalX) {		//Enemy is moving right
-				this.directionFacing = 2;
-			} else if (this.x < originalX){	//Enemy is moving left
-				this.directionFacing = 1;
-			} else {						//Enemy doesn't move left or right
-				if (this.y > originalY) this.directionFacing = 4;
-				else if (this.y < originalY) this.directionFacing = 3;
-				else {
-					this.directionFacing = 4;
-					setMoving(false);
-				}
-			}
+			changeDirection(originalX, originalY);
 		}
 	}
 
@@ -167,6 +165,25 @@ public class BasicEnemy extends Enemy {
 			if (this.intersects(wall)) return true;
 		}
 		return false;
+	}
+
+	/**Add commentMore actions
+	 * Change the direction of the enemy
+	 */
+	private void changeDirection(int originalX, int originalY) {
+		//Direction
+		if (this.x > originalX) {        //Enemy is moving right
+			this.directionFacing = 2;
+		} else if (this.x < originalX) {    //Enemy is moving left
+			this.directionFacing = 1;
+		} else {                        //Enemy doesn't move left or right
+			if (this.y > originalY) this.directionFacing = 4;
+			else if (this.y < originalY) this.directionFacing = 3;
+			else {
+				this.directionFacing = 4;
+				setMoving(false);
+			}
+		}
 	}
 
 	//---- Image stuff ----
