@@ -3,7 +3,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Represents the main player controlled by the user.
@@ -20,8 +19,7 @@ public class Player extends Character {
     private int spriteW = 75, spriteH = 75;
     private boolean moving;
     private boolean shotgun;
-    private Queue<PowerUp> powerUps = new LinkedList<>();
-    private ArrayList<ActivePowerUp> activePowerUps = new ArrayList<>();
+    private LinkedList<InventoryPowerUp> powerUps = new LinkedList<>();
     BufferedImage spriteSheet = ResourceLoader.loadImage("PlayerSprite.png");
     BufferedImage idleSpriteSheet = ResourceLoader.loadImage("IdleSprite.png");
 
@@ -131,28 +129,33 @@ public class Player extends Character {
         return list;
     }
 
-    /** Adds a power-up to the player's inventory */
-    public void addPowerUp(PowerUp p) {
-        powerUps.offer(p);
+    /** Adds a power-up with its icon to the player's inventory */
+    public void addPowerUp(PowerUp p, BufferedImage icon) {
+        powerUps.add(new InventoryPowerUp(p, icon));
     }
 
-    /** Activates the next power-up in FIFO order */
+    /** Activates the next unactivated power-up in FIFO order */
     public void usePowerUp() {
-        PowerUp p = powerUps.poll();
-        if (p != null) {
-            p.activate(this);
-            activePowerUps.add(new ActivePowerUp(p));
+        for (InventoryPowerUp ip : powerUps) {
+            if (!ip.active) {
+                ip.active = true;
+                ip.remaining = ip.powerUp.getDuration();
+                ip.powerUp.activate(this);
+                break;
+            }
         }
     }
 
     /** Updates active power-ups and handles expiration */
     public void updatePowerUps() {
-        for (int i = activePowerUps.size() - 1; i >= 0; i--) {
-            ActivePowerUp ap = activePowerUps.get(i);
-            ap.duration--;
-            if (ap.duration <= 0) {
-                ap.powerUp.deactivate(this);
-                activePowerUps.remove(i);
+        for (int i = powerUps.size() - 1; i >= 0; i--) {
+            InventoryPowerUp ip = powerUps.get(i);
+            if (ip.active) {
+                ip.remaining--;
+                if (ip.remaining <= 0) {
+                    ip.powerUp.deactivate(this);
+                    powerUps.remove(i);
+                }
             }
         }
     }
@@ -165,12 +168,24 @@ public class Player extends Character {
         return shotgun;
     }
 
-    private static class ActivePowerUp {
+    public LinkedList<InventoryPowerUp> getPowerUps() {
+        return powerUps;
+    }
+
+    /**
+     * Class representing a collected power-up, its icon, and state
+     */
+    public static class InventoryPowerUp {
         PowerUp powerUp;
-        int duration;
-        ActivePowerUp(PowerUp p) {
-            powerUp = p;
-            duration = p.getDuration();
+        BufferedImage icon;
+        int remaining;
+        boolean active;
+
+        InventoryPowerUp(PowerUp p, BufferedImage icon) {
+            this.powerUp = p;
+            this.icon = icon;
+            this.remaining = p.getDuration();
+            this.active = false;
         }
     }
 }
