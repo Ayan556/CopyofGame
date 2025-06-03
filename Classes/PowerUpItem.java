@@ -15,6 +15,10 @@ public class PowerUpItem extends java.awt.Rectangle {
         return powerUp;
     }
 
+    public java.awt.image.BufferedImage getImage() {
+        return image;
+    }
+
     public void draw(java.awt.Graphics2D g2, int xOffset, int yOffset) {
         if (image != null) {
             g2.drawImage(image, this.x + xOffset, this.y + yOffset, this.width, this.height, null);
