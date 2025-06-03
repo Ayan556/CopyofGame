@@ -9,6 +9,7 @@ import java.util.HashMap;
 import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 import javax.sound.sampled.*;
 
 /**
@@ -36,8 +37,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// State fields
 	private Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-	private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
-	private ArrayList<Bullet> bullets = new ArrayList<>();
+        private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
+        private ArrayList<Bullet> bullets = new ArrayList<>();
+        private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
 
 	// Game objects
 	private Player player;
@@ -49,7 +51,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
-	private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
+        private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
+        private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
+        private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
 
 	// Dimensions
 	private int panW = GAME_WIDTH, panH = GAME_HEIGHT;
@@ -207,22 +211,57 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	/**
 	 * Handles cleanup of offscreen/dead objects.
 	 */
-	private void aliveDead() {
-		// Remove off-screen bullets
-		for (int i = bullets.size() - 1; i >= 0; i--) {
-			if (bullets.get(i).disappear()) {
-				bullets.remove(i);
-			}
-		}
+        private void aliveDead() {
+                // Remove off-screen bullets
+                for (int i = bullets.size() - 1; i >= 0; i--) {
+                        if (bullets.get(i).disappear()) {
+                                bullets.remove(i);
+                        }
+                }
 
 		// Remove dead enemies and update score
 		for (int i = enemies.size() - 1; i >= 0; i--) {
-			if (!enemies.get(i).isAlive()) {
-				enemies.remove(i);
-				score.updateScore(10);
-			}
-		}
-	}
+                        if (!enemies.get(i).isAlive()) {
+                                enemies.remove(i);
+                                score.updateScore(10);
+                        }
+                }
+        }
+
+        /** Check if player collects any power-up items */
+        private void checkPowerUpPickup() {
+                for (int i = powerUpItems.size() - 1; i >= 0; i--) {
+                        PowerUpItem item = powerUpItems.get(i);
+                        if (player.intersects(item)) {
+                                player.addPowerUp(item.getPowerUp());
+                                player.usePowerUp();
+                                powerUpItems.remove(i);
+                        }
+                }
+        }
+
+        /** Spawn power-ups on random walkable tiles */
+        private void spawnPowerUps() {
+                powerUpItems.clear();
+                java.util.List<Rectangle> tiles = map.getWalkableTiles();
+                if (tiles.isEmpty()) return;
+
+                Random rand = new Random();
+                int size = map.getTileSize() / 2;
+
+                Rectangle tile1 = tiles.get(rand.nextInt(tiles.size()));
+                Rectangle tile2 = tiles.get(rand.nextInt(tiles.size()));
+
+                int x1 = tile1.x + (tile1.width - size) / 2;
+                int y1 = tile1.y + (tile1.height - size) / 2;
+                int x2 = tile2.x + (tile2.width - size) / 2;
+                int y2 = tile2.y + (tile2.height - size) / 2;
+
+                powerUpItems.add(new PowerUpItem(x1, y1, size,
+                                new Shotgun(600), shotgunIcon, java.awt.Color.BLUE));
+                powerUpItems.add(new PowerUpItem(x2, y2, size,
+                                new SpeedBoost(600, 3), speedIcon, java.awt.Color.YELLOW));
+        }
 
 	private void dealDamage() {
 		int num, cooldown;
@@ -349,8 +388,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			COUNTER = 0;
 		}
 
-		dealDamage();
-		aliveDead();
+                dealDamage();
+                aliveDead();
+                checkPowerUpPickup();
+                player.updatePowerUps();
 
 
 		// Spawn enemies for current wave
@@ -394,12 +435,15 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			waveInProgress = false;
 			wave++;
 			timer.stop();
-			map.updateLevel(wave);
+                        map.updateLevel(wave);
 
-			if (wave %5 == 1) {
-				map = new MapGenerator(10, 10, 75, (wave/5)+1);
-			}
-		}
+                        if (wave %5 == 1) {
+                                map = new MapGenerator(10, 10, 75, (wave/5)+1);
+                        }
+                        if (wave == 6) {
+                                spawnPowerUps();
+                        }
+                }
 
 		handleSmoothMovement();
 		move();
@@ -458,10 +502,15 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				g2.drawImage(obstacle, tile.x + xOffset, tile.y + yOffset, null);
 			}
 
-			// Draw bullets
-			for (Bullet b : bullets) {
-				b.draw(g2, xOffset, yOffset);
-			}
+                        // Draw power-ups
+                        for (PowerUpItem item : powerUpItems) {
+                                item.draw(g2, xOffset, yOffset);
+                        }
+
+                        // Draw bullets
+                        for (Bullet b : bullets) {
+                                b.draw(g2, xOffset, yOffset);
+                        }
 
 			// Draw player
 			player.drawCharacter(g2, xOffset, yOffset);
