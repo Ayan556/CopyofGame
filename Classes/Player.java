@@ -76,9 +76,15 @@ public class Player extends Character {
         }
 
         if (!moving) {
-            g2.drawImage(idleSpriteSheet, this.x + xOffset, this.y + yOffset, this.x + xOffset + spriteW, this.y + yOffset + spriteH, frame * spriteW, spriteRowNum * spriteH, (frame + 1)*spriteW, (spriteRowNum + 1)*spriteW, null);
+            g2.drawImage(idleSpriteSheet, this.x + xOffset, this.y + yOffset,
+                    this.x + xOffset + spriteW, this.y + yOffset + spriteH,
+                    frame * spriteW, spriteRowNum * spriteH,
+                    (frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
         } else {
-            g2.drawImage(spriteSheet, this.x + xOffset, this.y + yOffset, this.x + xOffset + spriteW, this.y + yOffset + spriteH, frame * spriteW, spriteRowNum * spriteH, (frame + 1)*spriteW, (spriteRowNum + 1)*spriteW, null);
+            g2.drawImage(spriteSheet, this.x + xOffset, this.y + yOffset,
+                    this.x + xOffset + spriteW, this.y + yOffset + spriteH,
+                    frame * spriteW, spriteRowNum * spriteH,
+                    (frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
         }
 
     }

@@ -206,10 +206,16 @@ public class BasicEnemy extends Enemy {
 				break;
 		}
 
-		if (!moving) {
-			g.drawImage(idleSpriteSheet, this.x + xOffset, this.y + yOffset, this.x + xOffset + spriteW, this.y + yOffset + spriteH, frame * spriteW, spriteRowNum * spriteH, (frame + 1)*spriteW, (spriteRowNum + 1)*spriteW, null);
-		} else {
-			g.drawImage(spriteSheet, this.x + xOffset, this.y + yOffset, this.x + xOffset + spriteW, this.y + yOffset + spriteH, frame * spriteW, spriteRowNum * spriteH, (frame + 1)*spriteW, (spriteRowNum + 1)*spriteW, null);
-		}
+                if (!moving) {
+                        g.drawImage(idleSpriteSheet, this.x + xOffset, this.y + yOffset,
+                                this.x + xOffset + spriteW, this.y + yOffset + spriteH,
+                                frame * spriteW, spriteRowNum * spriteH,
+                                (frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
+                } else {
+                        g.drawImage(spriteSheet, this.x + xOffset, this.y + yOffset,
+                                this.x + xOffset + spriteW, this.y + yOffset + spriteH,
+                                frame * spriteW, spriteRowNum * spriteH,
+                                (frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
+                }
 	}
 }
