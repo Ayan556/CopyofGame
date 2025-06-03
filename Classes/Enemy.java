@@ -64,8 +64,8 @@ public abstract class Enemy extends Character {
     public double getSpeed() {
         return speed;
     }
-    
+
     public int getNum() {
-    	return num;
+        return num;
     }
 }

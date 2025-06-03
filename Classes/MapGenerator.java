@@ -210,8 +210,8 @@ public class MapGenerator {
     public ArrayList<Rectangle> getEntrances() {
         return entrances;
     }
-    
+
     public void updateLevel(int lvl) {
-    	this.level = lvl;
+        this.level = lvl;
     }
 }

@@ -22,8 +22,8 @@ public class DeathScreen extends JFrame implements KeyListener{
     private BufferedImage no = ResourceLoader.loadImage("PlayAgainNo.png");
 
     public DeathScreen() {
-    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    	retry = 1;
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        retry = 1;
 
         this.setSize(screenSize.width, screenSize.height);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -32,7 +32,7 @@ public class DeathScreen extends JFrame implements KeyListener{
 
         DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
         drawingPanel.setFocusable(true);
-        drawingPanel.requestFocusInWindow(); 
+        drawingPanel.requestFocusInWindow();
         drawingPanel.addKeyListener(this);
         this.add(drawingPanel);
         this.setVisible(true);
@@ -41,31 +41,31 @@ public class DeathScreen extends JFrame implements KeyListener{
     public void updateScore(int newScore) {
         this.score = newScore;
     }
-    
+
     @Override
     public void keyPressed(KeyEvent e) {
-    	if (e.getKeyCode() == KeyEvent.VK_A) {
-    		retry = 1;
-    		repaint();
-    	} else if (e.getKeyCode() == KeyEvent.VK_D) {
-    		retry = 2;
-    		repaint();
-    	}
-    	
-    	if (e.getKeyCode() == KeyEvent.VK_U) {
-    		switch (retry) {
-    			case 1: 
-    				this.dispose();
-    	            new Main();
-    	            break;
-    			case 2:
+        if (e.getKeyCode() == KeyEvent.VK_A) {
+            retry = 1;
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+            retry = 2;
+            repaint();
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_U) {
+            switch (retry) {
+                case 1:
+                    this.dispose();
+                    new Main();
+                    break;
+                case 2:
                     this.dispose();
                     new Homepage();
-    				break;
-    		}
-    	}
+                    break;
+            }
+        }
     }
-    
+
     public void keyTyped(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
 
@@ -73,9 +73,9 @@ public class DeathScreen extends JFrame implements KeyListener{
         private int screenWidth, screenHeight;
 
         public DrawingPanel(int screenWidth, int screenHeight) {
-        	this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
-			this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
+            this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         }
 
         @Override
@@ -86,7 +86,7 @@ public class DeathScreen extends JFrame implements KeyListener{
 
             int xOffset = (getWidth() - GAME_WIDTH) / 2;
             int yOffset = (getHeight() - GAME_HEIGHT) / 2;
-            
+
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
 
@@ -95,16 +95,15 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.setColor(new Color(199, 193, 159));
             g2.setFont(new Font("Arial", Font.BOLD, 36));
             g2.drawString("Final Score: " + score, 310 + xOffset, 520 + yOffset);
-            
+
             switch (retry) {
-            case 1:
-            	g2.drawImage(yes, 280 + xOffset, 600 + yOffset, null);
-            	break;
-            case 2:
-            	g2.drawImage(no, 280 + xOffset, 600 + yOffset, null);
-            	break;
+                case 1:
+                    g2.drawImage(yes, 280 + xOffset, 600 + yOffset, null);
+                    break;
+                case 2:
+                    g2.drawImage(no, 280 + xOffset, 600 + yOffset, null);
+                    break;
             }
         }
     }
-
 }

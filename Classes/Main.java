@@ -85,7 +85,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		player = new Player((GAME_WIDTH - 70) / 2, (GAME_HEIGHT - 70) / 2, 70, 70, 5, GAME_WIDTH, GAME_HEIGHT);
 		map = new MapGenerator(10, 10, 75, 1); // Creates 10x10 grid of 75px tiles
 		score = new Score();
-		
+
 		//Enemies
 		wave = 1;
 		enemiesToSpawn = 2;
@@ -109,7 +109,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		enemies = new ArrayList<>();
 		timer = new Timer(TIMESPEED, this);
 		//timer.start();
-		
+
 	}
 
 	/**
@@ -125,16 +125,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			// Check collision with obstacles
 			for (Rectangle r : map.getObstacles()) {
 				if (b.intersects(r)) {
-					bullets.remove(i);
-					collided = true;
-					break;
-				}
-			}
-
-			// Check collision with walls if not already collided
-			if (!collided) {
-				for (Rectangle wall : map.getWalls()) {
-					if (b.intersects(wall)) {
+					if (bullets.size() > 0) {
 						bullets.remove(i);
 						collided = true;
 						break;
@@ -142,17 +133,32 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				}
 			}
 
+			// Check collision with walls if not already collided
+			if (!collided) {
+				for (Rectangle wall : map.getWalls()) {
+					if (b.intersects(wall)) {
+						if (bullets.size() > 0) {
+							bullets.remove(i);
+							collided = true;
+							break;
+						}
+					}
+				}
+			}
+
 			//collision with enemies
 			for (Enemy e : enemies) {
 				if (b.intersects(e)) {
-					bullets.remove(i);
-					e.updateHealth(1);
+					if (bullets.size() > 0) {
+						bullets.remove(i);
+						e.updateHealth(1);
+					}
 				}
 			}
 
 			// Out-of-bounds removal
 			if (b.disappear()) {
-				bullets.remove(i);
+				if (bullets.size() > 0)	bullets.remove(i);
 			} else {
 				b.moveBullet();
 				i++; // Only increment if not removed
@@ -257,7 +263,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			player.y = (GAME_WIDTH - 70) / 2;
 			return;
 		}
-		
+
 		if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
 			timer.stop();
 			paused = true;
@@ -272,7 +278,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			new Homepage();
 			return;
 		}
-		
+
 		if (paused) {
 			if (e.getKeyCode() == KeyEvent.VK_W && !resume) {
 				resume = true;
@@ -281,10 +287,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				resume = false;
 				repaint();
 			}
-			
+
 			return;
 		}
-		
+
 
 		// Fire bullet only once per press
 		if (e.getKeyCode() == KeyEvent.VK_U && !keysPressed.contains(KeyEvent.VK_U)) {
@@ -318,7 +324,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+
 		if (!player.isAlive()) {
 			timer.stop();
 			DeathScreen deathScreen = new DeathScreen();
@@ -374,9 +380,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			// Create the enemy
 			if (wave % 5 == 0) {
-			    enemies.add(new BossEnemy(spawnX, spawnY, enemySize, enemySize, enemyNums, wave));
+				enemies.add(new BossEnemy(spawnX, spawnY, enemySize, enemySize, enemyNums, wave));
 			} else {
-			    enemies.add(new BasicEnemy(spawnX, spawnY, enemySize, enemySize, 2.5, enemyNums, GAME_WIDTH, GAME_HEIGHT));
+				enemies.add(new BasicEnemy(spawnX, spawnY, enemySize, enemySize, 2.5, enemyNums, GAME_WIDTH, GAME_HEIGHT));
 			}
 			enemyNums++;
 			enemiesSpawnedThisWave++;
@@ -389,7 +395,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			wave++;
 			timer.stop();
 			map.updateLevel(wave);
-			
+
 			if (wave %5 == 1) {
 				map = new MapGenerator(10, 10, 75, (wave/5)+1);
 			}
@@ -423,13 +429,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			xOffset = (getWidth() - GAME_WIDTH) / 2;
 			yOffset = (getHeight() - GAME_HEIGHT) / 2;
 
-			
+
 			if (paused) {
 				g.setColor(Color.BLACK);
 				g.drawRect(0 + xOffset, 0 + yOffset, 900 + xOffset, 900 + yOffset);
 				g.setColor(Color.WHITE);
 				g.drawString("Paused", 450 + xOffset, 450 + yOffset);
-				
+
 				if (resume) {
 					g.setColor(Color.WHITE);
 					g.drawString("Resume", 450 + xOffset, 500 + yOffset);
@@ -443,7 +449,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				}
 				return;
 			}
-			
+
 			// Draw background
 			g2.drawImage(background, xOffset, yOffset, null);
 
@@ -492,15 +498,15 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			score.trackScore();
 			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
-			
+
 			if (!waveInProgress && !timer.isRunning()) {
 				g2.setColor(Color.WHITE);
 				g2.drawString("Wave " + wave, 500, 400);
 				g2.drawString("Press D to continue", 600, 400);
 			}
 		}
-			
-		}
+
+	}
 
 	private class Score {
 		private BufferedImage scoreSheet = ResourceLoader.loadImage("ScoreNums.png");
