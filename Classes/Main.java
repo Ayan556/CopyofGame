@@ -37,9 +37,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// State fields
 	private Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-	private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
-	private ArrayList<Bullet> bullets = new ArrayList<>();
-	private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
+  private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
+  private ArrayList<Bullet> bullets = new ArrayList<>();
+  private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
 
 
 	// Game objects
@@ -54,10 +54,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
-	private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
-	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
-	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
+  private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
+  private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
+  private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
 	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
+
 
 	// Dimensions
 	private int panW = GAME_WIDTH, panH = GAME_HEIGHT;
@@ -489,7 +490,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			for (Rectangle tile : map.getObstacles()) {
 				g2.drawImage(obstacle, tile.x + xOffset, tile.y + yOffset, null);
 			}
-
+      
       // Draw power-ups
       for (PowerUpItem item : powerUpItems) {
               item.draw(g2, xOffset, yOffset);
@@ -525,31 +526,31 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.drawRect(bar1X, barY, barLength, barHeight);
 			g2.drawString("HP", bar1X + 5, barY - 5);
 
-                        // Shield bar (right)
-                        g2.setColor(Color.CYAN);
-                        int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
-                        g2.fillRect(bar2X, barY, shieldFill, barHeight);
-                        g2.setColor(Color.WHITE);
-                        g2.drawRect(bar2X, barY, barLength, barHeight);
-                        g2.drawString("SH", bar2X + 5, barY - 5);
+      // Shield bar (right)
+      g2.setColor(Color.CYAN);
+      int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
+      g2.fillRect(bar2X, barY, shieldFill, barHeight);
+      g2.setColor(Color.WHITE);
+      g2.drawRect(bar2X, barY, barLength, barHeight);
+      g2.drawString("SH", bar2X + 5, barY - 5);
 
-                        // Draw collected power-up icons
-                        int iconSize = 40;
-                        int invY = barY + barHeight + 40;
-                        int idx = 0;
-                        for (Player.InventoryPowerUp ip : player.getPowerUps()) {
-                                int drawY = invY + idx * (iconSize + 30);
-                                boolean show = !ip.active || COUNTER % 20 < 10;
-                                if (show) {
-                                        if (ip.icon != null)
-                                                g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
-                                }
-                                if (ip.active) {
-                                        g2.setColor(Color.WHITE);
-                                        g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
-                                }
-                                idx++;
-                        }
+      // Draw collected power-up icons
+      int iconSize = 40;
+      int invY = barY + barHeight + 40;
+      int idx = 0;
+      for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+              int drawY = invY + idx * (iconSize + 30);
+              boolean show = !ip.active || COUNTER % 20 < 10;
+              if (show) {
+                      if (ip.icon != null)
+                              g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
+              }
+              if (ip.active) {
+                      g2.setColor(Color.WHITE);
+                      g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
+              }
+              idx++;
+      }
 
 			score.trackScore();
 			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
