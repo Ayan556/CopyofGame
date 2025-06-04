@@ -215,4 +215,56 @@ public class MapGenerator {
     public void updateLevel(int lvl) {
         this.level = lvl;
     }
+
+    /** Returns the tile size in pixels */
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    /**
+     * Returns a list of rectangles representing walkable tiles (no obstacles,
+     * walls, or entrances).
+     */
+    public ArrayList<Rectangle> getWalkableTiles() {
+        ArrayList<Rectangle> tiles = new ArrayList<>();
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                Rectangle tile = new Rectangle(c * tileSize, r * tileSize, tileSize, tileSize);
+
+                boolean blocked = false;
+
+                if (tile.intersects(playerSpawn)) blocked = true;
+
+                if (!blocked) {
+                    for (Rectangle o : obstacles) {
+                        if (o.intersects(tile)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!blocked) {
+                    for (Rectangle e : entrances) {
+                        if (e.intersects(tile)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!blocked) {
+                    for (Rectangle w : walls) {
+                        if (w.intersects(tile)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!blocked) tiles.add(tile);
+            }
+        }
+        return tiles;
+    }
 }
