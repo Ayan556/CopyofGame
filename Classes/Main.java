@@ -125,54 +125,59 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	 * Handles all movement logic for the player and bullets.
 	 */
 	private void move() {
-		// Update bullets
-		for (int i = 0; i < bullets.size(); ) {
-			Bullet b = bullets.get(i);
+                // Update bullets
+                for (int i = 0; i < bullets.size(); ) {
+                        Bullet b = bullets.get(i);
+                        boolean remove = false;
 
-			boolean collided = false;
+                        // Collision with obstacles
+                        for (Rectangle r : map.getObstacles()) {
+                                if (b.intersects(r)) {
+                                        if (b instanceof BouncingBullet) {
+                                                ((BouncingBullet) b).bounce(r);
+                                        } else {
+                                                remove = true;
+                                        }
+                                        break;
+                                }
+                        }
 
-			// Check collision with obstacles
-			for (Rectangle r : map.getObstacles()) {
-				if (b.intersects(r)) {
-					if (bullets.size() > 0) {
-						bullets.remove(i);
-						collided = true;
-						break;
-					}
-				}
-			}
+                        // Collision with walls
+                        if (!remove) {
+                                for (Rectangle wall : map.getWalls()) {
+                                        if (b.intersects(wall)) {
+                                                if (b instanceof BouncingBullet) {
+                                                        ((BouncingBullet) b).bounce(wall);
+                                                } else {
+                                                        remove = true;
+                                                }
+                                                break;
+                                        }
+                                }
+                        }
 
-			// Check collision with walls if not already collided
-			if (!collided) {
-				for (Rectangle wall : map.getWalls()) {
-					if (b.intersects(wall)) {
-						if (bullets.size() > 0) {
-							bullets.remove(i);
-							collided = true;
-							break;
-						}
-					}
-				}
-			}
+                        // Collision with enemies
+                        if (!remove) {
+                                for (Enemy e : enemies) {
+                                        if (b.intersects(e)) {
+                                                e.updateHealth(1);
+                                                remove = true;
+                                                break;
+                                        }
+                                }
+                        }
 
-			//collision with enemies
-			for (Enemy e : enemies) {
-				if (b.intersects(e)) {
-					if (bullets.size() > 0) {
-						bullets.remove(i);
-						e.updateHealth(1);
-					}
-				}
-			}
+                        if (!remove && b.disappear()) {
+                                remove = true;
+                        }
 
-			// Out-of-bounds removal
-			if (b.disappear()) {
-				if (bullets.size() > 0) bullets.remove(i);
-			} else {
-				b.moveBullet();
-				i++; // Only increment if not removed
-			}
-		}
+                        if (remove) {
+                                bullets.remove(i);
+                        } else {
+                                b.moveBullet();
+                                i++; // Only increment if not removed
+                        }
+                }
 
 		// TODO: Add enemy movement
 		for (Enemy e : enemies) {
