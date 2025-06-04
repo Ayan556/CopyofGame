@@ -55,10 +55,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
 	private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
-        private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon2.png");
-        private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
-        private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
-        private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
+	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon2.png");
+	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
+	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
+	private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
 
 
 	// Dimensions
@@ -118,67 +118,64 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		enemies = new ArrayList<>();
 		timer = new Timer(TIMESPEED, this);
 		//timer.start();
-
 	}
 
 	/**
 	 * Handles all movement logic for the player and bullets.
 	 */
 	private void move() {
-                // Update bullets
-                for (int i = 0; i < bullets.size(); ) {
-                        Bullet b = bullets.get(i);
-                        boolean remove = false;
+		// Update bullets
+		for (int i = 0; i < bullets.size(); ) {
+			Bullet b = bullets.get(i);
+			boolean remove = false;
 
-                        // Collision with obstacles
-                        for (Rectangle r : map.getObstacles()) {
-                                if (b.intersects(r)) {
-                                        if (b instanceof BouncingBullet) {
-                                                ((BouncingBullet) b).bounce(r);
-                                        } else {
-                                                remove = true;
-                                        }
-                                        break;
-                                }
-                        }
+			// Collision with obstacles
+			for (Rectangle r : map.getObstacles()) {
+				if (b.intersects(r)) {
+					if (b instanceof BouncingBullet) {
+						((BouncingBullet) b).bounce(r);
+					} else {
+						remove = true;
+					}
+					break;
+				}
+			}
 
-                        // Collision with walls
-                        if (!remove) {
-                                for (Rectangle wall : map.getWalls()) {
-                                        if (b.intersects(wall)) {
-                                                if (b instanceof BouncingBullet) {
-                                                        ((BouncingBullet) b).bounce(wall);
-                                                } else {
-                                                        remove = true;
-                                                }
-                                                break;
-                                        }
-                                }
-                        }
+			// Collision with walls
+			if (!remove) {
+				for (Rectangle wall : map.getWalls()) {
+					if (b.intersects(wall)) {
+						if (b instanceof BouncingBullet) {
+							((BouncingBullet) b).bounce(wall);
+						} else {
+							remove = true;
+						}
+						break;
+					}
+				}
+			}
 
-                        // Collision with enemies
-                        if (!remove) {
-                                for (Enemy e : enemies) {
-                                        if (b.intersects(e)) {
-                                                e.updateHealth(1);
-                                                remove = true;
-                                                break;
-                                        }
-                                }
-                        }
+			// Collision with enemies
+			if (!remove) {
+				for (Enemy e : enemies) {
+					if (b.intersects(e)) {
+						e.updateHealth(1);
+						remove = true;
+						break;
+					}
+				}
+			}
 
-                        if (!remove && b.disappear()) {
-                                remove = true;
-                        }
-
-                        if (remove) {
-                                bullets.remove(i);
-                        } else {
-                                b.moveBullet();
-                                i++; // Only increment if not removed
-                        }
-                }
-
+			if (!remove && b.disappear()) {
+				remove = true;
+			}
+			if (remove) {
+				bullets.remove(i);
+			} else {
+				b.moveBullet();
+				i++; // Only increment if not removed
+			}
+		}
 		// TODO: Add enemy movement
 		for (Enemy e : enemies) {
 			e.moveTowardPlayer(player, map, enemies);
@@ -208,10 +205,18 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			player.move(4, panW, panH);
 			player.move(2, panW, panH);
 		} else {
-			if (up) player.move(3, panW, panH);
-			if (down) player.move(4, panW, panH);
-			if (left) player.move(1, panW, panH);
-			if (right) player.move(2, panW, panH);
+			if (up) {
+				player.move(3, panW, panH);
+			}
+			if (down) {
+				player.move(4, panW, panH);
+			}
+			if (left) {
+				player.move(1, panW, panH);
+			}
+			if (right) {
+				player.move(2, panW, panH);
+			}
 		}
 
 		// Prevent player from moving through obstacles
@@ -257,7 +262,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private void spawnPowerUps() {
 		powerUpItems.clear();
 		java.util.List<Rectangle> tiles = map.getWalkableTiles();
-		if (tiles.isEmpty()) return;
+
+		if (tiles.isEmpty()) {
+			return;
+		}
 
 		Random rand = new Random();
 		int size = map.getTileSize() / 2;
@@ -271,10 +279,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		int y2 = tile2.y + (tile2.height - size) / 2;
 
 		int duration = 3000; // 30 seconds at 10ms per tick
-		powerUpItems.add(new PowerUpItem(x1, y1, size,
-				new Shotgun(duration), shotgunIcon, java.awt.Color.BLUE));
-		powerUpItems.add(new PowerUpItem(x2, y2, size,
-				new SpeedBoost(duration, 3), speedIcon, java.awt.Color.YELLOW));
+		powerUpItems.add(new PowerUpItem(x1, y1, size, new Shotgun(duration), shotgunIcon, java.awt.Color.BLUE));
+		powerUpItems.add(new PowerUpItem(x2, y2, size, new SpeedBoost(duration, 3), speedIcon, java.awt.Color.YELLOW));
 	}
 
 	private void dealDamage() {
@@ -288,15 +294,23 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			 */
 			num = enemy.getNum();
 
-			if (enemyDamageCooldown.containsKey(enemy.getNum())) cooldown = enemyDamageCooldown.get(enemy.getNum());
-			else cooldown = 0;
+			if (enemyDamageCooldown.containsKey(enemy.getNum())) {
+				cooldown = enemyDamageCooldown.get(enemy.getNum());
+			}
+			else {
+				cooldown = 0;
+			}
 
 			if (enemy.intersects(player)) {
 				if (cooldown == 0) {
 					player.updateHealth(1);
 					enemyDamageCooldown.put(num, DAMAGE_RATE);
-				} else enemyDamageCooldown.put(num, cooldown - 1);
-			} else enemyDamageCooldown.put(num, 0);
+				} else {
+					enemyDamageCooldown.put(num, cooldown - 1);
+				}
+			} else {
+				enemyDamageCooldown.put(num, 0);
+			}
 		}
 	}
 
@@ -307,18 +321,21 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_J && !waveInProgress) {
 			waveInProgress = true;
-			if (wave % 5 == 0) enemiesToSpawn = (wave / 5);
-			else enemiesToSpawn = wave + 1;
-                        enemiesSpawnedThisWave = 0;
-                        entranceSpawnCounts.clear();
-                        // Ensure no stray bullets from the previous wave carry
-                        // over when the new wave begins
-                        bullets.clear();
-                        timer.start();
-                        player.x = (GAME_WIDTH - 70) / 2;
-                        player.y = (GAME_WIDTH - 70) / 2;
-                        return;
-                }
+			if (wave % 5 == 0) {
+				enemiesToSpawn = (wave / 5);
+			} else {
+				enemiesToSpawn = wave + 1;
+			}
+			enemiesSpawnedThisWave = 0;
+			entranceSpawnCounts.clear();
+			// Ensure no stray bullets from the previous wave carry
+			// over when the new wave begins
+			bullets.clear();
+			timer.start();
+			player.x = (GAME_WIDTH - 70) / 2;
+			player.y = (GAME_WIDTH - 70) / 2;
+			return;
+		}
 
 		if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
 			timer.stop();
@@ -343,7 +360,6 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				resume = false;
 				repaint();
 			}
-
 			return;
 		}
 
@@ -394,7 +410,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 
 		//Set moving for animation
-		if (keysPressed.isEmpty()) player.setMoving(false);
+		if (keysPressed.isEmpty()) {
+			player.setMoving(false);
+		}
 
 
 		//Set frame for animation
@@ -452,18 +470,19 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 
 		// End the wave setup when done
-                if (enemiesSpawnedThisWave == enemiesToSpawn && enemies.size() == 0) {
-                        waveInProgress = false;
-                        wave++;
-                        timer.stop();
-                        // Remove any bullets still on screen so they do not
-                        // persist into the next wave
-                        bullets.clear();
-                        map.updateLevel(wave);
+		if (enemiesSpawnedThisWave == enemiesToSpawn && enemies.size() == 0) {
+			waveInProgress = false;
+			wave++;
+			timer.stop();
+			// Remove any bullets still on screen so they do not
+			// persist into the next wave
+			bullets.clear();
+			map.updateLevel(wave);
 
 			if (wave % 5 == 1) {
 				map = new MapGenerator(10, 10, 75, (wave / 5) + 1);
 			}
+
 			if (wave >= 2 && wave % 2 == 0) {
 				spawnPowerUps();
 			}
@@ -528,27 +547,27 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			int barLength = 150;
 			int spacing = 20; // space between bars
 
-                        int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
-                        int barY = getHeight() / 10; // Fixed top margin for HUD
-                        int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
-                        int bar2X = bar1X + barLength + spacing;
+			int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
+			int barY = getHeight() / 10; // Fixed top margin for HUD
+			int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
+			int bar2X = bar1X + barLength + spacing;
 
-                        // Draw heart-based health indicator above the bar
-                        if (heartsSheet != null) {
-                                int rowHeight = heartsSheet.getHeight() / 5;
-                                int rowWidth = heartsSheet.getWidth();
-                                int destW = barLength;
-                                int destH = (int) ((rowHeight / (double) rowWidth) * destW);
-                                int heartsX = bar1X;
-                                int heartsY = barY - destH - 10;
-                                int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
-                                int sx1 = 0;
-                                int sy1 = rowIndex * rowHeight;
-                                int sx2 = rowWidth;
-                                int sy2 = sy1 + rowHeight;
-                                g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
-                                                sx1, sy1, sx2, sy2, null);
-                        }
+			// Draw heart-based health indicator above the bar
+			if (heartsSheet != null) {
+				int rowHeight = heartsSheet.getHeight() / 5;
+				int rowWidth = heartsSheet.getWidth();
+				int destW = barLength;
+				int destH = (int) ((rowHeight / (double) rowWidth) * destW);
+				int heartsX = bar1X;
+				int heartsY = barY - destH - 10;
+				int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
+				int sx1 = 0;
+				int sy1 = rowIndex * rowHeight;
+				int sx2 = rowWidth;
+				int sy2 = sy1 + rowHeight;
+				g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
+						sx1, sy1, sx2, sy2, null);
+			}
 
 			// Health bar (left)
 			g2.setColor(Color.RED);
@@ -570,13 +589,16 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			int iconSize = 60;
 			int invY = barY + barHeight + 40;
 			int idx = 0;
+
 			for (Player.InventoryPowerUp ip : player.getPowerUps()) {
 				int drawY = invY + idx * (iconSize + 30);
 				boolean show = !ip.active || COUNTER % 20 < 10;
 				if (show) {
-					if (ip.icon != null)
+					if (ip.icon != null) {
 						g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
+					}
 				}
+
 				if (ip.active) {
 					g2.setColor(Color.WHITE);
 					g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
@@ -592,6 +614,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				g2.drawString("Wave " + wave, 500, 400);
 				g2.drawString("Press X to continue", 600, 400);
 			}
+
 			if (paused) {
 				g2.drawImage(pauseBackground, 0, 0, 1200 + xOffset, 1200 + yOffset, null);
 				g2.setColor(Color.WHITE);
