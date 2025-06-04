@@ -232,7 +232,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 
-	/**Add commentMore actions
+	/**
 	 * Check if player collects any power-up items
 	 */
 	private void checkPowerUpPickup() {
