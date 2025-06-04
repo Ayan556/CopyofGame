@@ -93,8 +93,7 @@ public class MapGenerator {
 
             // Skip if this tile would overlap the player spawn or the other
             // central tiles surrounding the spawn location
-            boolean isCenterTile = ((r == centerRow1 || r == centerRow2) &&
-                    (c == centerCol1 || c == centerCol2));
+            boolean isCenterTile = ((r == centerRow1 || r == centerRow2) && (c == centerCol1 || c == centerCol2));
             if (rect.intersects(playerSpawn) || isCenterTile) continue;
 
             // Skip if this tile would overlap or block an entrance
