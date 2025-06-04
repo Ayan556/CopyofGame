@@ -309,13 +309,16 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			waveInProgress = true;
 			if (wave % 5 == 0) enemiesToSpawn = (wave / 5);
 			else enemiesToSpawn = wave + 1;
-			enemiesSpawnedThisWave = 0;
-			entranceSpawnCounts.clear();
-			timer.start();
-			player.x = (GAME_WIDTH - 70) / 2;
-			player.y = (GAME_WIDTH - 70) / 2;
-			return;
-		}
+                        enemiesSpawnedThisWave = 0;
+                        entranceSpawnCounts.clear();
+                        // Ensure no stray bullets from the previous wave carry
+                        // over when the new wave begins
+                        bullets.clear();
+                        timer.start();
+                        player.x = (GAME_WIDTH - 70) / 2;
+                        player.y = (GAME_WIDTH - 70) / 2;
+                        return;
+                }
 
 		if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
 			timer.stop();
@@ -449,11 +452,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 
 		// End the wave setup when done
-		if (enemiesSpawnedThisWave == enemiesToSpawn && enemies.size() == 0) {
-			waveInProgress = false;
-			wave++;
-			timer.stop();
-			map.updateLevel(wave);
+                if (enemiesSpawnedThisWave == enemiesToSpawn && enemies.size() == 0) {
+                        waveInProgress = false;
+                        wave++;
+                        timer.stop();
+                        // Remove any bullets still on screen so they do not
+                        // persist into the next wave
+                        bullets.clear();
+                        map.updateLevel(wave);
 
 			if (wave % 5 == 1) {
 				map = new MapGenerator(10, 10, 75, (wave / 5) + 1);
