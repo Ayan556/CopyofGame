@@ -55,9 +55,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
 	private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
-	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
-	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
-	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
+        private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
+        private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
+        private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
+        private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
 
 
 	// Dimensions
@@ -516,10 +517,27 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			int barLength = 150;
 			int spacing = 20; // space between bars
 
-			int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
-			int barY = getHeight() / 10; // Fixed top margin for HUD
-			int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
-			int bar2X = bar1X + barLength + spacing;
+                        int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
+                        int barY = getHeight() / 10; // Fixed top margin for HUD
+                        int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
+                        int bar2X = bar1X + barLength + spacing;
+
+                        // Draw heart-based health indicator above the bar
+                        if (heartsSheet != null) {
+                                int rowHeight = heartsSheet.getHeight() / 5;
+                                int rowWidth = heartsSheet.getWidth();
+                                int destW = barLength;
+                                int destH = (int) ((rowHeight / (double) rowWidth) * destW);
+                                int heartsX = bar1X;
+                                int heartsY = barY - destH - 10;
+                                int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
+                                int sx1 = 0;
+                                int sy1 = rowIndex * rowHeight;
+                                int sx2 = rowWidth;
+                                int sy2 = sy1 + rowHeight;
+                                g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
+                                                sx1, sy1, sx2, sy2, null);
+                        }
 
 			// Health bar (left)
 			g2.setColor(Color.RED);
