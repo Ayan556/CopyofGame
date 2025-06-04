@@ -74,6 +74,14 @@ public class MapGenerator {
         Random rand = new Random();
         int maxObstacles = 5 * ((level % 5) + 1); // Increase obstacle count based on level
 
+        // Determine the 2x2 center tile indices so we can block obstacle
+        // placement in this area. The player spawns in the centre of these
+        // tiles, so keeping them clear prevents overlap with obstacles.
+        int centerRow1 = rows / 2 - 1;
+        int centerRow2 = rows / 2;
+        int centerCol1 = cols / 2 - 1;
+        int centerCol2 = cols / 2;
+
         // Try placing obstacles until desired number is reached
         while (obstacles.size() < maxObstacles) {
             // Choose random tile coordinates
@@ -83,8 +91,11 @@ public class MapGenerator {
             // Create a Rectangle representing this tile
             Rectangle rect = new Rectangle(c * tileSize, r * tileSize, tileSize, tileSize);
 
-            // Skip if this tile would overlap the player spawn
-            if (rect.intersects(playerSpawn)) continue;
+            // Skip if this tile would overlap the player spawn or the other
+            // central tiles surrounding the spawn location
+            boolean isCenterTile = ((r == centerRow1 || r == centerRow2) &&
+                    (c == centerCol1 || c == centerCol2));
+            if (rect.intersects(playerSpawn) || isCenterTile) continue;
 
             // Skip if this tile would overlap or block an entrance
             boolean isEntranceOverlap = entrances.stream().anyMatch(e -> e.intersects(rect));
