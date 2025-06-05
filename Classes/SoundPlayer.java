@@ -34,6 +34,20 @@ public class SoundPlayer {
         }
     }
 
+    /** Pauses the background audio without closing the clip. */
+    public static void pauseBackground() {
+        if (backgroundClip != null && backgroundClip.isRunning()) {
+            backgroundClip.stop();
+        }
+    }
+
+    /** Resumes a previously paused background audio clip. */
+    public static void resumeBackground() {
+        if (backgroundClip != null && !backgroundClip.isRunning()) {
+            backgroundClip.start();
+        }
+    }
+
     /**
      * Plays the specified audio file once from the /res/Audio directory.
      * @param filename The audio file name
