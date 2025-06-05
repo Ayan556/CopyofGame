@@ -53,13 +53,13 @@ public class Homepage extends JFrame implements KeyListener {
 			repaint();
 		}
 
-                if (e.getKeyCode() == KeyEvent.VK_U) {
-                        switch (button) {
-                                case 1:
-                                        SoundPlayer.stopBackground();
-                                        this.dispose();
-                                        new Main();
-                                        break;
+		if (e.getKeyCode() == KeyEvent.VK_U) {
+			switch (button) {
+				case 1:
+					SoundPlayer.stopBackground();
+					this.dispose();
+					new Main();
+					break;
 				case 2:
 					if (instructions) instructions = false;
 					else instructions = true;
