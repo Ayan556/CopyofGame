@@ -109,9 +109,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-		this.add(draw);
-		this.setVisible(true);
+                this.setLocationRelativeTo(null);
+                this.add(draw);
+                this.setVisible(true);
+
+                SoundPlayer.playBackground("BackgroundMusic.wav");
 
 		// Input and timer
 		this.addKeyListener(this);
@@ -337,20 +339,23 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			return;
 		}
 
-		if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
-			timer.stop();
-			paused = true;
-			repaint();
-			return;
-		} else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
-			paused = false;
-			timer.start();
-			return;
-		} else if (e.getKeyCode() == KeyEvent.VK_U && paused) {
-			this.dispose();
-			new Homepage();
-			return;
-		}
+                if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
+                        timer.stop();
+                        SoundPlayer.pauseBackground();
+                        paused = true;
+                        repaint();
+                        return;
+                } else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
+                        paused = false;
+                        timer.start();
+                        SoundPlayer.resumeBackground();
+                        return;
+                } else if (e.getKeyCode() == KeyEvent.VK_U && paused) {
+                        SoundPlayer.stopBackground();
+                        this.dispose();
+                        new Homepage();
+                        return;
+                }
 
 		if (paused) {
 			if (e.getKeyCode() == KeyEvent.VK_W && !resume) {
@@ -401,13 +406,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		if (!player.isAlive()) {
-			timer.stop();
-			DeathScreen deathScreen = new DeathScreen();
-			deathScreen.updateScore(score.score);
-			this.dispose();
-			return;
-		}
+                if (!player.isAlive()) {
+                        timer.stop();
+                        SoundPlayer.stopBackground();
+                        DeathScreen deathScreen = new DeathScreen();
+                        deathScreen.updateScore(score.score);
+                        this.dispose();
+                        return;
+                }
 
 		//Set moving for animation
 		if (keysPressed.isEmpty()) {
