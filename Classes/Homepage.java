@@ -23,9 +23,10 @@ public class Homepage extends JFrame implements KeyListener {
 	private BufferedImage bg = ResourceLoader.loadImage("BgHomePage.png");
 
 
-	Homepage() {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		button = 1;
+        Homepage() {
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                button = 1;
+                SoundPlayer.playBackground("BackgroundMusic.mp3");
 
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -54,10 +55,11 @@ public class Homepage extends JFrame implements KeyListener {
 
 		if (e.getKeyCode() == KeyEvent.VK_U) {
 			switch (button) {
-				case 1:
-					this.dispose();
-					new Main();
-					break;
+                                case 1:
+                                        SoundPlayer.playSound("BackgroundMusic.mp3");
+                                        this.dispose();
+                                        new Main();
+                                        break;
 				case 2:
 					if (instructions) instructions = false;
 					else instructions = true;
