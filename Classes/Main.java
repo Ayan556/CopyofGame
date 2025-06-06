@@ -598,26 +598,44 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.drawRect(bar2X, barY, barLength, barHeight);
 			g2.drawString("SH", bar2X + 5, barY - 5);
 
-			// Draw collected power-up icons
-			int iconSize = 60;
-			int invY = barY + barHeight + 40;
-			int idx = 0;
+                        // Draw collected power-up icons grouped by type
+                        int iconSize = 60;
+                        int invY = barY + barHeight + 40;
 
-			for (Player.InventoryPowerUp ip : player.getPowerUps()) {
-				int drawY = invY + idx * (iconSize + 30);
-				boolean show = !ip.active || COUNTER % 20 < 10;
-				if (show) {
-					if (ip.icon != null) {
-						g2.drawImage(ip.icon, bar1X, drawY, iconSize, iconSize, null);
-					}
-				}
+                        java.util.Map<Class<? extends PowerUp>, DisplayEntry> invMap = new java.util.LinkedHashMap<>();
 
-				if (ip.active) {
-					g2.setColor(Color.WHITE);
-					g2.drawString(String.valueOf(ip.remaining / 100), bar1X, drawY + iconSize + 15);
-				}
-				idx++;
-			}
+                        for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+                                Class<? extends PowerUp> type = ip.powerUp.getClass();
+                                DisplayEntry entry = invMap.get(type);
+                                if (entry == null) {
+                                        entry = new DisplayEntry(ip.icon);
+                                        invMap.put(type, entry);
+                                }
+                                entry.count++;
+                                if (ip.active) {
+                                        entry.active = true;
+                                        entry.remaining = ip.remaining;
+                                }
+                        }
+
+                        int idx = 0;
+                        for (DisplayEntry entry : invMap.values()) {
+                                int drawY = invY + idx * (iconSize + 30);
+                                boolean show = !entry.active || COUNTER % 20 < 10;
+                                if (show && entry.icon != null) {
+                                        g2.drawImage(entry.icon, bar1X, drawY, iconSize, iconSize, null);
+                                        if (entry.count > 1) {
+                                                g2.setColor(Color.WHITE);
+                                                g2.drawString("x" + entry.count, bar1X + iconSize - 15, drawY + iconSize - 5);
+                                        }
+                                }
+
+                                if (entry.active) {
+                                        g2.setColor(Color.WHITE);
+                                        g2.drawString(String.valueOf(entry.remaining / 100), bar1X, drawY + iconSize + 15);
+                                }
+                                idx++;
+                        }
 
 			score.trackScore();
 			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
@@ -652,7 +670,19 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 
-	private class Score {
+        /** Helper class for displaying power-up icons with counts and timers */
+        private static class DisplayEntry {
+                BufferedImage icon;
+                int count = 0;
+                boolean active = false;
+                int remaining = 0;
+
+                DisplayEntry(BufferedImage icon) {
+                        this.icon = icon;
+                }
+        }
+
+        private class Score {
 		private BufferedImage scoreSheet = ResourceLoader.loadImage("ScoreNums.png");
 
 		//Score keeper
