@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.*;
@@ -41,6 +42,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private ArrayList<Bullet> bullets = new ArrayList<>();
 	private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
 
+
 	// Game objects
 	private Player player;
 	private MapGenerator map;
@@ -58,6 +60,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
 	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
 	private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
+	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
 
 	// Dimensions
@@ -108,11 +111,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-                this.setLocationRelativeTo(null);
-                this.add(draw);
-                this.setVisible(true);
-
-                SoundPlayer.playBackground("BackgroundMusic.wav");
+		this.setLocationRelativeTo(null);
+		this.add(draw);
+		this.setVisible(true);
+		SoundPlayer.playBackground("BackgroundMusic.wav");
 
 		// Input and timer
 		this.addKeyListener(this);
@@ -322,13 +324,6 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_J && !waveInProgress) {
 			waveInProgress = true;
-			if (wave % 5 == 0) {
-				enemiesToSpawn = (wave / 5);
-			} else {
-				enemiesToSpawn = wave + 1;
-			}
-			enemiesSpawnedThisWave = 0;
-			entranceSpawnCounts.clear();
 			// Ensure no stray bullets from the previous wave carry
 			// over when the new wave begins
 			bullets.clear();
@@ -338,23 +333,23 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			return;
 		}
 
-                if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
-                        timer.stop();
-                        SoundPlayer.pauseBackground();
-                        paused = true;
-                        repaint();
-                        return;
-                } else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
-                        paused = false;
-                        timer.start();
-                        SoundPlayer.resumeBackground();
-                        return;
-                } else if (e.getKeyCode() == KeyEvent.VK_U && paused) {
-                        SoundPlayer.stopBackground();
-                        this.dispose();
-                        new Homepage();
-                        return;
-                }
+		if (e.getKeyCode() == KeyEvent.VK_I && !paused) {
+			timer.stop();
+			SoundPlayer.pauseBackground();
+			paused = true;
+			repaint();
+			return;
+		} else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
+			paused = false;
+			timer.start();
+			SoundPlayer.resumeBackground();
+			return;
+		} else if (e.getKeyCode() == KeyEvent.VK_U && paused) {
+			SoundPlayer.stopBackground();
+			this.dispose();
+			new Homepage();
+			return;
+		}
 
 		if (paused) {
 			if (e.getKeyCode() == KeyEvent.VK_W && !resume) {
@@ -395,9 +390,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	 * Not used, but required by KeyListener.
 	 */
 	@Override
-	public void keyTyped(KeyEvent e) {
-		// Unused
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	/**
 	 * Timer tick
@@ -405,14 +398,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-                if (!player.isAlive()) {
-                        timer.stop();
-                        SoundPlayer.stopBackground();
-                        DeathScreen deathScreen = new DeathScreen();
-                        deathScreen.updateScore(score.score);
-                        this.dispose();
-                        return;
-                }
+		if (!player.isAlive()) {
+			timer.stop();
+			SoundPlayer.stopBackground();
+			DeathScreen deathScreen = new DeathScreen();
+			deathScreen.updateScore(score.score);
+			this.dispose();
+			return;
+		}
 
 		//Set moving for animation
 		if (keysPressed.isEmpty()) {
@@ -476,19 +469,30 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 		// End the wave setup when done
 		if (enemiesSpawnedThisWave == enemiesToSpawn && enemies.size() == 0) {
-			waveInProgress = false;
+			if (wave % 5 == 0) {
+				timer.stop();
+				waveInProgress = false;
+			}
+
 			wave++;
-			timer.stop();
 			// Remove any bullets still on screen so they do not
 			// persist into the next wave
 			bullets.clear();
 			map.updateLevel(wave);
 
+			if (wave % 5 == 0) {
+				enemiesToSpawn = (wave / 5);
+			} else {
+				enemiesToSpawn = wave + 1;
+			}
+			enemiesSpawnedThisWave = 0;
+			entranceSpawnCounts.clear();
+
 			if (wave % 5 == 1) {
 				map = new MapGenerator(10, 10, 75, (wave / 5) + 1);
 			}
 
-			if (wave >= 2 && wave % 2 == 0) {
+			if (wave >= 4 && wave % 4 == 0) {
 				spawnPowerUps();
 			}
 		}
@@ -614,27 +618,31 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			score.trackScore();
 			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
 
+			g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
+			g2.setColor(Color.WHITE);
+			g2.drawString("Wave " + wave, 920 + xOffset, 200 + yOffset);
+
 			if (!waveInProgress) {
-				g2.setColor(Color.WHITE);
-				g2.drawString("Wave " + wave, 500, 400);
-				g2.drawString("Press X to continue", 600, 400);
+				g2.drawImage(pauseBackground, 0, 0, 1200 + xOffset, 1200 + yOffset, null);
+				if (wave == 1) g2.drawString("Press X to Begin", 250 + xOffset, 450 +yOffset);
+				else g2.drawString("Wave " + (wave-1) + " Completed, Press X to Continue", 50 + xOffset, 450 + yOffset);
 			}
 
 			if (paused) {
 				g2.drawImage(pauseBackground, 0, 0, 1200 + xOffset, 1200 + yOffset, null);
 				g2.setColor(Color.WHITE);
-				g2.drawString("Paused", 450 + xOffset, 450 + yOffset);
+				g2.drawString("Paused", 380 + xOffset, 400 + yOffset);
 
 				if (resume) {
 					g2.setColor(Color.WHITE);
-					g2.drawString("Resume", 450 + xOffset, 500 + yOffset);
+					g2.drawString("Resume", 380 + xOffset, 500 + yOffset);
 					g2.setColor(Color.GRAY);
-					g2.drawString("Exit", 450 + xOffset, 550 + yOffset);
+					g2.drawString("Exit", 380 + xOffset, 550 + yOffset);
 				} else {
 					g2.setColor(Color.GRAY);
-					g2.drawString("Resume", 450 + xOffset, 500 + yOffset);
+					g2.drawString("Resume", 380 + xOffset, 500 + yOffset);
 					g2.setColor(Color.WHITE);
-					g2.drawString("Exit", 450 + xOffset, 550 + yOffset);
+					g2.drawString("Exit", 380 + xOffset, 550 + yOffset);
 				}
 			}
 		}

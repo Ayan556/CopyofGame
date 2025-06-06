@@ -15,18 +15,21 @@ public class Homepage extends JFrame implements KeyListener {
 	public static final int GAME_WIDTH = 1600;
 	public static final int GAME_HEIGHT = 900;
 	int button;
-	boolean instructions;
-	private BufferedImage title = ResourceLoader.loadImage("Title.png");
-	private BufferedImage play = ResourceLoader.loadImage("Play.png");
-	private BufferedImage rules = ResourceLoader.loadImage("Rules.png");
-	private BufferedImage exit = ResourceLoader.loadImage("Exit.png");
-	private BufferedImage bg = ResourceLoader.loadImage("BgHomePage.png");
+	boolean instructions, credit;
+	private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
+	private BufferedImage play = ResourceLoader.loadImage("playselected.png");
+	private BufferedImage rules = ResourceLoader.loadImage("instselected.png");
+	private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
+	private BufferedImage bg = ResourceLoader.loadImage("titlebackground.jpg");
 
 
 	Homepage() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		button = 1;
 		SoundPlayer.playBackground("BackgroundMusic.wav");
+
+		instructions = false;
+		credit = false;
 
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -49,7 +52,7 @@ public class Homepage extends JFrame implements KeyListener {
 			}
 			repaint();
 		} else if (e.getKeyCode() == KeyEvent.VK_S) {
-			if (button != 3) button++;
+			if (button != 4) button++;
 			repaint();
 		}
 
@@ -60,12 +63,20 @@ public class Homepage extends JFrame implements KeyListener {
 					this.dispose();
 					new Main();
 					break;
+
 				case 2:
 					if (instructions) instructions = false;
 					else instructions = true;
 					repaint();
 					break;
+
 				case 3:
+					if (credit) credit = false;
+					else credit = true;
+					repaint();
+					break;
+
+				case 4:
 					System.exit(0);
 					break;
 			}
@@ -101,19 +112,24 @@ public class Homepage extends JFrame implements KeyListener {
 				g2.setColor(Color.BLUE);
 				g2.setFont(new Font("Arial", Font.BOLD, 36));
 				g2.drawString("INSTRUCTIONS", 310 + xOffset, 520 + yOffset);
-			} else {
-				g2.drawImage(title, 416 +xOffset, 100 + yOffset, null);
+			} else if (credit) {
+				g2.setColor(Color.BLUE);
+				g2.setFont(new Font("Arial", Font.BOLD, 36));
+				g2.drawString("CREDITS", 310 + xOffset, 520 + yOffset);
+			}	else {
 
 				switch (button) {
 					case 1:
-						g2.drawImage(play, 568 + xOffset, 500 + yOffset, null);
+						g2.drawImage(play, 0, 0, 1500, 850, null);
 						break;
 					case 2:
-						g2.drawImage(rules, 568 + xOffset, 500 + yOffset, null);
+						g2.drawImage(rules, 0, 0, 1500, 850, null);
 						break;
 					case 3:
-						g2.drawImage(exit, 568 + xOffset, 500 + yOffset, null);
+						g2.drawImage(credits, 0, 0, 1500, 850, null);
 						break;
+					case 4:
+						g2.drawImage(quit, 0, 0, 1500, 850, null);
 				}
 			}
 		}
