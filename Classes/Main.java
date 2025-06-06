@@ -41,7 +41,6 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private ArrayList<Bullet> bullets = new ArrayList<>();
 	private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
 
-
 	// Game objects
 	private Player player;
 	private MapGenerator map;
