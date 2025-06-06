@@ -134,8 +134,19 @@ public class Player extends Character {
         powerUps.add(new InventoryPowerUp(p, icon));
     }
 
-    /** Activates the next unactivated power-up in FIFO order */
+    /**
+     * Activates the next stored power-up only if none are currently active.
+     * This prevents stacking multiple power-ups at the same time.
+     */
     public void usePowerUp() {
+        // Don't allow activation if one is already running
+        for (InventoryPowerUp ip : powerUps) {
+            if (ip.active) {
+                return;
+            }
+        }
+
+        // Activate the first inactive power-up in the queue
         for (InventoryPowerUp ip : powerUps) {
             if (!ip.active) {
                 ip.active = true;
