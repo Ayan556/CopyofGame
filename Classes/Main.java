@@ -281,7 +281,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		int x2 = tile2.x + (tile2.width - size) / 2;
 		int y2 = tile2.y + (tile2.height - size) / 2;
 
-		int duration = 3000; // 30 seconds at 10ms per tick
+		int duration = 1000; // 10 seconds at 10ms per tick
 		powerUpItems.add(new PowerUpItem(x1, y1, size, new Shotgun(duration), shotgunIcon, java.awt.Color.BLUE));
 		powerUpItems.add(new PowerUpItem(x2, y2, size, new SpeedBoost(duration, 3), speedIcon, java.awt.Color.YELLOW));
 	}
@@ -363,14 +363,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 
 
-                // Fire bullet only once per press
-                if (e.getKeyCode() == KeyEvent.VK_U && !keysPressed.contains(KeyEvent.VK_U)) {
-                        bullets.addAll(player.shoot());
-                }
-                // Track the U key so holding it down doesn't repeatedly fire
-                if (e.getKeyCode() == KeyEvent.VK_U) {
-                        keysPressed.add(KeyEvent.VK_U);
-                }
+		// Fire bullet only once per press
+		if (e.getKeyCode() == KeyEvent.VK_U && !keysPressed.contains(KeyEvent.VK_U)) {
+				bullets.addAll(player.shoot());
+		}
+		// Track the U key so holding it down doesn't repeatedly fire
+		if (e.getKeyCode() == KeyEvent.VK_U) {
+				keysPressed.add(KeyEvent.VK_U);
+		}
 
 		if (e.getKeyCode() == KeyEvent.VK_O) {
 			player.usePowerUp();
@@ -496,7 +496,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				map = new MapGenerator(10, 10, 75, (wave / 5) + 1);
 			}
 
-			if (wave >= 4 && wave % 4 == 0) {
+			if (wave >= 3 && wave % 3 == 0) {
 				spawnPowerUps();
 			}
 		}
@@ -598,44 +598,44 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.drawRect(bar2X, barY, barLength, barHeight);
 			g2.drawString("SH", bar2X + 5, barY - 5);
 
-                        // Draw collected power-up icons grouped by type
-                        int iconSize = 60;
-                        int invY = barY + barHeight + 40;
+			// Draw collected power-up icons grouped by type
+			int iconSize = 60;
+			int invY = barY + barHeight + 40;
 
-                        java.util.Map<Class<? extends PowerUp>, DisplayEntry> invMap = new java.util.LinkedHashMap<>();
+			java.util.Map<Class<? extends PowerUp>, DisplayEntry> invMap = new java.util.LinkedHashMap<>();
 
-                        for (Player.InventoryPowerUp ip : player.getPowerUps()) {
-                                Class<? extends PowerUp> type = ip.powerUp.getClass();
-                                DisplayEntry entry = invMap.get(type);
-                                if (entry == null) {
-                                        entry = new DisplayEntry(ip.icon);
-                                        invMap.put(type, entry);
-                                }
-                                entry.count++;
-                                if (ip.active) {
-                                        entry.active = true;
-                                        entry.remaining = ip.remaining;
-                                }
-                        }
+			for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+					Class<? extends PowerUp> type = ip.powerUp.getClass();
+					DisplayEntry entry = invMap.get(type);
+					if (entry == null) {
+							entry = new DisplayEntry(ip.icon);
+							invMap.put(type, entry);
+					}
+					entry.count++;
+					if (ip.active) {
+							entry.active = true;
+							entry.remaining = ip.remaining;
+					}
+			}
 
-                        int idx = 0;
-                        for (DisplayEntry entry : invMap.values()) {
-                                int drawY = invY + idx * (iconSize + 30);
-                                boolean show = !entry.active || COUNTER % 20 < 10;
-                                if (show && entry.icon != null) {
-                                        g2.drawImage(entry.icon, bar1X, drawY, iconSize, iconSize, null);
-                                        if (entry.count > 1) {
-                                                g2.setColor(Color.WHITE);
-                                                g2.drawString("x" + entry.count, bar1X + iconSize - 15, drawY + iconSize - 5);
-                                        }
-                                }
+			int idx = 0;
+			for (DisplayEntry entry : invMap.values()) {
+					int drawY = invY + idx * (iconSize + 30);
+					boolean show = !entry.active || COUNTER % 20 < 10;
+					if (show && entry.icon != null) {
+							g2.drawImage(entry.icon, bar1X, drawY, iconSize, iconSize, null);
+							if (entry.count > 1) {
+									g2.setColor(Color.WHITE);
+									g2.drawString("x" + entry.count, bar1X + iconSize - 15, drawY + iconSize - 5);
+							}
+					}
 
-                                if (entry.active) {
-                                        g2.setColor(Color.WHITE);
-                                        g2.drawString(String.valueOf(entry.remaining / 100), bar1X, drawY + iconSize + 15);
-                                }
-                                idx++;
-                        }
+					if (entry.active) {
+							g2.setColor(Color.WHITE);
+							g2.drawString(String.valueOf(entry.remaining / 100), bar1X, drawY + iconSize + 15);
+					}
+					idx++;
+			}
 
 			score.trackScore();
 			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
