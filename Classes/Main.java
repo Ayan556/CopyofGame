@@ -363,10 +363,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 
 
-		// Fire bullet only once per press
-		if (e.getKeyCode() == KeyEvent.VK_U && !keysPressed.contains(KeyEvent.VK_U)) {
-			bullets.addAll(player.shoot());
-		}
+                // Fire bullet only once per press
+                if (e.getKeyCode() == KeyEvent.VK_U && !keysPressed.contains(KeyEvent.VK_U)) {
+                        bullets.addAll(player.shoot());
+                }
+                // Track the U key so holding it down doesn't repeatedly fire
+                if (e.getKeyCode() == KeyEvent.VK_U) {
+                        keysPressed.add(KeyEvent.VK_U);
+                }
 
 		if (e.getKeyCode() == KeyEvent.VK_O) {
 			player.usePowerUp();
