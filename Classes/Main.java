@@ -59,7 +59,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon2.png");
 	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
 	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
-	private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
+        private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
+        private BufferedImage shieldFull = ResourceLoader.loadImage("FullShield.png");
+        private BufferedImage shieldEmpty = ResourceLoader.loadImage("EmptyShield.png");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
 
@@ -559,51 +561,41 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				e.drawCharacter(g2, xOffset, yOffset);
 			}
 
-			int barHeight = 20;
-			int barLength = 150;
-			int spacing = 20; // space between bars
+                        int barLength = 150;
+                        int spacing = 20; // space between bars
 
-			int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
-			int barY = getHeight() / 10; // Fixed top margin for HUD
-			int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
-			int bar2X = bar1X + barLength + spacing;
+                        int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
+                        int barY = getHeight() / 10; // Fixed top margin for HUD
+                        int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
+                        int bar2X = bar1X + barLength + spacing;
 
-			// Draw heart-based health indicator above the bar
-			if (heartsSheet != null) {
-				int rowHeight = heartsSheet.getHeight() / 5;
-				int rowWidth = heartsSheet.getWidth();
-				int destW = barLength;
-				int destH = (int) ((rowHeight / (double) rowWidth) * destW);
-				int heartsX = bar1X;
-				int heartsY = barY - destH - 10;
-				int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
-				int sx1 = 0;
-				int sy1 = rowIndex * rowHeight;
-				int sx2 = rowWidth;
-				int sy2 = sy1 + rowHeight;
-				g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
-						sx1, sy1, sx2, sy2, null);
-			}
+                        int destH = 0;
+                        if (heartsSheet != null) {
+                                int rowHeight = heartsSheet.getHeight() / 5;
+                                int rowWidth = heartsSheet.getWidth();
+                                int destW = barLength;
+                                destH = (int) ((rowHeight / (double) rowWidth) * destW);
 
-			// Health bar (left)
-			g2.setColor(Color.RED);
-			int healthFill = (int) ((player.getHealth() / 5.0) * barLength); // Assuming max = 5
-			g2.fillRect(bar1X, barY, healthFill, barHeight);
-			g2.setColor(Color.WHITE);
-			g2.drawRect(bar1X, barY, barLength, barHeight);
-			g2.drawString("HP", bar1X + 5, barY - 5);
+                                // Draw heart-based health indicator
+                                int heartsX = bar1X;
+                                int heartsY = barY;
+                                int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
+                                g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
+                                                0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
 
-			// Shield bar (right)
-			g2.setColor(Color.CYAN);
-			int shieldFill = (int) ((player.getShield() / 5.0) * barLength);
-			g2.fillRect(bar2X, barY, shieldFill, barHeight);
-			g2.setColor(Color.WHITE);
-			g2.drawRect(bar2X, barY, barLength, barHeight);
-			g2.drawString("SH", bar2X + 5, barY - 5);
+                                // Draw shield icons
+                                int shieldSize = destH; // match heart height
+                                int shieldX = bar2X;
+                                int shieldY = barY;
+                                for (int i = 0; i < 5; i++) {
+                                        BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
+                                        g2.drawImage(img, shieldX + i * shieldSize, shieldY, shieldSize, shieldSize, null);
+                                }
+                        }
 
-			// Draw collected power-up icons grouped by type
-			int iconSize = 60;
-			int invY = barY + barHeight + 40;
+                        // Draw collected power-up icons grouped by type
+                        int iconSize = 60;
+                        int invY = barY + destH + 40;
 
 			java.util.Map<Class<? extends PowerUp>, DisplayEntry> invMap = new java.util.LinkedHashMap<>();
 
