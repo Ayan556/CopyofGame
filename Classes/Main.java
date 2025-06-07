@@ -583,26 +583,26 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
       int destH = 0;
       if (heartsSheet != null) {
-              int rowHeight = heartsSheet.getHeight() / 5;
-              int rowWidth = heartsSheet.getWidth();
-              int destW = barLength;
-              destH = (int) ((rowHeight / (double) rowWidth) * destW);
+		  int rowHeight = heartsSheet.getHeight() / 5;
+		  int rowWidth = heartsSheet.getWidth();
+		  int destW = barLength;
+		  destH = (int) ((rowHeight / (double) rowWidth) * destW);
 
-              // Draw heart-based health indicator
-              int heartsX = bar1X;
-              int heartsY = barY;
-              int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
-              g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
-                              0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
+		  // Draw heart-based health indicator
+		  int heartsX = bar1X;
+		  int heartsY = barY;
+		  int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
+		  g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + destW, heartsY + destH,
+						  0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
 
-              // Draw shield icons
-              int shieldSize = destH; // match heart height
-              int shieldX = bar2X;
-              int shieldY = barY + destH + spacing;
-              for (int i = 0; i < 5; i++) {
-                      BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
-                      g2.drawImage(img, shieldX + i * shieldSize, shieldY, shieldSize, shieldSize, null);
-              }
+		  // Draw shield icons
+		  int shieldSize = destH; // match heart height
+		  int shieldX = bar2X;
+		  int shieldY = barY + destH + spacing;
+		  for (int i = 0; i < 5; i++) {
+				  BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
+				  g2.drawImage(img, shieldX + i * shieldSize, shieldY, shieldSize, shieldSize, null);
+		  }
       }
 
       // Draw collected power-up icons grouped by type
