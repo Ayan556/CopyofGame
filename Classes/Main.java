@@ -322,12 +322,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_J && !waveInProgress && !paused) {
-                        waveInProgress = true;
-                        // Ensure no stray bullets from the previous wave carry
-                        // over when the new wave begins
-                        bullets.clear();
-                        timer.start();
+		if (e.getKeyCode() == KeyEvent.VK_J && !waveInProgress && !paused) {
+			waveInProgress = true;
+			// Ensure no stray bullets from the previous wave carry
+			// over when the new wave begins
+			bullets.clear();
+			timer.start();
 			player.x = (GAME_WIDTH - 70) / 2;
 			player.y = (GAME_WIDTH - 70) / 2;
 			return;
@@ -339,13 +339,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			paused = true;
 			repaint();
 			return;
-                } else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
-                        paused = false;
-                        if (waveInProgress) {
-                                timer.start();
-                        }
-                        SoundPlayer.resumeBackground();
-                        return;
+		} else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
+			paused = false;
+			if (waveInProgress) {
+					timer.start();
+			}
+			SoundPlayer.resumeBackground();
+			return;
 		} else if (e.getKeyCode() == KeyEvent.VK_U && paused) {
 			SoundPlayer.stopBackground();
 			this.dispose();
