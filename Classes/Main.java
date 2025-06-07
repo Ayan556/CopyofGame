@@ -530,9 +530,19 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-			// Calculate center offset for the game window
-			xOffset = (getWidth() - GAME_WIDTH) / 2;
-			yOffset = (getHeight() - GAME_HEIGHT) / 2;
+                        // Scale the game world to always fit inside the panel
+                        double scale = Math.min(getWidth() / (double) GAME_WIDTH,
+                                        getHeight() / (double) GAME_HEIGHT);
+                        int worldW = (int) (GAME_WIDTH * scale);
+                        int worldH = (int) (GAME_HEIGHT * scale);
+                        int transX = (getWidth() - worldW) / 2;
+                        int transY = (getHeight() - worldH) / 2;
+                        xOffset = (int) (transX / scale);
+                        yOffset = (int) (transY / scale);
+
+                        java.awt.geom.AffineTransform oldTransform = g2.getTransform();
+                        // Only scale the world - offsets handle centering
+                        g2.scale(scale, scale);
 
 
 			// Draw background
@@ -556,18 +566,20 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			// Draw player
 			player.drawCharacter(g2, xOffset, yOffset);
 
-			//Draw Enemies
-			for (Enemy e : enemies) {
-				e.drawCharacter(g2, xOffset, yOffset);
-			}
+                        //Draw Enemies
+                        for (Enemy e : enemies) {
+                                e.drawCharacter(g2, xOffset, yOffset);
+                        }
+
+                        // Reset transform so HUD elements remain constant size
+                        g2.setTransform(oldTransform);
 
                         int barLength = 150;
                         int spacing = 20; // space between bars
 
-                        int leftHUDWidth = (getWidth() - Main.GAME_WIDTH) / 2; // Width of black margin
                         int barY = getHeight() / 10; // Fixed top margin for HUD
-                        int bar1X = (leftHUDWidth - (2 * barLength + spacing)) / 2; // Left padding
-                        int bar2X = bar1X + barLength + spacing;
+                        int bar1X = 20; // left margin for HUD elements
+                        int bar2X = bar1X;
 
                         int destH = 0;
                         if (heartsSheet != null) {
@@ -586,7 +598,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                                 // Draw shield icons
                                 int shieldSize = destH; // match heart height
                                 int shieldX = bar2X;
-                                int shieldY = barY;
+                                int shieldY = barY + destH + spacing;
                                 for (int i = 0; i < 5; i++) {
                                         BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
                                         g2.drawImage(img, shieldX + i * shieldSize, shieldY, shieldSize, shieldSize, null);
@@ -595,7 +607,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
                         // Draw collected power-up icons grouped by type
                         int iconSize = 60;
-                        int invY = barY + destH + 40;
+                        int invY = barY + destH * 2 + spacing + 40;
 
 			java.util.Map<Class<? extends PowerUp>, DisplayEntry> invMap = new java.util.LinkedHashMap<>();
 
@@ -632,34 +644,36 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 					idx++;
 			}
 
-			score.trackScore();
-			score.drawScore(xOffset, yOffset, g2, screenWidth, screenHeight);
+                        score.trackScore();
+                        score.drawScore(g2, screenWidth, screenHeight, transX);
 
-			g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
-			g2.setColor(Color.WHITE);
-			g2.drawString("Wave " + wave, 920 + xOffset, 200 + yOffset);
+                        g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
+                        g2.setColor(Color.WHITE);
+                        int waveX = transX + worldW + 20;
+                        int waveY = transY + (int)(200 * scale);
+                        g2.drawString("Wave " + wave, waveX, waveY);
 
 			if (!waveInProgress) {
-				g2.drawImage(pauseBackground, 0, 0, 1200 + xOffset, 1200 + yOffset, null);
-				if (wave == 1) g2.drawString("Press X to Begin", 250 + xOffset, 450 +yOffset);
-				else g2.drawString("Wave " + (wave-1) + " Completed, Press X to Continue", 50 + xOffset, 450 + yOffset);
+                                g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
+                                if (wave == 1) g2.drawString("Press X to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
+                                else g2.drawString("Wave " + (wave-1) + " Completed, Press X to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
 			}
 
 			if (paused) {
-				g2.drawImage(pauseBackground, 0, 0, 1200 + xOffset, 1200 + yOffset, null);
-				g2.setColor(Color.WHITE);
-				g2.drawString("Paused", 380 + xOffset, 400 + yOffset);
+                                g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
+                                g2.setColor(Color.WHITE);
+                                g2.drawString("Paused", transX + (int)(380 * scale), transY + (int)(400 * scale));
 
 				if (resume) {
-					g2.setColor(Color.WHITE);
-					g2.drawString("Resume", 380 + xOffset, 500 + yOffset);
-					g2.setColor(Color.GRAY);
-					g2.drawString("Exit", 380 + xOffset, 550 + yOffset);
+                                        g2.setColor(Color.WHITE);
+                                        g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
+                                        g2.setColor(Color.GRAY);
+                                        g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
 				} else {
-					g2.setColor(Color.GRAY);
-					g2.drawString("Resume", 380 + xOffset, 500 + yOffset);
-					g2.setColor(Color.WHITE);
-					g2.drawString("Exit", 380 + xOffset, 550 + yOffset);
+                                        g2.setColor(Color.GRAY);
+                                        g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
+                                        g2.setColor(Color.WHITE);
+                                        g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
 				}
 			}
 		}
@@ -703,12 +717,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			ones = (score % 10);
 		}
 
-		public void drawScore(int xOffset, int yOffset, Graphics2D g, int screenWidth, int screenHeight) {
-			// Calculate the right-side margin for score (mirror of HP/SH bars)
-			int rightHUDWidth = (screenWidth - GAME_WIDTH) / 2;
+                public void drawScore(Graphics2D g, int screenWidth, int screenHeight, int hudMargin) {
+                        // Calculate the right-side margin for score (mirror of HP/SH bars)
+                        int rightHUDWidth = hudMargin;
 
-			int scoreY = screenHeight / 10;  // Align with health/shield bar height
-			int scoreX = screenWidth - rightHUDWidth + 20;  // Padding into right black margin
+                        int scoreY = screenHeight / 10;  // Align with health/shield bar height
+                        int scoreX = screenWidth - rightHUDWidth + 20;  // Padding into right black margin
 
 			drawDigit(g, hundreds, scoreX, scoreY, scoreX + 46, scoreY + 56);
 			drawDigit(g, tens, scoreX + 60, scoreY, scoreX + 106, scoreY + 56);
