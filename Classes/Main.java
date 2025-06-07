@@ -541,7 +541,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                         yOffset = (int) (transY / scale);
 
                         java.awt.geom.AffineTransform oldTransform = g2.getTransform();
-                        g2.translate(transX, transY);
+                        // Only scale the world - offsets handle centering
                         g2.scale(scale, scale);
 
 
@@ -577,9 +577,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                         int barLength = 150;
                         int spacing = 20; // space between bars
 
-                        int leftHUDWidth = transX; // Width of black margin on the left
                         int barY = getHeight() / 10; // Fixed top margin for HUD
-                        int bar1X = Math.max(10, (leftHUDWidth - barLength) / 2); // center or pad
+                        int bar1X = 20; // left margin for HUD elements
                         int bar2X = bar1X;
 
                         int destH = 0;
