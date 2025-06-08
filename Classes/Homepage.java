@@ -26,7 +26,7 @@ public class Homepage extends JFrame implements KeyListener {
 	Homepage() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		button = 1;
-		SoundPlayer.playBackground("BackgroundMusic.wav");
+		SoundPlayer.playBackground("CyberpunkMusic.wav");
 
 		instructions = false;
 		credit = false;

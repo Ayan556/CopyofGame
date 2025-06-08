@@ -600,7 +600,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                   int heartsX = bar1X;
                   int heartsY = barY;
                   int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
-                  g2.drawImage(heartsSheet, heartsX, heartsY, heartsX + heartsWidth, heartsY + heartsHeight,
+                  g2.drawImage(heartsSheet, heartsX + 50, heartsY, heartsX + heartsWidth + 50, heartsY + heartsHeight,
                                                   0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
 
                   // Draw shield icons at base size
@@ -609,7 +609,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                   shieldY = barY + heartsHeight + spacing;
                   for (int i = 0; i < 5; i++) {
                                   BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
-                                  g2.drawImage(img, shieldX + i * shieldSize, shieldY, shieldSize, shieldSize, null);
+                                  g2.drawImage(img, shieldX + i * shieldSize + 72, shieldY - 10, shieldSize, shieldSize, null);
                   }
       }
 
