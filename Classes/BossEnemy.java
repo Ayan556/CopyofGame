@@ -32,7 +32,7 @@ public class BossEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.y < 0 || this.y > 900) && (this.x < 375 || this.x > 450)) {
+		} else if ((this.y < 0 || this.y > 900) && (this.x < 375 || this.x > 450)) {
 			if (this.x < 375) moveX = (int) speed;
 			else moveX = (int) -speed;
 
@@ -81,46 +81,47 @@ public class BossEnemy extends Enemy {
 				setMoving(false);
 			}
 		} else {
-			int ts = map.getTileSize();
-                        java.awt.Point start = new java.awt.Point((this.x + this.width / 2) / ts, (this.y + this.height / 2) / ts);
-                        java.awt.Point goal = new java.awt.Point((p.x + p.width / 2) / ts, (p.y + p.height / 2) / ts);
-                        java.util.ArrayList<java.awt.Point> path = map.findPath(start, goal);
-                        if (path.size() > 1) {
-                                java.awt.Point next = path.get(1);
-                                int targetX = next.x * ts + ts / 2 - this.width / 2;
-                                int targetY = next.y * ts + ts / 2 - this.height / 2;
+			double dx = p.x - this.x;
+			double dy = p.y - this.y;
+			double dist = Math.sqrt(dx * dx + dy * dy);
+			if (dist == 0) return;
 
-                                double dx = targetX - this.x;
-                                double dy = targetY - this.y;
-                                double dist = Math.sqrt(dx * dx + dy * dy);
-                                moveX = (int)Math.round((dx / dist) * speed);
-                                moveY = (int)Math.round((dy / dist) * speed);
+			moveX = (int)((dx / dist) * speed);
+			moveY = (int)((dy / dist) * speed);
 
-                                int originalX = this.x;
-                                int originalY = this.y;
+			int originalX = this.x;
+			int originalY = this.y;
 
-                                this.moving = true;
-                                this.x += moveX;
-                                this.y += moveY;
-                                if (collides(map)) {
-                                        this.x = originalX;
-                                        this.y = originalY;
-                                }
+			this.moving = true;
 
-                                if (this.x > originalX) {
-                                        this.directionFacing = 2;
-                                } else if (this.x < originalX) {
-                                        this.directionFacing = 1;
-                                } else {
-                                        if (this.y > originalY) this.directionFacing = 4;
-                                        else if (this.y < originalY) this.directionFacing = 3;
-                                        else {
-                                                this.directionFacing = 4;
-                                                setMoving(false);
-                                        }
-                                }
-                        }
-                }
+			// Diagonal
+			this.x += moveX;
+			this.y += moveY;
+			if (collides(map)) {
+				this.x = originalX;
+				this.y = originalY;
+
+				this.x += moveX;
+				if (collides(map)) this.x = originalX;
+
+				this.y += moveY;
+				if (collides(map)) this.y = originalY;
+			}
+
+			//Direction
+			if (this.x > originalX) {		//Enemy is moving right
+				this.directionFacing = 2;
+			} else if (this.x < originalX){	//Enemy is moving left
+				this.directionFacing = 1;
+			} else {						//Enemy doesn't move left or right
+				if (this.y > originalY) this.directionFacing = 4;
+				else if (this.y < originalY) this.directionFacing = 3;
+				else {
+					this.directionFacing = 4;
+					setMoving(false);
+				}
+			}
+		}
 	}
 
 	/**
