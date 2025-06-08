@@ -316,6 +316,16 @@ public class MapGenerator {
      * path including the start and goal.
      */
     public ArrayList<java.awt.Point> findPath(java.awt.Point start, java.awt.Point goal) {
+        // Validate the start and goal positions to ensure they fall within the
+        // bounds of the generated grid. If either point lies outside the grid
+        // dimensions, pathfinding cannot proceed safely so we simply return an
+        // empty path.
+        if (start.x < 0 || start.y < 0 || goal.x < 0 || goal.y < 0 ||
+            start.x >= cols || start.y >= rows ||
+            goal.x >= cols || goal.y >= rows) {
+            return new ArrayList<>();
+        }
+
         class Node {
             int r, c;
             double g, f;
