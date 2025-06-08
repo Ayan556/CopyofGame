@@ -55,14 +55,14 @@ public class MapGenerator {
      * Adds 4 entrance rectangles to the center of each map edge (top, bottom, left, right).
      */
     private void generateEntrances() {
-        // Top center entrance
-        entrances.add(new Rectangle(((cols / 2)-1) * tileSize, 0, 2* tileSize, tileSize));
+        // Top center entrance aligned with the central corridor
+        entrances.add(new Rectangle((cols / 2) * tileSize, 0, 2 * tileSize, tileSize));
         // Bottom center entrance
-        entrances.add(new Rectangle(((cols / 2)-1) * tileSize, (rows - 1) * tileSize, 2*tileSize, tileSize));
+        entrances.add(new Rectangle((cols / 2) * tileSize, (rows - 1) * tileSize, 2 * tileSize, tileSize));
         // Left center entrance
-        entrances.add(new Rectangle(0, ((rows / 2)-1) * tileSize, tileSize, 2*tileSize));
+        entrances.add(new Rectangle(0, (rows / 2) * tileSize, tileSize, 2 * tileSize));
         // Right center entrance
-        entrances.add(new Rectangle((cols - 1) * tileSize, ((rows / 2)-1) * tileSize, tileSize, 2*tileSize));
+        entrances.add(new Rectangle((cols - 1) * tileSize, (rows / 2) * tileSize, tileSize, 2 * tileSize));
     }
 
     /**
@@ -231,6 +231,38 @@ public class MapGenerator {
         return tileSize;
     }
 
+    /** Number of rows in the map grid */
+    public int getRows() {
+        return rows;
+    }
+
+    /** Number of columns in the map grid */
+    public int getCols() {
+        return cols;
+    }
+
+    /**
+     * Checks if the specified tile coordinates are walkable (not blocked by
+     * walls, obstacles or the player spawn).
+     */
+    public boolean isWalkable(int row, int col) {
+        if (row < 0 || col < 0 || row >= rows || col >= cols) return false;
+
+        Rectangle tile = new Rectangle(col * tileSize, row * tileSize, tileSize, tileSize);
+
+        if (tile.intersects(playerSpawn)) return false;
+
+        for (Rectangle o : obstacles) {
+            if (o.intersects(tile)) return false;
+        }
+
+        for (Rectangle w : walls) {
+            if (w.intersects(tile)) return false;
+        }
+
+        return true;
+    }
+
     /**
      * Returns a list of rectangles representing walkable tiles (no obstacles,
      * walls, or entrances).
@@ -276,5 +308,71 @@ public class MapGenerator {
             }
         }
         return tiles;
+    }
+
+    /**
+     * Performs a simple A* search on the map grid to find a path between two
+     * tile coordinates. The returned list contains the tile coordinates of the
+     * path including the start and goal.
+     */
+    public ArrayList<java.awt.Point> findPath(java.awt.Point start, java.awt.Point goal) {
+        class Node {
+            int r, c;
+            double g, f;
+            Node parent;
+            Node(int r, int c, double g, double f, Node p) {
+                this.r = r; this.c = c; this.g = g; this.f = f; this.parent = p;
+            }
+        }
+
+        java.util.PriorityQueue<Node> open = new java.util.PriorityQueue<>(java.util.Comparator.comparingDouble(n -> n.f));
+        boolean[][] closed = new boolean[rows][cols];
+
+        Node startN = new Node(start.y, start.x, 0, 0, null);
+        startN.f = Math.abs(startN.r - goal.y) + Math.abs(startN.c - goal.x);
+        open.add(startN);
+
+        Node[][] all = new Node[rows][cols];
+        all[startN.r][startN.c] = startN;
+
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+
+        while (!open.isEmpty()) {
+            Node cur = open.poll();
+            if (cur.r == goal.y && cur.c == goal.x) {
+                java.util.LinkedList<java.awt.Point> path = new java.util.LinkedList<>();
+                while (cur != null) {
+                    path.addFirst(new java.awt.Point(cur.c, cur.r));
+                    cur = cur.parent;
+                }
+                return new ArrayList<>(path);
+            }
+
+            closed[cur.r][cur.c] = true;
+
+            for (int[] d : dirs) {
+                int nr = cur.r + d[0];
+                int nc = cur.c + d[1];
+                if (!isWalkable(nr, nc) || closed[nr][nc]) continue;
+
+                double ng = cur.g + 1;
+                Node n = all[nr][nc];
+                if (n == null) {
+                    n = new Node(nr, nc, ng, 0, cur);
+                    all[nr][nc] = n;
+                } else if (ng < n.g) {
+                    n.g = ng;
+                    n.parent = cur;
+                } else {
+                    continue;
+                }
+
+                n.f = n.g + Math.abs(nr - goal.y) + Math.abs(nc - goal.x);
+                open.remove(n);
+                open.add(n);
+            }
+        }
+
+        return new ArrayList<>();
     }
 }
