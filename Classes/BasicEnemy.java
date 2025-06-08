@@ -110,47 +110,37 @@ public class BasicEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-		} else {
-			double dx = p.x - this.x;
-			double dy = p.y - this.y;
-			double dist = Math.sqrt(dx * dx + dy * dy);
-			if (dist == 0) return;
+                } else {
+                        int ts = map.getTileSize();
+                        java.awt.Point start = new java.awt.Point((this.x + this.width / 2) / ts, (this.y + this.height / 2) / ts);
+                        java.awt.Point goal = new java.awt.Point((p.x + p.width / 2) / ts, (p.y + p.height / 2) / ts);
+                        java.util.ArrayList<java.awt.Point> path = map.findPath(start, goal);
+                        if (path.size() > 1) {
+                                java.awt.Point next = path.get(1);
+                                int targetX = next.x * ts + ts / 2 - this.width / 2;
+                                int targetY = next.y * ts + ts / 2 - this.height / 2;
 
-			moveX = (int)((dx / dist) * speed);
-			moveY = (int)((dy / dist) * speed);
+                                double dx = targetX - this.x;
+                                double dy = targetY - this.y;
+                                double dist = Math.sqrt(dx * dx + dy * dy);
+                                moveX = (int)Math.round((dx / dist) * speed);
+                                moveY = (int)Math.round((dy / dist) * speed);
 
-			int originalX = this.x;
-			int originalY = this.y;
+                                int originalX = this.x;
+                                int originalY = this.y;
 
-			this.moving = true;
+                                this.moving = true;
+                                this.x += moveX;
+                                this.y += moveY;
+                                if (collides(map)) {
+                                        this.x = originalX;
+                                        this.y = originalY;
+                                }
 
-			// Diagonal
-			this.x += moveX;
-			this.y += moveY;
-			if (collides(map)) {
-				this.x = originalX;
-				this.y = originalY;
-
-				//X movement only
-				if (dx == 0) moveX = 0;
-				else if (dx < 0) moveX = (int) -speed;
-				else moveX = (int) speed;
-
-				this.x += moveX;
-				if (collides(map)) this.x = originalX;//collidesWithOthers(others)
-
-				//Y movement onlyAdd commentMore actions
-				if (dy == 0) moveY = 0;
-				else if (dy < 0) moveY = (int) -speed;
-				else moveY = (int) speed;
-
-				this.y += moveY;
-				if (collides(map)) this.y = originalY;
-			}
-
-			changeDirection(originalX, originalY);
-		}
-	}
+                                changeDirection(originalX, originalY);
+                        }
+                }
+        }
 
 	/**
 	 * Check for collisions
@@ -167,9 +157,9 @@ public class BasicEnemy extends Enemy {
 		return false;
 	}
 
-	/**Add commentMore actions
-	 * Change the direction of the enemy
-	 */
+        /**
+         * Change the direction of the enemy
+         */
 	private void changeDirection(int originalX, int originalY) {
 		//Direction
 		if (this.x > originalX) {        //Enemy is moving right
