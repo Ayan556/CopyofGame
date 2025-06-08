@@ -20,7 +20,7 @@ public class Homepage extends JFrame implements KeyListener {
 	private BufferedImage play = ResourceLoader.loadImage("playselected.png");
 	private BufferedImage rules = ResourceLoader.loadImage("instselected.png");
 	private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
-	private BufferedImage bg = ResourceLoader.loadImage("titlebackground.jpg");
+	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
 
 
 	Homepage() {
