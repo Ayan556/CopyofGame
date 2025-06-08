@@ -316,6 +316,17 @@ public class MapGenerator {
      * path including the start and goal.
      */
     public ArrayList<java.awt.Point> findPath(java.awt.Point start, java.awt.Point goal) {
+        // Clamp start and goal within map bounds to avoid indexing errors
+        int sr = Math.min(Math.max(start.y, 0), rows - 1);
+        int sc = Math.min(Math.max(start.x, 0), cols - 1);
+        int gr = Math.min(Math.max(goal.y, 0), rows - 1);
+        int gc = Math.min(Math.max(goal.x, 0), cols - 1);
+
+        // Both start and goal tiles must be walkable
+        if (!isWalkable(sr, sc) || !isWalkable(gr, gc)) {
+            return new ArrayList<>();
+        }
+
         class Node {
             int r, c;
             double g, f;
@@ -328,8 +339,8 @@ public class MapGenerator {
         java.util.PriorityQueue<Node> open = new java.util.PriorityQueue<>(java.util.Comparator.comparingDouble(n -> n.f));
         boolean[][] closed = new boolean[rows][cols];
 
-        Node startN = new Node(start.y, start.x, 0, 0, null);
-        startN.f = Math.abs(startN.r - goal.y) + Math.abs(startN.c - goal.x);
+        Node startN = new Node(sr, sc, 0, 0, null);
+        startN.f = Math.abs(startN.r - gr) + Math.abs(startN.c - gc);
         open.add(startN);
 
         Node[][] all = new Node[rows][cols];
@@ -339,7 +350,7 @@ public class MapGenerator {
 
         while (!open.isEmpty()) {
             Node cur = open.poll();
-            if (cur.r == goal.y && cur.c == goal.x) {
+            if (cur.r == gr && cur.c == gc) {
                 java.util.LinkedList<java.awt.Point> path = new java.util.LinkedList<>();
                 while (cur != null) {
                     path.addFirst(new java.awt.Point(cur.c, cur.r));
@@ -367,7 +378,7 @@ public class MapGenerator {
                     continue;
                 }
 
-                n.f = n.g + Math.abs(nr - goal.y) + Math.abs(nc - goal.x);
+                n.f = n.g + Math.abs(nr - gr) + Math.abs(nc - gc);
                 open.remove(n);
                 open.add(n);
             }
