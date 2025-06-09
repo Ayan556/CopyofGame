@@ -17,7 +17,7 @@ public class DeathScreen extends JFrame implements KeyListener{
     public static final int GAME_HEIGHT = 900;
     private int score;
     private int retry;
-    private BufferedImage youDied = ResourceLoader.loadImage("Death.png");
+    private BufferedImage youDied = ResourceLoader.loadImage("Death2.png");
     private BufferedImage yes = ResourceLoader.loadImage("PlayAgainYes.png");
     private BufferedImage no = ResourceLoader.loadImage("PlayAgainNo.png");
 
