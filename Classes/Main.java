@@ -455,14 +455,15 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		if (!player.isAlive()) {
-			timer.stop();
-			SoundPlayer.stopBackground();
-			DeathScreen deathScreen = new DeathScreen();
-			deathScreen.updateScore(score.score);
-			this.dispose();
-			return;
-		}
+                if (!player.isAlive()) {
+                        timer.stop();
+                        player.deactivateAllPowerUps();
+                        SoundPlayer.stopBackground();
+                        DeathScreen deathScreen = new DeathScreen();
+                        deathScreen.updateScore(score.score);
+                        this.dispose();
+                        return;
+                }
 
 		//Set moving for animation
 		if (keysPressed.isEmpty()) {

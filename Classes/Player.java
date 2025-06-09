@@ -104,6 +104,7 @@ public class Player extends Character {
         int bulletY = this.y + (this.height - bulletH) / 2;
 
         if (shotgun) {
+            SoundPlayer.playSound("Shotgun.wav");
             double baseAngle = 0;
             switch (this.directionFacing) {
                 case 1 -> baseAngle = Math.PI;
@@ -166,6 +167,16 @@ public class Player extends Character {
                     ip.powerUp.deactivate(this);
                     powerUps.remove(i);
                 }
+            }
+        }
+    }
+
+    /** Deactivates all currently active power-ups without removing them. */
+    public void deactivateAllPowerUps() {
+        for (InventoryPowerUp ip : powerUps) {
+            if (ip.active) {
+                ip.powerUp.deactivate(this);
+                ip.active = false;
             }
         }
     }
