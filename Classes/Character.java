@@ -146,4 +146,26 @@ public abstract class Character extends Rectangle {
     public void addSpeed(double delta) {
         this.speed += delta;
     }
+
+    /**
+     * Adds the specified amount to the character's health without
+     * exceeding the maximum of 5.
+     * @param amount amount of hearts to restore
+     */
+    public void addHealth(int amount) {
+        this.health += amount;
+        if (this.health > 5) this.health = 5;
+        if (this.health < 0) this.health = 0;
+    }
+
+    /**
+     * Adds the specified amount to the character's shield without
+     * exceeding the maximum of 5.
+     * @param amount amount of shields to restore
+     */
+    public void addShield(int amount) {
+        this.shield += amount;
+        if (this.shield > 5) this.shield = 5;
+        if (this.shield < 0) this.shield = 0;
+    }
 }
