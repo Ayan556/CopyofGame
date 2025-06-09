@@ -20,6 +20,7 @@ public class Player extends Character {
     private boolean moving;
     private boolean shotgun;
     private LinkedList<InventoryPowerUp> powerUps = new LinkedList<>();
+    private LinkedList<InventoryHeal> heals = new LinkedList<>();
     BufferedImage spriteSheet = ResourceLoader.loadImage("PlayerSprite.png");
     BufferedImage idleSpriteSheet = ResourceLoader.loadImage("IdleSprite.png");
 
@@ -135,20 +136,18 @@ public class Player extends Character {
     }
 
     /**
-     * Activates the next stored power-up only if none are currently active.
-     * This prevents stacking multiple power-ups at the same time.
+     * Activates a stored power-up of the given type if one is not already active.
+     * @param type the class of power-up to activate
      */
-    public void usePowerUp() {
-        // Don't allow activation if one is already running
+    public void usePowerUp(Class<? extends PowerUp> type) {
         for (InventoryPowerUp ip : powerUps) {
-            if (ip.active) {
-                return;
+            if (type.isInstance(ip.powerUp) && ip.active) {
+                return; // already active
             }
         }
 
-        // Activate the first inactive power-up in the queue
         for (InventoryPowerUp ip : powerUps) {
-            if (!ip.active) {
+            if (type.isInstance(ip.powerUp) && !ip.active) {
                 ip.active = true;
                 ip.remaining = ip.powerUp.getDuration();
                 ip.powerUp.activate(this);
@@ -183,6 +182,30 @@ public class Player extends Character {
         return powerUps;
     }
 
+    /** Adds a heal item with its icon to the player's inventory */
+    public void addHeal(Heal h, BufferedImage icon) {
+        heals.add(new InventoryHeal(h, icon));
+    }
+
+    /**
+     * Uses and removes the first heal item of the given type.
+     * @param type the class of heal to use
+     */
+    public void useHeal(Class<? extends Heal> type) {
+        for (int i = 0; i < heals.size(); i++) {
+            InventoryHeal ih = heals.get(i);
+            if (type.isInstance(ih.heal)) {
+                ih.heal.apply(this);
+                heals.remove(i);
+                break;
+            }
+        }
+    }
+
+    public LinkedList<InventoryHeal> getHeals() {
+        return heals;
+    }
+
     /**
      * Class representing a collected power-up, its icon, and state
      */
@@ -197,6 +220,17 @@ public class Player extends Character {
             this.icon = icon;
             this.remaining = p.getDuration();
             this.active = false;
+        }
+    }
+
+    /** Class representing a collected heal item */
+    public static class InventoryHeal {
+        Heal heal;
+        BufferedImage icon;
+
+        InventoryHeal(Heal h, BufferedImage icon) {
+            this.heal = h;
+            this.icon = icon;
         }
     }
 }
