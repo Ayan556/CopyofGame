@@ -9,6 +9,7 @@ public class SpeedBoost extends PowerUp {
     @Override
     public void activate(Player player) {
         player.addSpeed(boostAmount);
+        SoundPlayer.playSound("SpeedBoostSound.wav");
     }
 
     @Override
