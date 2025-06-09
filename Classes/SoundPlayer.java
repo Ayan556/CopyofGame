@@ -49,10 +49,13 @@ public class SoundPlayer {
     }
 
     /**
-     * Plays the specified audio file once from the /res/Audio directory.
+     * Plays the specified audio file once from the /res/Audio directory and
+     * returns the Clip so callers may stop it early if desired.
+     *
      * @param filename The audio file name
+     * @return the Clip that is playing, or null if an error occurred
      */
-    public static void playSound(String filename) {
+    public static Clip playSound(String filename) {
         try (InputStream is = SoundPlayer.class.getResourceAsStream("/Audio/" + filename)) {
             if (is == null) {
                 throw new IOException("Audio not found: /Audio/" + filename);
@@ -61,9 +64,19 @@ public class SoundPlayer {
             Clip clip = AudioSystem.getClip();
             clip.open(ais);
             clip.start();
+            return clip;
         } catch (Exception e) {
             System.err.println("Error playing audio: " + filename);
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    /** Stops and closes the provided Clip if it is not null. */
+    public static void stopClip(Clip clip) {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
         }
     }
 }

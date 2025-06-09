@@ -171,6 +171,16 @@ public class Player extends Character {
         }
     }
 
+    /** Deactivates all currently active power-ups without removing them. */
+    public void deactivateAllPowerUps() {
+        for (InventoryPowerUp ip : powerUps) {
+            if (ip.active) {
+                ip.powerUp.deactivate(this);
+                ip.active = false;
+            }
+        }
+    }
+
     public void setShotgun(boolean active) {
         this.shotgun = active;
     }
