@@ -104,6 +104,7 @@ public class Player extends Character {
         int bulletY = this.y + (this.height - bulletH) / 2;
 
         if (shotgun) {
+            SoundPlayer.playSound("Shotgun.wav");
             double baseAngle = 0;
             switch (this.directionFacing) {
                 case 1 -> baseAngle = Math.PI;
