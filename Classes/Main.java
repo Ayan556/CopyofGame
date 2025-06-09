@@ -360,16 +360,23 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_X && !waveInProgress && !paused) {
+                if (!waveInProgress && !paused &&
+                    (e.getKeyCode() == KeyEvent.VK_W ||
+                     e.getKeyCode() == KeyEvent.VK_A ||
+                     e.getKeyCode() == KeyEvent.VK_S ||
+                     e.getKeyCode() == KeyEvent.VK_D)) {
                         waveInProgress = true;
                         // Ensure no stray bullets from the previous wave carry
                         // over when the new wave begins
                         bullets.clear();
+                        // Reset any held movement keys so the player does not
+                        // move immediately when the wave starts
+                        keysPressed.clear();
                         timer.start();
-			player.x = (GAME_WIDTH - 70) / 2;
-			player.y = (GAME_WIDTH - 70) / 2;
-			return;
-		}
+                        player.x = (GAME_WIDTH - 70) / 2;
+                        player.y = (GAME_WIDTH - 70) / 2;
+                        return;
+                }
 
                 if (e.getKeyCode() == KeyEvent.VK_L && !paused) {
                         timer.stop();
@@ -528,10 +535,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 		// End the wave setup when done
 		if (enemiesSpawnedThisWave == enemiesToSpawn && enemies.size() == 0) {
-			if (wave % 5 == 0) {
-				timer.stop();
-				waveInProgress = false;
-			}
+                        if (wave % 5 == 0) {
+                                timer.stop();
+                                waveInProgress = false;
+                                // Clear any held keys so the next wave starts
+                                // only on a deliberate movement input
+                                keysPressed.clear();
+                        }
 
 			wave++;
 			// Remove any bullets still on screen so they do not
@@ -723,8 +733,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			if (!waveInProgress) {
                                 g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
-                                if (wave == 1) g2.drawString("Press X to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
-                                else g2.drawString("Wave " + (wave-1) + " Completed, Press X to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
+                                if (wave == 1) g2.drawString("Move Joystick to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
+                                else g2.drawString("Wave " + (wave-1) + " Completed, Move Joystick to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
 			}
 
 			if (paused) {
