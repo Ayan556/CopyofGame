@@ -129,6 +129,7 @@ public class Player extends Character {
             }
         } else {
             list.add(new Bullet(bulletX, bulletY, bulletW, bulletH, panelWidth, panelHeight, directionFacing));
+            SoundPlayer.playSound("GunShot.wav");
         }
 
         return list;
