@@ -709,11 +709,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
       if (speedActive) g2.drawString(String.valueOf(speedRemain / 100), bar1X, drawY + iconSize + 15);
 
       drawY += iconSize + 30;
-      g2.drawImage(shotgunIcon, bar1X, drawY, iconSize, iconSize, null);
-      g2.drawString("x" + shotgunCount, bar1X + iconSize - 15, drawY + iconSize - 5);
-      if (shotgunActive) g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + iconSize + 15);
+      int shotgunH = iconSize;
+      int shotgunW = (int) (shotgunIcon.getWidth() * (shotgunH / (double) shotgunIcon.getHeight()));
+      g2.drawImage(shotgunIcon, bar1X, drawY, shotgunW, shotgunH, null);
+      g2.drawString("x" + shotgunCount, bar1X + shotgunW - 15, drawY + shotgunH - 5);
+      if (shotgunActive) g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + shotgunH + 15);
 
-      drawY += iconSize + 40;
+      drawY += shotgunH + 40;
       g2.drawString("Heals", bar1X, drawY - 10);
       g2.drawImage(bandageIcon, bar1X, drawY, iconSize, iconSize, null);
       g2.drawString("x" + bandageCount, bar1X + iconSize - 15, drawY + iconSize - 5);
