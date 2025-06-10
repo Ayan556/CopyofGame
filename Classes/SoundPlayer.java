@@ -4,6 +4,27 @@ import java.io.InputStream;
 
 public class SoundPlayer {
     private static Clip backgroundClip;
+    // Volume scale between 0.0 (mute) and 1.0 (full volume)
+    private static final float DEFAULT_VOLUME = 0.5f;
+
+    /**
+     * Adjusts the volume of the provided clip. If the clip does not support
+     * MASTER_GAIN control this method does nothing.
+     */
+    private static void setVolume(Clip clip, float volume) {
+        if (clip == null) {
+            return;
+        }
+        try {
+            FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (20.0 * Math.log10(Math.max(0.0001f, volume)));
+            dB = Math.max(dB, control.getMinimum());
+            dB = Math.min(dB, control.getMaximum());
+            control.setValue(dB);
+        } catch (IllegalArgumentException ignored) {
+            // Clip doesn't support volume control
+        }
+    }
 
     /**
      * Plays the specified audio file on loop from the /res/Audio directory.
@@ -18,6 +39,7 @@ public class SoundPlayer {
             AudioInputStream ais = AudioSystem.getAudioInputStream(is);
             backgroundClip = AudioSystem.getClip();
             backgroundClip.open(ais);
+            setVolume(backgroundClip, DEFAULT_VOLUME);
             backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
             System.err.println("Error playing background audio: " + filename);
@@ -63,6 +85,7 @@ public class SoundPlayer {
             AudioInputStream ais = AudioSystem.getAudioInputStream(is);
             Clip clip = AudioSystem.getClip();
             clip.open(ais);
+            setVolume(clip, DEFAULT_VOLUME);
             clip.start();
             return clip;
         } catch (Exception e) {
