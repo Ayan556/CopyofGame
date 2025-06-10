@@ -21,6 +21,7 @@ public class Homepage extends JFrame implements KeyListener {
 	private BufferedImage rules = ResourceLoader.loadImage("instselected.png");
 	private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
 	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
+	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
 
 	Homepage() {
@@ -56,7 +57,7 @@ public class Homepage extends JFrame implements KeyListener {
 			repaint();
 		}
 
-		if (e.getKeyCode() == KeyEvent.VK_U) {
+		if (e.getKeyCode() == KeyEvent.VK_J) {
 			switch (button) {
 				case 1:
 					SoundPlayer.stopBackground();
@@ -109,13 +110,13 @@ public class Homepage extends JFrame implements KeyListener {
 			g2.drawImage(bg, 0 + xOffset, 0, 1600 + xOffset, 940, null);
 
 			if (instructions) {
-				g2.setColor(Color.BLUE);
+				g2.setColor(Color.WHITE);
 				g2.setFont(new Font("Arial", Font.BOLD, 36));
 				g2.drawString("INSTRUCTIONS", 310 + xOffset, 520 + yOffset);
 			} else if (credit) {
-				g2.setColor(Color.BLUE);
-				g2.setFont(new Font("Arial", Font.BOLD, 36));
-				g2.drawString("CREDITS", 310 + xOffset, 520 + yOffset);
+				g2.setColor(Color.WHITE);
+				g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
+				g2.drawString("CREDITS: Ayan, Candice, Minjin, Dominik", 310 + xOffset, 520 + yOffset);
 			}	else {
 
 				switch (button) {

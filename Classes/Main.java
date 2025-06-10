@@ -384,15 +384,15 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                         paused = true;
                         repaint();
                         return;
-                } else if (e.getKeyCode() == KeyEvent.VK_U && paused && resume) {
-                        paused = false;
+				} else if (e.getKeyCode() == KeyEvent.VK_J && paused && resume) {
+					paused = false;
                         if (waveInProgress) {
                                         timer.start();
                         }
                         SoundPlayer.resumeBackground();
                         repaint();
                         return;
-		} else if (e.getKeyCode() == KeyEvent.VK_U && paused) {
+		} else if (e.getKeyCode() == KeyEvent.VK_J && paused) {
 			SoundPlayer.stopBackground();
 			this.dispose();
 			new Homepage();
