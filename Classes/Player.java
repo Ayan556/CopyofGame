@@ -15,14 +15,15 @@ public class Player extends Character {
 
     // Character sprite images for different directions
     private int frame;
-    private int spriteRowNum = 0;
+    private int spriteCol = 0;
     private int spriteW = 75, spriteH = 75;
     private boolean moving;
     private boolean shotgun;
     private LinkedList<InventoryPowerUp> powerUps = new LinkedList<>();
     private LinkedList<InventoryHeal> heals = new LinkedList<>();
-    BufferedImage spriteSheet = ResourceLoader.loadImage("PlayerSprite.png");
-    BufferedImage idleSpriteSheet = ResourceLoader.loadImage("IdleSprite.png");
+    BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("playerWalk.png");
+    BufferedImage idleSpriteSheet = ResourceLoader.loadImage("playerIdle.png");
+
 
     /**
      * Constructs a Player object with defined attributes and starting position.
@@ -61,31 +62,33 @@ public class Player extends Character {
     public void drawCharacter(Graphics2D g2, int xOffset, int yOffset) {
         switch (this.directionFacing) {
             case 1:
-                spriteRowNum = 3;
+                spriteCol = 3;
                 break;
             case 2:
-                spriteRowNum = 2;
+                spriteCol = 2;
                 break;
             case 3:
-                spriteRowNum = 1;
+                spriteCol = 1;
                 break;
             case 4:
-                spriteRowNum = 0;
+                spriteCol = 0;
                 break;
         }
 
         if (!moving) {
-            g2.drawImage(idleSpriteSheet, this.x + xOffset, this.y + yOffset,
+            g2.drawImage(idleSpriteSheet,
+                    this.x + xOffset, this.y + yOffset,
                     this.x + xOffset + spriteW, this.y + yOffset + spriteH,
-                    frame * spriteW, spriteRowNum * spriteH,
-                    (frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
+                    spriteCol*spriteW, frame*spriteH,
+                    spriteCol*spriteW+spriteW, (frame+1)*spriteH, null);
         } else {
-            g2.drawImage(spriteSheet, this.x + xOffset, this.y + yOffset,
+            g2.drawImage(
+                    walkingSpriteSheet,
+                    this.x + xOffset, this.y + yOffset,
                     this.x + xOffset + spriteW, this.y + yOffset + spriteH,
-                    frame * spriteW, spriteRowNum * spriteH,
-                    (frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
+                    spriteCol*spriteW, frame*spriteH,
+                    spriteCol*spriteW+spriteW, (frame+1)*spriteH, null);
         }
-
     }
 
     /**

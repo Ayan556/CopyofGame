@@ -14,11 +14,11 @@ public class BasicEnemy extends Enemy {
 
 	//Sprite stuff
 	private int frame;
-	private int spriteRowNum = 0;
+	private int spriteCol = 0;
 	private int spriteW = 75, spriteH = 75;
 	private boolean moving;
-	BufferedImage spriteSheet = ResourceLoader.loadImage("BasicEnemyMoving.png");
-	BufferedImage idleSpriteSheet = ResourceLoader.loadImage("BasicEnemyIdle.png");
+	BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("enemyWalk.png");
+	BufferedImage idleSpriteSheet = ResourceLoader.loadImage("enemyIdle.png");
 
 	/**
 	 * Constructs a BasicEnemy with given parameters and sets default health and shield.
@@ -210,29 +210,35 @@ public class BasicEnemy extends Enemy {
 	public void drawCharacter(Graphics2D g, int xOffset, int yOffset) {
 		switch (this.directionFacing) {
 			case 1:
-				spriteRowNum = 3;
+				spriteCol  = 3;
 				break;
 			case 2:
-				spriteRowNum = 2;
+				spriteCol  = 2;
 				break;
 			case 3:
-				spriteRowNum = 1;
+				spriteCol = 1;
 				break;
 			case 4:
-				spriteRowNum = 0;
+				spriteCol = 0;
 				break;
 		}
 
 		if (!moving) {
-			g.drawImage(idleSpriteSheet, this.x + xOffset, this.y + yOffset,
+			g.drawImage(
+					idleSpriteSheet,
+					this.x + xOffset, this.y + yOffset,
 					this.x + xOffset + spriteW, this.y + yOffset + spriteH,
-					frame * spriteW, spriteRowNum * spriteH,
-					(frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
+					spriteCol*spriteW, frame*spriteH,
+					spriteCol*spriteW+spriteW, (frame+1)*spriteH,
+					null);
 		} else {
-			g.drawImage(spriteSheet, this.x + xOffset, this.y + yOffset,
+			g.drawImage(
+					walkingSpriteSheet,
+					this.x + xOffset, this.y + yOffset,
 					this.x + xOffset + spriteW, this.y + yOffset + spriteH,
-					frame * spriteW, spriteRowNum * spriteH,
-					(frame + 1) * spriteW, (spriteRowNum + 1) * spriteH, null);
+					spriteCol*spriteW, frame*spriteH,
+					spriteCol*spriteW+spriteW, (frame+1)*spriteH,
+					null);
 		}
 	}
 }
