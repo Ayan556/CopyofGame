@@ -3,6 +3,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -32,18 +34,26 @@ public class Homepage extends JFrame implements KeyListener {
 		instructions = false;
 		credit = false;
 
-		this.setSize(screenSize.width, screenSize.height);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
+                this.setUndecorated(true);
+                this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                this.setLocationRelativeTo(null);
 
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
 		drawingPanel.setFocusable(true);
 		drawingPanel.requestFocusInWindow();
 		drawingPanel.addKeyListener(this);
-		this.add(drawingPanel);
-		this.setVisible(true);
-	}
+                this.add(drawingPanel);
+
+                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+                if (gd.isFullScreenSupported()) {
+                        gd.setFullScreenWindow(this);
+                } else {
+                        this.setSize(screenSize.width, screenSize.height);
+                        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                }
+
+                this.setVisible(true);
+        }
 
 	@Override
 	public void keyPressed(KeyEvent e) {
