@@ -100,7 +100,10 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
 
-            g2.drawImage(youDied, xOffset, 300 + yOffset, null);
+            // Center the death splash horizontally and keep the original
+            // vertical offset so the layout looks similar on all resolutions
+            int deathX = xOffset + (GAME_WIDTH - youDied.getWidth()) / 2;
+            g2.drawImage(youDied, deathX, 300 + yOffset, null);
 
             g2.setColor(new Color(199, 193, 159));
             g2.setFont(new Font("Arial", Font.BOLD, 36));
@@ -108,10 +111,12 @@ public class DeathScreen extends JFrame implements KeyListener{
 
             switch (retry) {
                 case 1:
-                    g2.drawImage(yes, 280 + xOffset, 600 + yOffset, null);
+                    int yesX = xOffset + (GAME_WIDTH - yes.getWidth()) / 2;
+                    g2.drawImage(yes, yesX, 600 + yOffset, null);
                     break;
                 case 2:
-                    g2.drawImage(no, 280 + xOffset, 600 + yOffset, null);
+                    int noX = xOffset + (GAME_WIDTH - no.getWidth()) / 2;
+                    g2.drawImage(no, noX, 600 + yOffset, null);
                     break;
             }
         }
