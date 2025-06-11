@@ -115,11 +115,11 @@ public class Homepage extends JFrame implements KeyListener {
 			int xOffset = (getWidth() - GAME_WIDTH) / 2;
 			int yOffset = (getHeight() - GAME_HEIGHT) / 2;
 
-			g2.setColor(Color.BLACK);
-			g2.fillRect(0, 0, screenWidth, screenHeight);
-                        // Scale and center the background image relative to the
-                        // current screen resolution
-                        g2.drawImage(bg, xOffset, yOffset, GAME_WIDTH, GAME_HEIGHT, null);
+                        g2.setColor(Color.BLACK);
+                        g2.fillRect(0, 0, screenWidth, screenHeight);
+                        // Scale the background image to fill the whole screen
+                        // regardless of the internal GAME_WIDTH/GAME_HEIGHT
+                        g2.drawImage(bg, 0, 0, screenWidth, screenHeight, null);
 
 			if (instructions) {
 				g2.setColor(Color.WHITE);
