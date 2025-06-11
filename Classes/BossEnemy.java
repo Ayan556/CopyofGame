@@ -13,18 +13,18 @@ public class BossEnemy extends Enemy {
 	 * Move towards the player
 	 */
 	@Override
-        public void moveTowardPlayer(Player p, MapGenerator map, ArrayList<Enemy> others) {
-                double moveY, moveX;
+	public void moveTowardPlayer(Player p, MapGenerator map, ArrayList<Enemy> others) {
+		int moveY, moveX;
 
-                if ((this.x < 0 || this.x > 900) && (this.y < 375 || this.y > 450)) {
-                        if (this.y < 375) moveY = speed;
-                        else moveY = -speed;
+		if ((this.x < 0 || this.x > 900) && (this.y < 375 || this.y > 450)) {
+			if (this.y < 375) moveY = (int) speed;
+			else moveY = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(0, moveY, 900, 900);
-                        syncPosition();
+			this.y += moveY;
+
 
 			//Direction
 			if (this.y > originalY) this.directionFacing = 4;
@@ -33,15 +33,15 @@ public class BossEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.y < 0 || this.y > 900) && (this.x < 375 || this.x > 450)) {
-                        if (this.x < 375) moveX = speed;
-                        else moveX = -speed;
+		} else if ((this.y < 0 || this.y > 900) && (this.x < 375 || this.x > 450)) {
+			if (this.x < 375) moveX = (int) speed;
+			else moveX = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(moveX, 0, 900, 900);
-                        syncPosition();
+			this.x += moveX;
+
 
 			//Direction
 			if (this.x > originalX) this.directionFacing = 2;
@@ -50,15 +50,15 @@ public class BossEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.y < 0 || this.y > 900) && (this.x > 375 && this.x < 450)){
-                        if (this.y < 0) moveY = speed;
-                        else moveY = -speed;
+		} else if ((this.y < 0 || this.y > 900) && (this.x > 375 && this.x < 450)) {
+			if (this.y < 0) moveY = (int) speed;
+			else moveY = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(0, moveY, 900, 900);
-                        syncPosition();
+			this.y += moveY;
+
 
 			//Direction
 			if (this.y > originalY) this.directionFacing = 4;
@@ -67,15 +67,15 @@ public class BossEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.x < 0 || this.x > 900) && (this.y > 375 && this.y < 450)) {
-                        if (this.x < 0) moveX = speed;
-                        else moveX = -speed;
+		} else if ((this.x < 0 || this.x > 900) && (this.y > 375 && this.y < 450)) {
+			if (this.x < 0) moveX = (int) speed;
+			else moveX = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(moveX, 0, 900, 900);
-                        syncPosition();
+			this.x += moveX;
+
 
 			//Direction
 			if (this.x > originalX) this.directionFacing = 2;
@@ -90,8 +90,8 @@ public class BossEnemy extends Enemy {
 			double dist = Math.sqrt(dx * dx + dy * dy);
 			if (dist == 0) return;
 
-                        moveX = (dx / dist) * speed;
-                        moveY = (dy / dist) * speed;
+			moveX = (int) ((dx / dist) * speed);
+			moveY = (int) ((dy / dist) * speed);
 
 			int originalX = this.x;
 			int originalY = this.y;
@@ -99,31 +99,26 @@ public class BossEnemy extends Enemy {
 			this.moving = true;
 
 			// Diagonal
-                        moveVector(moveX, moveY, 900, 900);
-                        if (collides(map)) {
-                                this.x = originalX;
-                                this.y = originalY;
-                                syncPosition();
+			this.x += moveX;
+			this.y += moveY;
+			if (collides(map)) {
+				this.x = originalX;
+				this.y = originalY;
 
-                                moveVector(moveX, 0, 900, 900);
-                                if (collides(map)) {
-                                        this.x = originalX;
-                                        syncPosition();
-                                }
+				this.x += moveX;
+				if (collides(map)) this.x = originalX;
 
-                                moveVector(0, moveY, 900, 900);
-                                if (collides(map)) {
-                                        this.y = originalY;
-                                        syncPosition();
-                                }
-                        }
+				this.y += moveY;
+				if (collides(map)) this.y = originalY;
+			}
+
 
 			//Direction
-			if (this.x > originalX) {		//Enemy is moving right
+			if (this.x > originalX) {        //Enemy is moving right
 				this.directionFacing = 2;
-			} else if (this.x < originalX){	//Enemy is moving left
+			} else if (this.x < originalX) {    //Enemy is moving left
 				this.directionFacing = 1;
-			} else {						//Enemy doesn't move left or right
+			} else {                        //Enemy doesn't move left or right
 				if (this.y > originalY) this.directionFacing = 4;
 				else if (this.y < originalY) this.directionFacing = 3;
 				else {
@@ -131,14 +126,15 @@ public class BossEnemy extends Enemy {
 					setMoving(false);
 				}
 			}
-                        syncPosition();
+
 		}
 	}
 
 	/**
 	 * Check for collisions
-	 * @param map		The game map
-	 * @return			true or false depending on collision
+	 *
+	 * @param map The game map
+	 * @return true or false depending on collision
 	 */
 	private boolean collides(MapGenerator map) {
 		for (Rectangle r : map.getObstacles()) {

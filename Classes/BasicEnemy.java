@@ -23,15 +23,15 @@ public class BasicEnemy extends Enemy {
 	/**
 	 * Constructs a BasicEnemy with given parameters and sets default health and shield.
 	 *
-	 * @param x       X-coordinate of enemy spawn
-	 * @param y       Y-coordinate of enemy spawn
-	 * @param width   Width of the enemy
-	 * @param height  Height of the enemy
-	 * @param speed   Movement speed of the enemy
-	 * @param panW    Width of the game panel (used for bounds or pathing)
-	 * @param panH    Height of the game panel
+	 * @param x      X-coordinate of enemy spawn
+	 * @param y      Y-coordinate of enemy spawn
+	 * @param width  Width of the enemy
+	 * @param height Height of the enemy
+	 * @param speed  Movement speed of the enemy
+	 * @param panW   Width of the game panel (used for bounds or pathing)
+	 * @param panH   Height of the game panel
 	 */
-	public BasicEnemy(int x, int y, int width, int height, double speed, int num,int panW, int panH) {
+	public BasicEnemy(int x, int y, int width, int height, double speed, int num, int panW, int panH) {
 		super(x, y, width, height, 5, 5, num, speed); // Health = 5, Shield = 5
 		this.color = Color.GREEN;
 		this.panelWidth = panW;
@@ -42,19 +42,19 @@ public class BasicEnemy extends Enemy {
 	/**
 	 * Move towards the player
 	 */
-        @Override
-        public void moveTowardPlayer(Player p, MapGenerator map, ArrayList<Enemy> others) {
-                double moveY, moveX;
+	@Override
+	public void moveTowardPlayer(Player p, MapGenerator map, ArrayList<Enemy> others) {
+		int moveY, moveX;
 
-                if ((this.x < 0 || this.x > 900) && (this.y < 375 || this.y > 450)) {
-                        if (this.y < 375) moveY = speed;
-                        else moveY = -speed;
+		if ((this.x < 0 || this.x > 900) && (this.y < 375 || this.y > 450)) {
+			if (this.y < 375) moveY = (int) speed;
+			else moveY = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(0, moveY, panelWidth, panelHeight);
-                        syncPosition();
+			this.y += moveY;
+
 
 			//Direction
 			if (this.y > originalY) this.directionFacing = 4;
@@ -63,15 +63,15 @@ public class BasicEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.y < 0 || this.y > 900) && (this.x < 375 || this.x > 450)) {
-                        if (this.x < 375) moveX = speed;
-                        else moveX = -speed;
+		} else if ((this.y < 0 || this.y > 900) && (this.x < 375 || this.x > 450)) {
+			if (this.x < 375) moveX = (int) speed;
+			else moveX = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(moveX, 0, panelWidth, panelHeight);
-                        syncPosition();
+			this.x += moveX;
+
 
 			//Direction
 			if (this.x > originalX) this.directionFacing = 2;
@@ -80,15 +80,15 @@ public class BasicEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.y < 0 || this.y > 900) && (this.x > 375 && this.x < 450)){
-                        if (this.y < 0) moveY = speed;
-                        else moveY = -speed;
+		} else if ((this.y < 0 || this.y > 900) && (this.x > 375 && this.x < 450)) {
+			if (this.y < 0) moveY = (int) speed;
+			else moveY = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(0, moveY, panelWidth, panelHeight);
-                        syncPosition();
+			this.y += moveY;
+
 
 			//Direction
 			if (this.y > originalY) this.directionFacing = 4;
@@ -97,15 +97,15 @@ public class BasicEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else if ((this.x < 0 || this.x > 900) && (this.y > 375 && this.y < 450)) {
-                        if (this.x < 0) moveX = speed;
-                        else moveX = -speed;
+		} else if ((this.x < 0 || this.x > 900) && (this.y > 375 && this.y < 450)) {
+			if (this.x < 0) moveX = (int) speed;
+			else moveX = (int) -speed;
 
 			int originalX = this.x;
 			int originalY = this.y;
 
-                        moveVector(moveX, 0, panelWidth, panelHeight);
-                        syncPosition();
+			this.x += moveX;
+
 
 			//Direction
 			if (this.x > originalX) this.directionFacing = 2;
@@ -120,8 +120,8 @@ public class BasicEnemy extends Enemy {
 			double dist = Math.sqrt(dx * dx + dy * dy);
 			if (dist == 0) return;
 
-                        moveX = (dx / dist) * speed;
-                        moveY = (dy / dist) * speed;
+			moveX = (int) ((dx / dist) * speed);
+			moveY = (int) ((dy / dist) * speed);
 
 			int originalX = this.x;
 			int originalY = this.y;
@@ -129,44 +129,40 @@ public class BasicEnemy extends Enemy {
 			this.moving = true;
 
 			// Diagonal
-                        moveVector(moveX, moveY, panelWidth, panelHeight);
-                        if (collides(map)) {
-                                this.x = originalX;
-                                this.y = originalY;
-                                syncPosition();
+			this.x += moveX;
+			this.y += moveY;
+			if (collides(map)) {
+				this.x = originalX;
+				this.y = originalY;
 
 				//X movement only
-                                if (dx == 0) moveX = 0;
-                                else if (dx < 0) moveX = -speed;
-                                else moveX = speed;
+				if (dx == 0) moveX = 0;
+				else if (dx < 0) moveX = (int) -speed;
+				else moveX = (int) speed;
 
-                                moveVector(moveX, 0, panelWidth, panelHeight);
-                                if (collides(map)) {
-                                        this.x = originalX;
-                                        syncPosition();
-                                }
+				this.x += moveX;
+				if (collides(map)) this.x = originalX;//collidesWithOthers(others)
+
 
 				//Y movement onlyAdd commentMore actions
-                                if (dy == 0) moveY = 0;
-                                else if (dy < 0) moveY = -speed;
-                                else moveY = speed;
+				if (dy == 0) moveY = 0;
+				else if (dy < 0) moveY = (int) -speed;
+				else moveY = (int) speed;
 
-                                moveVector(0, moveY, panelWidth, panelHeight);
-                                if (collides(map)) {
-                                        this.y = originalY;
-                                        syncPosition();
-                                }
-                        }
+				this.y += moveY;
+				if (collides(map)) this.y = originalY;
+			}
 
-                        changeDirection(originalX, originalY);
-                        syncPosition();
-                }
-        }
+			changeDirection(originalX, originalY);
+		}
+	}
+
 
 	/**
 	 * Check for collisions
-	 * @param map		The game map
-	 * @return			true or false depending on collision
+	 *
+	 * @param map The game map
+	 * @return true or false depending on collision
 	 */
 	private boolean collides(MapGenerator map) {
 		for (Rectangle r : map.getObstacles()) {
@@ -178,7 +174,8 @@ public class BasicEnemy extends Enemy {
 		return false;
 	}
 
-	/**Add commentMore actions
+	/**
+	 * Add commentMore actions
 	 * Change the direction of the enemy
 	 */
 	private void changeDirection(int originalX, int originalY) {
@@ -201,7 +198,8 @@ public class BasicEnemy extends Enemy {
 
 	/**
 	 * Set moving
-	 * @param moving		boolean value for moving
+	 *
+	 * @param moving boolean value for moving
 	 */
 	public void setMoving(boolean moving) {
 		this.moving = moving;
@@ -221,10 +219,10 @@ public class BasicEnemy extends Enemy {
 	public void drawCharacter(Graphics2D g, int xOffset, int yOffset) {
 		switch (this.directionFacing) {
 			case 1:
-				spriteCol  = 3;
+				spriteCol = 3;
 				break;
 			case 2:
-				spriteCol  = 2;
+				spriteCol = 2;
 				break;
 			case 3:
 				spriteCol = 1;
@@ -239,16 +237,16 @@ public class BasicEnemy extends Enemy {
 					idleSpriteSheet,
 					this.x + xOffset, this.y + yOffset,
 					this.x + xOffset + spriteW, this.y + yOffset + spriteH,
-					spriteCol*spriteW, frame*spriteH,
-					spriteCol*spriteW+spriteW, (frame+1)*spriteH,
+					spriteCol * spriteW, frame * spriteH,
+					spriteCol * spriteW + spriteW, (frame + 1) * spriteH,
 					null);
 		} else {
 			g.drawImage(
 					walkingSpriteSheet,
 					this.x + xOffset, this.y + yOffset,
 					this.x + xOffset + spriteW, this.y + yOffset + spriteH,
-					spriteCol*spriteW, frame*spriteH,
-					spriteCol*spriteW+spriteW, (frame+1)*spriteH,
+					spriteCol * spriteW, frame * spriteH,
+					spriteCol * spriteW + spriteW, (frame + 1) * spriteH,
 					null);
 		}
 	}
