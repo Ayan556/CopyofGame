@@ -5,8 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -28,7 +26,8 @@ public class DeathScreen extends JFrame implements KeyListener{
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         retry = 1;
 
-        this.setUndecorated(true);
+        this.setSize(screenSize.width, screenSize.height);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
@@ -37,15 +36,6 @@ public class DeathScreen extends JFrame implements KeyListener{
         drawingPanel.requestFocusInWindow();
         drawingPanel.addKeyListener(this);
         this.add(drawingPanel);
-
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        if (gd.isFullScreenSupported()) {
-            gd.setFullScreenWindow(this);
-        } else {
-            this.setSize(screenSize.width, screenSize.height);
-            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
-
         this.setVisible(true);
     }
 
@@ -63,7 +53,7 @@ public class DeathScreen extends JFrame implements KeyListener{
             repaint();
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_J) {
+        if (e.getKeyCode() == KeyEvent.VK_L) {
             switch (retry) {
                 case 1:
                     this.dispose();
@@ -101,10 +91,7 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
 
-            // Center the death splash horizontally and keep the original
-            // vertical offset so the layout looks similar on all resolutions
-            int deathX = xOffset + (GAME_WIDTH - youDied.getWidth()) / 2;
-            g2.drawImage(youDied, deathX, 300 + yOffset, null);
+            g2.drawImage(youDied, xOffset, 300 + yOffset, null);
 
             g2.setColor(new Color(199, 193, 159));
             g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
@@ -112,12 +99,10 @@ public class DeathScreen extends JFrame implements KeyListener{
 
             switch (retry) {
                 case 1:
-                    int yesX = xOffset + (GAME_WIDTH - yes.getWidth()) / 2;
-                    g2.drawImage(yes, yesX, 600 + yOffset, null);
+                    g2.drawImage(yes, 280 + xOffset, 600 + yOffset, null);
                     break;
                 case 2:
-                    int noX = xOffset + (GAME_WIDTH - no.getWidth()) / 2;
-                    g2.drawImage(no, noX, 600 + yOffset, null);
+                    g2.drawImage(no, 280 + xOffset, 600 + yOffset, null);
                     break;
             }
         }

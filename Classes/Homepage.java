@@ -3,8 +3,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -18,13 +16,13 @@ public class Homepage extends JFrame implements KeyListener {
 	public static final int GAME_HEIGHT = 900;
 	int button;
 	boolean instructions, credit;
+	private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
 	private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
 	private BufferedImage play = ResourceLoader.loadImage("playselected.png");
 	private BufferedImage rules = ResourceLoader.loadImage("instselected.png");
 	private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
 	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
-
 
 	Homepage() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -34,26 +32,18 @@ public class Homepage extends JFrame implements KeyListener {
 		instructions = false;
 		credit = false;
 
-                this.setUndecorated(true);
-                this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                this.setLocationRelativeTo(null);
+		this.setSize(screenSize.width, screenSize.height);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
 		drawingPanel.setFocusable(true);
 		drawingPanel.requestFocusInWindow();
 		drawingPanel.addKeyListener(this);
-                this.add(drawingPanel);
-
-                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-                if (gd.isFullScreenSupported()) {
-                        gd.setFullScreenWindow(this);
-                } else {
-                        this.setSize(screenSize.width, screenSize.height);
-                        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                }
-
-                this.setVisible(true);
-        }
+		this.add(drawingPanel);
+		this.setVisible(true);
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -67,7 +57,7 @@ public class Homepage extends JFrame implements KeyListener {
 			repaint();
 		}
 
-		if (e.getKeyCode() == KeyEvent.VK_J) {
+		if (e.getKeyCode() == KeyEvent.VK_L) {
 			switch (button) {
 				case 1:
 					SoundPlayer.stopBackground();
@@ -117,40 +107,28 @@ public class Homepage extends JFrame implements KeyListener {
 
 			g2.setColor(Color.BLACK);
 			g2.fillRect(0, 0, screenWidth, screenHeight);
-                        // Scale and center the background image relative to the
-                        // current screen resolution
-                        g2.drawImage(bg, xOffset, yOffset, GAME_WIDTH, GAME_HEIGHT, null);
+			g2.drawImage(bg, 0 + xOffset, 0, 1600 + xOffset, 940, null);
 
 			if (instructions) {
-				g2.setColor(Color.WHITE);
-				g2.setFont(customFont.deriveFont(Font.PLAIN, 36));
-				g2.drawString("INSTRUCTIONS", 310 + xOffset, 520 + yOffset);
+				g2.drawImage(instruction, -10, 0, 1580 + xOffset, 940, null);
 			} else if (credit) {
 				g2.setColor(Color.WHITE);
 				g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
-				g2.drawString("CREDITS: Ayan, Candice, Minjin, Dominik", 310 + xOffset, 520 + yOffset);
+				g2.drawString("Game Directed and Created By: Ayan, Candice, Minjin, Dominik", 310 + xOffset, 520 + yOffset);
 			}	else {
 
 				switch (button) {
 					case 1:
-						int playX = xOffset + (GAME_WIDTH - play.getWidth()) / 2;
-						int playY = yOffset + (GAME_HEIGHT - play.getHeight()) / 2;
-						g2.drawImage(play, playX, playY, null);
+						g2.drawImage(play, 0, 0, 1500, 850, null);
 						break;
 					case 2:
-						int rulesX = xOffset + (GAME_WIDTH - rules.getWidth()) / 2;
-						int rulesY = yOffset + (GAME_HEIGHT - rules.getHeight()) / 2;
-						g2.drawImage(rules, rulesX, rulesY, null);
+						g2.drawImage(rules, 0, 0, 1500, 850, null);
 						break;
 					case 3:
-						int creditsX = xOffset + (GAME_WIDTH - credits.getWidth()) / 2;
-						int creditsY = yOffset + (GAME_HEIGHT - credits.getHeight()) / 2;
-						g2.drawImage(credits, creditsX, creditsY, null);
+						g2.drawImage(credits, 0, 0, 1500, 850, null);
 						break;
 					case 4:
-						int quitX = xOffset + (GAME_WIDTH - quit.getWidth()) / 2;
-						int quitY = yOffset + (GAME_HEIGHT - quit.getHeight()) / 2;
-						g2.drawImage(quit, quitX, quitY, null);
+						g2.drawImage(quit, 0, 0, 1500, 850, null);
 				}
 			}
 		}

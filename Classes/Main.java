@@ -14,8 +14,8 @@ import java.util.Random;
 import javax.sound.sampled.*;
 
 /**
-* The main game engine class that handles the frame, game loop, input, and rendering.
-*/
+ * The main game engine class that handles the frame, game loop, input, and rendering.
+ */
 public class Main extends JFrame implements ActionListener, KeyListener {
 
 	// Constants
@@ -27,7 +27,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private static int FRAME_REFRESH_RATE = 8;
 
 	// Enemies waves
-	private final HashMap<Integer, Integer> entranceSpawnCounts = new HashMap<>();
+	private HashMap<Integer, Integer> entranceSpawnCounts = new HashMap<>();
 	private int wave;
 	private int enemiesToSpawn;
 	private int enemiesSpawnedThisWave;
@@ -36,12 +36,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private int xOffset, yOffset;
 
 	// State fields
-	private final Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
+	private Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-	private final HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
-	private final ArrayList<Bullet> bullets = new ArrayList<>();
-	private final ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
-	private final ArrayList<HealItem> healItems = new ArrayList<>();
+	private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
+	private ArrayList<Bullet> bullets = new ArrayList<>();
+	private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
+	private ArrayList<HealItem> healItems = new ArrayList<>();
 
 
 	// Game objects
@@ -57,13 +57,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
 	private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
-	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
+	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon2.png");
 	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
 	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
 	private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
 	private BufferedImage shieldFull = ResourceLoader.loadImage("FullShield.png");
 	private BufferedImage shieldEmpty = ResourceLoader.loadImage("EmptyShield.png");
-	private BufferedImage bandageIcon = ResourceLoader.loadImage("Bandage.png");
+	private BufferedImage bandageIcon = ResourceLoader.loadImage("MedKit.png");
 	private BufferedImage shieldPotionIcon = ResourceLoader.loadImage("ShieldPotion.png");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
@@ -75,22 +75,22 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private Timer timer;
 
 	/**
-	* Entry point for the program.
-	*/
+	 * Entry point for the program.
+	 */
 	public static void main(String[] args) {
 		new Homepage();
 	}
 
 	/**
-	* Constructor initializes game setup.
-	*/
+	 * Constructor initializes game setup.
+	 */
 	public Main() {
 		setup();
 	}
 
 	/**
-	* Initializes the JFrame, player, map, and timer.
-	*/
+	 * Initializes the JFrame, player, map, and timer.
+	 */
 	private void setup() {
 		// Get full screen size
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -113,21 +113,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		// Drawing panel handles rendering
 		draw = new DrawingPanel(screenSize.width, screenSize.height);
 
-		this.setUndecorated(true);
+		this.setSize(screenSize.width, screenSize.height);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.add(draw);
-
-		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		if (gd.isFullScreenSupported()) {
-				gd.setFullScreenWindow(this);
-		} else {
-				this.setSize(screenSize.width, screenSize.height);
-				this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		}
-
 		this.setVisible(true);
-		SoundPlayer.playBackground("BackgroundMusic.wav");
+//		SoundPlayer.playBackground("BackgroundMusic.wav");
 
 		// Input and timer
 		this.addKeyListener(this);
@@ -137,8 +129,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Handles all movement logic for the player and bullets.
-	*/
+	 * Handles all movement logic for the player and bullets.
+	 */
 	private void move() {
 		// Update bullets
 		for (int i = 0; i < bullets.size(); ) {
@@ -199,8 +191,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Handles player movement using smooth multi-key input.
-	*/
+	 * Handles player movement using smooth multi-key input.
+	 */
 	private void handleSmoothMovement() {
 		boolean up = keysPressed.contains(KeyEvent.VK_W);
 		boolean down = keysPressed.contains(KeyEvent.VK_S);
@@ -236,8 +228,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Handles cleanup of offscreen/dead objects.
-	*/
+	 * Handles cleanup of offscreen/dead objects.
+	 */
 	private void aliveDead() {
 		// Remove off-screen bullets
 		for (int i = bullets.size() - 1; i >= 0; i--) {
@@ -256,8 +248,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Check if player collects any power-up items
-	*/
+	 * Check if player collects any power-up items
+	 */
 	private void checkPowerUpPickup() {
 		for (int i = powerUpItems.size() - 1; i >= 0; i--) {
 			PowerUpItem item = powerUpItems.get(i);
@@ -279,8 +271,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Spawn power-ups on random walkable tiles
-	*/
+	 * Spawn power-ups on random walkable tiles
+	 */
 	private void spawnPowerUps() {
 		powerUpItems.clear();
 		java.util.List<Rectangle> tiles = map.getWalkableTiles();
@@ -333,10 +325,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 		for (Enemy enemy : enemies) {
 			/*
-			* If enemy is intersecting player, check for enemy's damage cooldown time.
-			* If the cooldown is at 0, player takes damage and the cooldown is reset. Otherwise, the enemy's cooldown counts down.
-			* Reset the enemy if it stops touching the player
-			*/
+			 * If enemy is intersecting player, check for enemy's damage cooldown time.
+			 * If the cooldown is at 0, player takes damage and the cooldown is reset. Otherwise, the enemy's cooldown counts down.
+			 * Reset the enemy if it stops touching the player
+			 */
 			num = enemy.getNum();
 
 			if (enemyDamageCooldown.containsKey(enemy.getNum())) {
@@ -360,11 +352,15 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Handles key press events.
-	*/
+	 * Handles key press events.
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (!waveInProgress && !paused && (e.getKeyCode() == KeyEvent.VK_W ||	e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_D)) {
+		if (!waveInProgress && !paused &&
+				(e.getKeyCode() == KeyEvent.VK_W ||
+						e.getKeyCode() == KeyEvent.VK_A ||
+						e.getKeyCode() == KeyEvent.VK_S ||
+						e.getKeyCode() == KeyEvent.VK_D)) {
 			waveInProgress = true;
 			// Ensure no stray bullets from the previous wave carry
 			// over when the new wave begins
@@ -384,7 +380,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			paused = true;
 			repaint();
 			return;
-		} else if (e.getKeyCode() == KeyEvent.VK_J && paused && resume) {
+		} else if (e.getKeyCode() == KeyEvent.VK_L && paused && resume) {
 			paused = false;
 			if (waveInProgress) {
 				timer.start();
@@ -392,7 +388,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			SoundPlayer.resumeBackground();
 			repaint();
 			return;
-		} else if (e.getKeyCode() == KeyEvent.VK_J && paused) {
+		} else if (e.getKeyCode() == KeyEvent.VK_L && paused) {
 			SoundPlayer.stopBackground();
 			this.dispose();
 			new Homepage();
@@ -443,24 +439,22 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Handles key release events.
-	*/
+	 * Handles key release events.
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		keysPressed.remove(e.getKeyCode());
 	}
 
 	/**
-	* Not used, but required by KeyListener.
-	*/
+	 * Not used, but required by KeyListener.
+	 */
 	@Override
-	public void keyTyped(KeyEvent e) {
-		//Empty
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	/**
-	* Timer tick
-	*/
+	 * Timer tick
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -575,8 +569,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	/**
-	* Inner class for drawing the game.
-	*/
+	 * Inner class for drawing the game.
+	 */
 	private class DrawingPanel extends JPanel {
 		private int screenWidth, screenHeight;
 
@@ -595,7 +589,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			// Scale the game world to always fit inside the panel
 			double scale = Math.min(getWidth() / (double) GAME_WIDTH,
-			getHeight() / (double) GAME_HEIGHT);
+					getHeight() / (double) GAME_HEIGHT);
 			int worldW = (int) (GAME_WIDTH * scale);
 			int worldH = (int) (GAME_HEIGHT * scale);
 			int transX = (getWidth() - worldW) / 2;
@@ -652,7 +646,6 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			int heartsHeight = 0;
 			int shieldSize = 0;
 			int shieldY = barY; // initialized for scope
-
 			if (heartsSheet != null) {
 				int rowHeight = heartsSheet.getHeight() / 5;
 				int rowWidth = heartsSheet.getWidth();
@@ -669,13 +662,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				int heartsY = barY;
 				int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
 				g2.drawImage(heartsSheet, heartsX + 50, heartsY, heartsX + heartsWidth + 50, heartsY + heartsHeight,
-						  0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
+						0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
 
 				// Draw shield icons at base size
 				shieldSize = heartBaseSize;
 				int shieldX = bar2X;
 				shieldY = barY + heartsHeight + spacing;
-
 				for (int i = 0; i < 5; i++) {
 					BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
 					g2.drawImage(img, shieldX + i * shieldSize + 72, shieldY - 10, shieldSize, shieldSize, null);
@@ -692,25 +684,16 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			for (Player.InventoryPowerUp ip : player.getPowerUps()) {
 				if (ip.powerUp instanceof SpeedBoost) {
 					speedCount++;
-					if (ip.active) {
-						speedActive = true; speedRemain = ip.remaining;
-					}
+					if (ip.active) { speedActive = true; speedRemain = ip.remaining; }
 				} else if (ip.powerUp instanceof Shotgun) {
 					shotgunCount++;
-					if (ip.active) {
-						shotgunActive = true; shotgunRemain = ip.remaining;
-					}
+					if (ip.active) { shotgunActive = true; shotgunRemain = ip.remaining; }
 				}
 			}
 
 			int bandageCount = 0, shieldPotionCount = 0;
-
 			for (Player.InventoryHeal ih : player.getHeals()) {
-				if (ih.heal instanceof Bandage) {
-					bandageCount++;
-				} else if (ih.heal instanceof ShieldPotion) {
-					shieldPotionCount++;
-				}
+				if (ih.heal instanceof Bandage) bandageCount++; else if (ih.heal instanceof ShieldPotion) shieldPotionCount++;
 			}
 
 			g2.setFont(customFont.deriveFont(Font.PLAIN, 30));
@@ -719,21 +702,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			int drawY = invY;
 			g2.drawImage(speedIcon, bar1X, drawY, iconSize, iconSize, null);
 			g2.drawString("x" + speedCount, bar1X + iconSize - 15, drawY + iconSize - 5);
-
-			if (speedActive) {
-				g2.drawString(String.valueOf(speedRemain / 100), bar1X, drawY + iconSize + 15);
-			}
+			if (speedActive) g2.drawString(String.valueOf(speedRemain / 100), bar1X, drawY + iconSize + 15);
 
 			drawY += iconSize + 30;
-			int shotgunH = iconSize;
-			int shotgunW = (int) (shotgunIcon.getWidth() * (shotgunH / (double) shotgunIcon.getHeight()));
-			g2.drawImage(shotgunIcon, bar1X, drawY, shotgunW, shotgunH, null);
-			g2.drawString("x" + shotgunCount, bar1X + shotgunW - 15, drawY + shotgunH - 5);
-			if (shotgunActive) {
-				g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + shotgunH + 15);
-			}
+			g2.drawImage(shotgunIcon, bar1X, drawY, iconSize, iconSize, null);
+			g2.drawString("x" + shotgunCount, bar1X + iconSize - 15, drawY + iconSize - 5);
+			if (shotgunActive) g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + iconSize + 15);
 
-			drawY += shotgunH + 40;
+			drawY += iconSize + 40;
 			g2.drawString("Heals", bar1X, drawY - 10);
 			g2.drawImage(bandageIcon, bar1X, drawY, iconSize, iconSize, null);
 			g2.drawString("x" + bandageCount, bar1X + iconSize - 15, drawY + iconSize - 5);
@@ -742,20 +718,18 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.drawImage(shieldPotionIcon, bar1X, drawY, iconSize, iconSize, null);
 			g2.drawString("x" + shieldPotionCount, bar1X + iconSize - 15, drawY + iconSize - 5);
 
-			score.trackScore();
-			score.drawScore(g2, screenWidth, screenHeight, transX);
+			int waveX = transX + worldW + 20;
+			int waveY = transY + (int)(200 * scale);
+
+			score.drawScore(g2, waveX, waveY-70);
 
 			g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
 			g2.setColor(Color.WHITE);
-			int waveX = transX + worldW + 20;
-			int waveY = transY + (int)(200 * scale);
 			g2.drawString("Wave " + wave, waveX, waveY);
 
 			if (!waveInProgress) {
 				g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
-				if (wave == 1) {
-					g2.drawString("Move Joystick to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
-				}
+				if (wave == 1) g2.drawString("Move Joystick to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
 				else g2.drawString("Wave " + (wave-1) + " Completed, Move Joystick to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
 			}
 
@@ -792,108 +766,20 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	}
 
 	private class Score {
-		private BufferedImage scoreSheet = ResourceLoader.loadImage("ScoreNums.png");
-
 		//Score keeper
-		private int score, ones, tens, hundreds;
-
-		//coordinates
-		private int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
+		private int score;
 
 		Score() {
 			this.score = 0;
-			this.ones = 0;
-			this.tens = 0;
-			this.hundreds = 0;
 		}
 
 		public void updateScore(int increase) {
 			score += increase;
 		}
 
-		public void trackScore() {
-			hundreds = score / 100;
-			tens = (score % 100) / 10;
-			ones = (score % 10);
-		}
-
-		public void drawScore(Graphics2D g, int screenWidth, int screenHeight, int hudMargin) {
-			// Calculate the right-side margin for score (mirror of HP/SH bars)
-			int rightHUDWidth = hudMargin;
-
-			int scoreY = screenHeight / 10;  // Align with health/shield bar height
-			int scoreX = screenWidth - rightHUDWidth + 20;  // Padding into right black margin
-
-			drawDigit(g, hundreds, scoreX, scoreY, scoreX + 46, scoreY + 56);
-			drawDigit(g, tens, scoreX + 60, scoreY, scoreX + 106, scoreY + 56);
-			drawDigit(g, ones, scoreX + 120, scoreY, scoreX + 166, scoreY + 56);
-		}
-
-
-		private void drawDigit(Graphics2D g, int digit, int dx1, int dy1, int dx2, int dy2) {
-			switch (digit) {
-				case 0:
-					sx1 = 196;
-					sy1 = 56;
-					sx2 = 242;
-					sy2 = 112;
-					break;
-				case 1:
-					sx1 = 0;
-					sy1 = 0;
-					sx2 = 46;
-					sy2 = 56;
-					break;
-				case 2:
-					sx1 = 49;
-					sy1 = 0;
-					sx2 = 95;
-					sy2 = 56;
-					break;
-				case 3:
-					sx1 = 98;
-					sy1 = 0;
-					sx2 = 144;
-					sy2 = 56;
-					break;
-				case 4:
-					sx1 = 147;
-					sy1 = 0;
-					sx2 = 193;
-					sy2 = 56;
-					break;
-				case 5:
-					sx1 = 196;
-					sy1 = 0;
-					sx2 = 242;
-					sy2 = 56;
-					break;
-				case 6:
-					sx1 = 0;
-					sy1 = 56;
-					sx2 = 46;
-					sy2 = 112;
-					break;
-				case 7:
-					sx1 = 49;
-					sy1 = 56;
-					sx2 = 95;
-					sy2 = 112;
-					break;
-				case 8:
-					sx1 = 98;
-					sy1 = 56;
-					sx2 = 144;
-					sy2 = 112;
-					break;
-				case 9:
-					sx1 = 147;
-					sy1 = 56;
-					sx2 = 193;
-					sy2 = 112;
-					break;
-			}
-			g.drawImage(scoreSheet, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+		public void drawScore(Graphics2D g, int x, int y) {
+			g.setFont(customFont.deriveFont(Font.PLAIN, 200));
+			g.drawString(String.valueOf(score), x, y);
 		}
 	}
 }

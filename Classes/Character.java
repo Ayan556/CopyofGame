@@ -15,7 +15,7 @@ public abstract class Character extends Rectangle {
     protected boolean moving;
     protected int frame;
 
-    // Track precise position to allow smooth fractional movement
+    // Track precise position to allow smooth fractional movementAdd commentMore actions
     protected double preciseX;
     protected double preciseY;
 

@@ -24,7 +24,6 @@ public class Player extends Character {
     BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("playerWalk.png");
     BufferedImage idleSpriteSheet = ResourceLoader.loadImage("playerIdle.png");
 
-
     /**
      * Constructs a Player object with defined attributes and starting position.
      *
@@ -76,18 +75,21 @@ public class Player extends Character {
         }
 
         if (!moving) {
-            g2.drawImage(idleSpriteSheet,
+            g2.drawImage(
+                    idleSpriteSheet,
                     this.x + xOffset, this.y + yOffset,
                     this.x + xOffset + spriteW, this.y + yOffset + spriteH,
                     spriteCol*spriteW, frame*spriteH,
-                    spriteCol*spriteW+spriteW, (frame+1)*spriteH, null);
+                    spriteCol*spriteW+spriteW, (frame+1)*spriteH,
+                    null);
         } else {
             g2.drawImage(
                     walkingSpriteSheet,
                     this.x + xOffset, this.y + yOffset,
                     this.x + xOffset + spriteW, this.y + yOffset + spriteH,
                     spriteCol*spriteW, frame*spriteH,
-                    spriteCol*spriteW+spriteW, (frame+1)*spriteH, null);
+                    spriteCol*spriteW+spriteW, (frame+1)*spriteH,
+                    null);
         }
     }
 
@@ -207,10 +209,6 @@ public class Player extends Character {
      * @param type the class of heal to use
      */
     public void useHeal(Class<? extends Heal> type) {
-        // Don't use a heal if the player's corresponding bar is already full
-        if (type == Bandage.class && this.getHealth() >= 5) return;
-        if (type == ShieldPotion.class && this.getShield() >= 5) return;
-
         for (int i = 0; i < heals.size(); i++) {
             InventoryHeal ih = heals.get(i);
             if (type.isInstance(ih.heal)) {

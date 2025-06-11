@@ -6,7 +6,6 @@ public class Shotgun extends PowerUp {
     @Override
     public void activate(Player player) {
         player.setShotgun(true);
-        SoundPlayer.playSound("ShotgunCycle.wav");
     }
 
     @Override
