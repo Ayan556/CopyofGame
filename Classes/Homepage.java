@@ -117,7 +117,9 @@ public class Homepage extends JFrame implements KeyListener {
 
 			g2.setColor(Color.BLACK);
 			g2.fillRect(0, 0, screenWidth, screenHeight);
-			g2.drawImage(bg, 0 + xOffset, 0, 1600 + xOffset, 940, null);
+                        // Scale and center the background image relative to the
+                        // current screen resolution
+                        g2.drawImage(bg, xOffset, yOffset, GAME_WIDTH, GAME_HEIGHT, null);
 
 			if (instructions) {
 				g2.setColor(Color.WHITE);
@@ -130,17 +132,25 @@ public class Homepage extends JFrame implements KeyListener {
 			}	else {
 
 				switch (button) {
-					case 1:
-						g2.drawImage(play, 0, 0, 1500, 850, null);
-						break;
-					case 2:
-						g2.drawImage(rules, 0, 0, 1500, 850, null);
-						break;
-					case 3:
-						g2.drawImage(credits, 0, 0, 1500, 850, null);
-						break;
-					case 4:
-						g2.drawImage(quit, 0, 0, 1500, 850, null);
+                                        case 1:
+                                                int playX = xOffset + (GAME_WIDTH - play.getWidth()) / 2;
+                                                int playY = yOffset + (GAME_HEIGHT - play.getHeight()) / 2;
+                                                g2.drawImage(play, playX, playY, null);
+                                                break;
+                                        case 2:
+                                                int rulesX = xOffset + (GAME_WIDTH - rules.getWidth()) / 2;
+                                                int rulesY = yOffset + (GAME_HEIGHT - rules.getHeight()) / 2;
+                                                g2.drawImage(rules, rulesX, rulesY, null);
+                                                break;
+                                        case 3:
+                                                int creditsX = xOffset + (GAME_WIDTH - credits.getWidth()) / 2;
+                                                int creditsY = yOffset + (GAME_HEIGHT - credits.getHeight()) / 2;
+                                                g2.drawImage(credits, creditsX, creditsY, null);
+                                                break;
+                                        case 4:
+                                                int quitX = xOffset + (GAME_WIDTH - quit.getWidth()) / 2;
+                                                int quitY = yOffset + (GAME_HEIGHT - quit.getHeight()) / 2;
+                                                g2.drawImage(quit, quitX, quitY, null);
 				}
 			}
 		}
