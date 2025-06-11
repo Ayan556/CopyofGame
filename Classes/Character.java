@@ -15,6 +15,10 @@ public abstract class Character extends Rectangle {
     protected boolean moving;
     protected int frame;
 
+    // Track precise position to allow smooth fractional movement
+    protected double preciseX;
+    protected double preciseY;
+
     /**
      * Constructor to initialize all character fields.
      *
@@ -32,6 +36,9 @@ public abstract class Character extends Rectangle {
         this.shield = shield;
         this.speed = speed;
         this.directionFacing = 4; // Default facing downwards
+
+        this.preciseX = x;
+        this.preciseY = y;
     }
 
     //----Image stuff----
@@ -69,22 +76,33 @@ public abstract class Character extends Rectangle {
         this.directionFacing = direction;
 
         switch (direction) {
-            case 1: // Left
-                if (this.x - this.speed >= 0) this.x -= speed;
-                break;
-
-            case 2: // Right
-                if (this.x + this.width + this.speed <= panW) this.x += speed;
-                break;
-
-            case 3: // Up
-                if (this.y - this.speed >= 0) this.y -= speed;
-                break;
-
-            case 4: // Down
-                if (this.y + this.height + this.speed <= panH) this.y += speed;
-                break;
+            case 1 -> moveVector(-speed, 0, panW, panH);
+            case 2 -> moveVector(speed, 0, panW, panH);
+            case 3 -> moveVector(0, -speed, panW, panH);
+            case 4 -> moveVector(0, speed, panW, panH);
         }
+    }
+
+    /**
+     * Moves the character by the provided x/y deltas applying bounds checking.
+     */
+    public void moveVector(double dx, double dy, int panW, int panH) {
+        preciseX += dx;
+        preciseY += dy;
+
+        if (preciseX < 0) preciseX = 0;
+        if (preciseY < 0) preciseY = 0;
+        if (preciseX + width > panW) preciseX = panW - width;
+        if (preciseY + height > panH) preciseY = panH - height;
+
+        this.x = (int)Math.round(preciseX);
+        this.y = (int)Math.round(preciseY);
+    }
+
+    /** Synchronize precise coordinates with integer position */
+    public void syncPosition() {
+        this.preciseX = this.x;
+        this.preciseY = this.y;
     }
 
     /**
