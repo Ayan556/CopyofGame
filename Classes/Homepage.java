@@ -123,7 +123,7 @@ public class Homepage extends JFrame implements KeyListener {
 
 			if (instructions) {
 				g2.setColor(Color.WHITE);
-				g2.setFont(new Font("Arial", Font.BOLD, 36));
+				g2.setFont(customFont.deriveFont(Font.PLAIN, 36));
 				g2.drawString("INSTRUCTIONS", 310 + xOffset, 520 + yOffset);
 			} else if (credit) {
 				g2.setColor(Color.WHITE);
@@ -132,25 +132,25 @@ public class Homepage extends JFrame implements KeyListener {
 			}	else {
 
 				switch (button) {
-                                        case 1:
-                                                int playX = xOffset + (GAME_WIDTH - play.getWidth()) / 2;
-                                                int playY = yOffset + (GAME_HEIGHT - play.getHeight()) / 2;
-                                                g2.drawImage(play, playX, playY, null);
-                                                break;
-                                        case 2:
-                                                int rulesX = xOffset + (GAME_WIDTH - rules.getWidth()) / 2;
-                                                int rulesY = yOffset + (GAME_HEIGHT - rules.getHeight()) / 2;
-                                                g2.drawImage(rules, rulesX, rulesY, null);
-                                                break;
-                                        case 3:
-                                                int creditsX = xOffset + (GAME_WIDTH - credits.getWidth()) / 2;
-                                                int creditsY = yOffset + (GAME_HEIGHT - credits.getHeight()) / 2;
-                                                g2.drawImage(credits, creditsX, creditsY, null);
-                                                break;
-                                        case 4:
-                                                int quitX = xOffset + (GAME_WIDTH - quit.getWidth()) / 2;
-                                                int quitY = yOffset + (GAME_HEIGHT - quit.getHeight()) / 2;
-                                                g2.drawImage(quit, quitX, quitY, null);
+					case 1:
+						int playX = xOffset + (GAME_WIDTH - play.getWidth()) / 2;
+						int playY = yOffset + (GAME_HEIGHT - play.getHeight()) / 2;
+						g2.drawImage(play, playX, playY, null);
+						break;
+					case 2:
+						int rulesX = xOffset + (GAME_WIDTH - rules.getWidth()) / 2;
+						int rulesY = yOffset + (GAME_HEIGHT - rules.getHeight()) / 2;
+						g2.drawImage(rules, rulesX, rulesY, null);
+						break;
+					case 3:
+						int creditsX = xOffset + (GAME_WIDTH - credits.getWidth()) / 2;
+						int creditsY = yOffset + (GAME_HEIGHT - credits.getHeight()) / 2;
+						g2.drawImage(credits, creditsX, creditsY, null);
+						break;
+					case 4:
+						int quitX = xOffset + (GAME_WIDTH - quit.getWidth()) / 2;
+						int quitY = yOffset + (GAME_HEIGHT - quit.getHeight()) / 2;
+						g2.drawImage(quit, quitX, quitY, null);
 				}
 			}
 		}

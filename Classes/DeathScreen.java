@@ -22,6 +22,7 @@ public class DeathScreen extends JFrame implements KeyListener{
     private BufferedImage youDied = ResourceLoader.loadImage("Death2.png");
     private BufferedImage yes = ResourceLoader.loadImage("PlayAgainYes.png");
     private BufferedImage no = ResourceLoader.loadImage("PlayAgainNo.png");
+    private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
     public DeathScreen() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -106,7 +107,7 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.drawImage(youDied, deathX, 300 + yOffset, null);
 
             g2.setColor(new Color(199, 193, 159));
-            g2.setFont(new Font("Arial", Font.BOLD, 36));
+            g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
             g2.drawString("Final Score: " + score, 310 + xOffset, 520 + yOffset);
 
             switch (retry) {

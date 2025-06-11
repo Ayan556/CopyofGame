@@ -27,7 +27,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private static int FRAME_REFRESH_RATE = 8;
 
 	// Enemies waves
-	private HashMap<Integer, Integer> entranceSpawnCounts = new HashMap<>();
+	private final HashMap<Integer, Integer> entranceSpawnCounts = new HashMap<>();
 	private int wave;
 	private int enemiesToSpawn;
 	private int enemiesSpawnedThisWave;
@@ -36,12 +36,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private int xOffset, yOffset;
 
 	// State fields
-	private Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
+	private final Set<Integer> keysPressed = new HashSet<>(); // Tracks currently held keys
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-	private HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
-	private ArrayList<Bullet> bullets = new ArrayList<>();
-	private ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
-	private ArrayList<HealItem> healItems = new ArrayList<>();
+	private final HashMap<Integer, Integer> enemyDamageCooldown = new HashMap<>();
+	private final ArrayList<Bullet> bullets = new ArrayList<>();
+	private final ArrayList<PowerUpItem> powerUpItems = new ArrayList<>();
+	private final ArrayList<HealItem> healItems = new ArrayList<>();
 
 
 	// Game objects
@@ -113,21 +113,21 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		// Drawing panel handles rendering
 		draw = new DrawingPanel(screenSize.width, screenSize.height);
 
-                this.setUndecorated(true);
-                this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-                this.setLocationRelativeTo(null);
-                this.add(draw);
+		this.setUndecorated(true);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.add(draw);
 
-                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-                if (gd.isFullScreenSupported()) {
-                        gd.setFullScreenWindow(this);
-                } else {
-                        this.setSize(screenSize.width, screenSize.height);
-                        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                }
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		if (gd.isFullScreenSupported()) {
+				gd.setFullScreenWindow(this);
+		} else {
+				this.setSize(screenSize.width, screenSize.height);
+				this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 
-                this.setVisible(true);
-                SoundPlayer.playBackground("BackgroundMusic.wav");
+		this.setVisible(true);
+		SoundPlayer.playBackground("BackgroundMusic.wav");
 
 		// Input and timer
 		this.addKeyListener(this);
