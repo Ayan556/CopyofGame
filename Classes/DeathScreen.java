@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -25,8 +27,7 @@ public class DeathScreen extends JFrame implements KeyListener{
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         retry = 1;
 
-        this.setSize(screenSize.width, screenSize.height);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setUndecorated(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
@@ -35,6 +36,15 @@ public class DeathScreen extends JFrame implements KeyListener{
         drawingPanel.requestFocusInWindow();
         drawingPanel.addKeyListener(this);
         this.add(drawingPanel);
+
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        if (gd.isFullScreenSupported()) {
+            gd.setFullScreenWindow(this);
+        } else {
+            this.setSize(screenSize.width, screenSize.height);
+            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+
         this.setVisible(true);
     }
 
