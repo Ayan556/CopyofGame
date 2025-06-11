@@ -31,7 +31,7 @@ public class MapGenerator {
         this.obstacles = new ArrayList<>();
         this.entrances = new ArrayList<>();
 
-        this.walls = new ArrayList<Rectangle>();
+        this.walls = new ArrayList<>();
         walls.add(new Rectangle(0, 0, 375, 75));
         walls.add(new Rectangle(0, 0, 75, 375));
         walls.add(new Rectangle(525, 0, 375, 75));
@@ -55,15 +55,16 @@ public class MapGenerator {
      * Adds 4 entrance rectangles to the center of each map edge (top, bottom, left, right).
      */
     private void generateEntrances() {
+        // These coordinates line up with the wall gaps so enemies don't spawn inside walls
         // Top center entrance
-        entrances.add(new Rectangle(((cols / 2)-1) * tileSize, 0, 2* tileSize, tileSize));
+        entrances.add(new Rectangle((cols / 2) * tileSize, 0, 2 * tileSize, tileSize));
         // Bottom center entrance
-        entrances.add(new Rectangle(((cols / 2)-1) * tileSize, (rows - 1) * tileSize, 2*tileSize, tileSize));
+        entrances.add(new Rectangle((cols / 2) * tileSize, (rows + 1) * tileSize, 2 * tileSize, tileSize));
         // Left center entrance
-        entrances.add(new Rectangle(0, ((rows / 2)-1) * tileSize, tileSize, 2*tileSize));
+        entrances.add(new Rectangle(0, (rows / 2) * tileSize, tileSize, 2 * tileSize));
         // Right center entrance
-        entrances.add(new Rectangle((cols - 1) * tileSize, ((rows / 2)-1) * tileSize, tileSize, 2*tileSize));
-    }
+        entrances.add(new Rectangle((cols + 1) * tileSize, (rows / 2) * tileSize, tileSize, 2 * tileSize));
+   }
 
     /**
      * Randomly generates obstacles on the map.

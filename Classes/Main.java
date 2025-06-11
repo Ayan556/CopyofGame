@@ -193,43 +193,39 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	/**
 	* Handles player movement using smooth multi-key input.
 	*/
-	private void handleSmoothMovement() {
-		boolean up = keysPressed.contains(KeyEvent.VK_W);
-		boolean down = keysPressed.contains(KeyEvent.VK_S);
-		boolean left = keysPressed.contains(KeyEvent.VK_A);
-		boolean right = keysPressed.contains(KeyEvent.VK_D);
+        private void handleSmoothMovement() {
+                boolean up = keysPressed.contains(KeyEvent.VK_W);
+                boolean down = keysPressed.contains(KeyEvent.VK_S);
+                boolean left = keysPressed.contains(KeyEvent.VK_A);
+                boolean right = keysPressed.contains(KeyEvent.VK_D);
 
-		// Allow diagonal movement by checking combinations
-		if (up && left) {
-			player.move(3, panW, panH);
-			player.move(1, panW, panH);
-		} else if (up && right) {
-			player.move(3, panW, panH);
-			player.move(2, panW, panH);
-		} else if (down && left) {
-			player.move(4, panW, panH);
-			player.move(1, panW, panH);
-		} else if (down && right) {
-			player.move(4, panW, panH);
-			player.move(2, panW, panH);
-		} else {
-			if (up) {
-				player.move(3, panW, panH);
-			}
-			if (down) {
-				player.move(4, panW, panH);
-			}
-			if (left) {
-				player.move(1, panW, panH);
-			}
-			if (right) {
-				player.move(2, panW, panH);
-			}
-		}
+                double dx = 0;
+                double dy = 0;
 
-		// Prevent player from moving through obstacles
-		map.blockPlayer(player, player.getDirectionFacing());
-	}
+                if (up) dy -= 1;
+                if (down) dy += 1;
+                if (left) dx -= 1;
+                if (right) dx += 1;
+
+                if (dx != 0 || dy != 0) {
+                        double len = Math.sqrt(dx * dx + dy * dy);
+                        dx = dx / len * player.getSpeed();
+                        dy = dy / len * player.getSpeed();
+
+                        // Determine facing direction based on movement vector
+                        if (Math.abs(dx) > Math.abs(dy)) {
+                                player.directionFacing = dx > 0 ? 2 : 1;
+                        } else {
+                                player.directionFacing = dy > 0 ? 4 : 3;
+                        }
+
+                        player.moveVector(dx, dy, panW, panH);
+                }
+
+                // Prevent player from moving through obstacles
+                map.blockPlayer(player, player.getDirectionFacing());
+                player.syncPosition();
+        }
 
 	/**
 	* Handles cleanup of offscreen/dead objects.
