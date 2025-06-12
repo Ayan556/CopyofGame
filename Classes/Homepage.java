@@ -106,10 +106,11 @@ public class Homepage extends JFrame implements KeyListener {
 					repaint();
 					break;
 
-				case 4:
-					score = !score;
-					repaint();
-					break;
+                                case 4:
+                                        SoundPlayer.stopBackground();
+                                        Homepage.this.dispose();
+                                        new ScoresScreen();
+                                        break;
 				case 5:
 					System.exit(0);
 					break;
