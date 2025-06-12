@@ -20,7 +20,8 @@ public class HighscoreManager {
     }
 
     /**
-     * Sorts the high score file from highest to lowest score.
+     * Sorts the high score file from highest to lowest score and trims
+     * the list to the top 20 entries.
      */
     public static void sortScores() {
         File file = new File(FILE_NAME);
@@ -39,9 +40,11 @@ public class HighscoreManager {
             int sb = parseScore(b);
             return Integer.compare(sb, sa); // descending
         });
+        // Keep only the top 20 scores after sorting
+        int limit = Math.min(20, lines.size());
         try (PrintWriter pw = new PrintWriter(file)) {
-            for (String l : lines) {
-                pw.println(l);
+            for (int i = 0; i < limit; i++) {
+                pw.println(lines.get(i));
             }
         } catch (IOException e) {
             e.printStackTrace();
