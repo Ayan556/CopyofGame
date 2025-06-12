@@ -51,10 +51,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private Player player;
 	private MapGenerator map;
 	private Score score;
-        private DrawingPanel draw;
-        private UsernameInputScreen usernameInput;
-        private Graphics2D g2;
-        private String username = "";
+	private DrawingPanel draw;
+	private UsernameInputScreen usernameInput;
+	private Graphics2D g2;
+	private String username = "";
 
 	//enemy identifier
 	private int enemyNums;
@@ -483,16 +483,16 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-                if (!player.isAlive()) {
-                        timer.stop();
-                        player.deactivateAllPowerUps();
-                        SoundPlayer.stopBackground();
-                        HighscoreManager.addScore(username, score.getScore());
-                        DeathScreen deathScreen = new DeathScreen();
-                        deathScreen.setResult(username, score.getScore());
-                        this.dispose();
-                        return;
-                }
+		if (!player.isAlive()) {
+			timer.stop();
+			player.deactivateAllPowerUps();
+			SoundPlayer.stopBackground();
+			HighscoreManager.addScore(username, score.getScore());
+			DeathScreen deathScreen = new DeathScreen();
+			deathScreen.setResult(username, score.getScore());
+			this.dispose();
+			return;
+		}
 
 		//Set moving for animation
 		if (keysPressed.isEmpty()) {

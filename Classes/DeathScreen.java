@@ -5,8 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -15,12 +13,12 @@ import javax.swing.JPanel;
 
 public class DeathScreen extends JFrame implements KeyListener{
 
-    public static final int GAME_WIDTH = 900;
-    public static final int GAME_HEIGHT = 900;
+    public static final int GAME_WIDTH = 1920;
+    public static final int GAME_HEIGHT = 1080;
     private int score;
     private String username;
     private int retry;
-    private BufferedImage youDied = ResourceLoader.loadImage("Death2.png");
+    private BufferedImage youDied = ResourceLoader.loadImage("deathScreen.jpg");
     private BufferedImage yes = ResourceLoader.loadImage("PlayAgainYes.png");
     private BufferedImage no = ResourceLoader.loadImage("PlayAgainNo.png");
     private Font customFont = FontLoader.loadFont("Game-Font.ttf");
@@ -34,11 +32,6 @@ public class DeathScreen extends JFrame implements KeyListener{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setUndecorated(true);
         this.setLocationRelativeTo(null);
-
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        if (gd.isFullScreenSupported()) {
-            gd.setFullScreenWindow(this);
-        }
 
         DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
         drawingPanel.setFocusable(true);
@@ -101,7 +94,7 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
 
-            g2.drawImage(youDied, xOffset, 300 + yOffset, null);
+            g2.drawImage(youDied, 1920, 1080 + yOffset, null);
 
             g2.setColor(new Color(199, 193, 159));
             g2.setFont(customFont.deriveFont(Font.PLAIN, 80));

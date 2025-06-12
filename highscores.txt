@@ -3,6 +3,10 @@ VTR - 190
 WSD - 180
 SCF - 160
 AYT - 140
+SCD - 20
+QWS - 10
+WDV - 10
 DDF - 0
 EDF - 0
 SER - 0
+SDR - 0

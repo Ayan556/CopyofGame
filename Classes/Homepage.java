@@ -14,16 +14,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Homepage extends JFrame implements KeyListener {
-	public static final int GAME_WIDTH = 1600;
-	public static final int GAME_HEIGHT = 900;
+	public static final int GAME_WIDTH = 1920;
+	public static final int GAME_HEIGHT = 1080;
 	int button;
-  boolean instructions, credit;
-  private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
-  private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
-  private BufferedImage play = ResourceLoader.loadImage("playselected.png");
-  private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
-  private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
-  private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
+    boolean instructions, credit;
+    private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
+    private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
+    private BufferedImage play = ResourceLoader.loadImage("playselected.png");
+    private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
+    private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
+    private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
 	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
@@ -35,11 +35,11 @@ public class Homepage extends JFrame implements KeyListener {
 		instructions = false;
 		credit = false;
 
-    this.setSize(screenSize.width, screenSize.height);
-    this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setUndecorated(true);
-    this.setLocationRelativeTo(null);
+		this.setSize(screenSize.width, screenSize.height);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setUndecorated(true);
+		this.setLocationRelativeTo(null);
 
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
 		drawingPanel.setFocusable(true);
@@ -75,21 +75,21 @@ public class Homepage extends JFrame implements KeyListener {
 					repaint();
 					break;
 
-                                case 3:
-                                        if (credit) credit = false;
-                                        else credit = true;
-                                        repaint();
-                                        break;
+				case 3:
+						if (credit) credit = false;
+						else credit = true;
+						repaint();
+						break;
 
-                                case 4:
-                                        this.dispose();
-                                        new ScoresScreen();
-                                        break;
+				case 4:
+						this.dispose();
+						new ScoresScreen();
+						break;
 
-                                case 5:
-                                        System.exit(0);
-                                        break;
-                        }
+				case 5:
+						System.exit(0);
+						break;
+					}
                 }
 	}
 
@@ -116,10 +116,10 @@ public class Homepage extends JFrame implements KeyListener {
 
 			g2.setColor(Color.BLACK);
 			g2.fillRect(0, 0, screenWidth, screenHeight);
-			g2.drawImage(bg, 0 + xOffset, 0, 1600 + xOffset, 940, null);
+			g2.drawImage(bg, 0 + xOffset, 0, 1920 + xOffset, 1080, null);
 
 			if (instructions) {
-				g2.drawImage(instruction, -10, 0, 1580 + xOffset, 940, null);
+				g2.drawImage(instruction, -10, 0, 1920 + xOffset, 1080, null);
 			} else if (credit) {
 				g2.setColor(Color.WHITE);
 				g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
@@ -128,19 +128,19 @@ public class Homepage extends JFrame implements KeyListener {
 
 				switch (button) {
 					case 1:
-						g2.drawImage(play, 0, 0, 1500, 850, null);
+						g2.drawImage(play, 0, 0, 1920, 1080, null);
 						break;
 					case 2:
-						g2.drawImage(rules, 0, 0, 1500, 850, null);
+						g2.drawImage(rules, 0, 0, 1920, 1080, null);
 						break;
 					case 3:
-						g2.drawImage(credits, 0, 0, 1500, 850, null);
+						g2.drawImage(credits, 0, 0, 1920, 1080, null);
 						break;
 					case 4:
-                                                g2.drawImage(scores, 0, 0, 1500, 850, null);
-                                                break;
-                                        case 5:
-                                                g2.drawImage(quit, 0, 0, 1500, 850, null);
+						g2.drawImage(scores, 0, 0, 1920, 1080, null);
+						break;
+					case 5:
+						g2.drawImage(quit, 0, 0, 1920, 1080, null);
 				}
 			}
 		}

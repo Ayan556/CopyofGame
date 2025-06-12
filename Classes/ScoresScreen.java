@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScoresScreen extends JFrame implements KeyListener {
-    public static final int GAME_WIDTH = 1600;
-    public static final int GAME_HEIGHT = 900;
+    public static final int GAME_WIDTH = 1920;
+    public static final int GAME_HEIGHT = 1080;
 
     private BufferedImage background = ResourceLoader.loadImage("scoresBackground.jpg");
     private Font customFont = FontLoader.loadFont("Game-Font.ttf");
@@ -24,11 +24,6 @@ public class ScoresScreen extends JFrame implements KeyListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setUndecorated(true);
         this.setLocationRelativeTo(null);
-
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        if (gd.isFullScreenSupported()) {
-            gd.setFullScreenWindow(this);
-        }
 
         loadScores();
 
