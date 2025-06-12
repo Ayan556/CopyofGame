@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -27,6 +29,8 @@ public class Homepage extends JFrame implements KeyListener {
 	ArrayList<String> scoreList;
 	private int scrollIndex = 0;
 	private static final int VISIBLE_LINES = 10;
+
+	ArrayList<String> creditLines;
 
 	private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
 	private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
@@ -45,6 +49,20 @@ public class Homepage extends JFrame implements KeyListener {
 
 		instructions = false;
 		credit = false;
+
+		score = false;
+
+		creditLines = new ArrayList<String>();
+		creditLines.add("Game Directed and Created By:");
+		creditLines.add("Ayan Talukdar");
+		creditLines.add("Minjin Choi");
+		creditLines.add("Candice Lee");
+		creditLines.add("Dominik Fear-Firman");
+		creditLines.add(" ");
+		creditLines.add("Artists:");
+		creditLines.add("Catherine Zhang");
+		creditLines.add("Minjin Choi");
+		creditLines.add("Candice Lee");
 
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -106,11 +124,11 @@ public class Homepage extends JFrame implements KeyListener {
 					repaint();
 					break;
 
-                                case 4:
-                                        SoundPlayer.stopBackground();
-                                        Homepage.this.dispose();
-                                        new ScoresScreen();
-                                        break;
+				case 4:
+					SoundPlayer.stopBackground();
+					Homepage.this.dispose();
+					new ScoresScreen();
+					break;
 				case 5:
 					System.exit(0);
 					break;
@@ -146,9 +164,21 @@ public class Homepage extends JFrame implements KeyListener {
 			if (instructions) {
 				g2.drawImage(instruction, 0, 0, screenWidth, screenHeight, null);
 			} else if (credit) {
+				g2.setColor(Color.BLACK);
+				g2.fillRect(0, 0, screenWidth, screenHeight);
 				g2.setColor(Color.WHITE);
-				g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
-				g2.drawString("Game Directed and Created By: Ayan, Candice, Minjin, Dominik", 310 + xOffset, 520 + yOffset);
+				g2.setFont(customFont.deriveFont(Font.PLAIN, 100));
+				FontMetrics fm = g.getFontMetrics();
+				int textHeight = fm.getHeight();
+				int counter = 1;
+
+				for (String line : creditLines) {
+					int textWidth = fm.stringWidth(line);
+					int x = (getWidth() - textWidth) / 2;
+					g2.drawString(line, x, 275 + yOffset + counter*textHeight);
+
+					counter++;
+				}
 			} else if (score) {
 				loadScores();
 

@@ -721,27 +721,27 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				if (ih.heal instanceof Bandage) bandageCount++; else if (ih.heal instanceof ShieldPotion) shieldPotionCount++;
 			}
 
-			g2.setFont(customFont.deriveFont(Font.PLAIN, 30));
+			g2.setFont(customFont.deriveFont(Font.PLAIN, 50));
 			g2.setColor(Color.WHITE);
-			g2.drawString("Power-Ups", bar1X, invY - 10);
+			g2.drawString("Power-Ups", bar1X + 60, invY - 10);
 			int drawY = invY;
-			g2.drawImage(speedIcon, bar1X, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + speedCount, bar1X + iconSize - 15, drawY + iconSize - 5);
+			g2.drawImage(speedIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+			g2.drawString("x" + speedCount, bar1X + iconSize + 45, drawY + iconSize - 5);
 			if (speedActive) g2.drawString(String.valueOf(speedRemain / 100), bar1X, drawY + iconSize + 15);
 
 			drawY += iconSize + 30;
-			g2.drawImage(shotgunIcon, bar1X, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + shotgunCount, bar1X + iconSize - 15, drawY + iconSize - 5);
+			g2.drawImage(shotgunIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+			g2.drawString("x" + shotgunCount, bar1X + iconSize + 45, drawY + iconSize - 5);
 			if (shotgunActive) g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + iconSize + 15);
 
 			drawY += iconSize + 40;
-			g2.drawString("Heals", bar1X, drawY - 10);
-			g2.drawImage(bandageIcon, bar1X, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + bandageCount, bar1X + iconSize - 15, drawY + iconSize - 5);
+			g2.drawString("Heals", bar1X + 60, drawY - 10);
+			g2.drawImage(bandageIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+			g2.drawString("x" + bandageCount, bar1X + iconSize + 45, drawY + iconSize - 5);
 
 			drawY += iconSize + 30;
-			g2.drawImage(shieldIcon, bar1X, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + shieldPotionCount, bar1X + iconSize - 15, drawY + iconSize - 5);
+			g2.drawImage(shieldIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+			g2.drawString("x" + shieldPotionCount, bar1X + iconSize + 45, drawY + iconSize - 5);
 
 			int waveX = transX + worldW + 20;
 			int waveY = transY + (int)(200 * scale);
