@@ -17,13 +17,13 @@ public class Homepage extends JFrame implements KeyListener {
 	public static final int GAME_WIDTH = 1600;
 	public static final int GAME_HEIGHT = 900;
 	int button;
-        boolean instructions, credit;
-        private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
-        private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
-        private BufferedImage play = ResourceLoader.loadImage("playselected.png");
-        private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
-        private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
-        private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
+  boolean instructions, credit;
+  private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
+  private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
+  private BufferedImage play = ResourceLoader.loadImage("playselected.png");
+  private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
+  private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
+  private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
 	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
@@ -35,16 +35,11 @@ public class Homepage extends JFrame implements KeyListener {
 		instructions = false;
 		credit = false;
 
-                this.setSize(screenSize.width, screenSize.height);
-                this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                this.setUndecorated(true);
-                this.setLocationRelativeTo(null);
-
-                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-                if (gd.isFullScreenSupported()) {
-                        gd.setFullScreenWindow(this);
-                }
+    this.setSize(screenSize.width, screenSize.height);
+    this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setUndecorated(true);
+    this.setLocationRelativeTo(null);
 
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
 		drawingPanel.setFocusable(true);
