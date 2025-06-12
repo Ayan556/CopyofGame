@@ -30,6 +30,7 @@ public class DeathScreen extends JFrame implements KeyListener{
         this.setSize(screenSize.width, screenSize.height);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setUndecorated(true);
         this.setLocationRelativeTo(null);
 
         DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);

@@ -121,6 +121,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		this.setSize(screenSize.width, screenSize.height);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setUndecorated(true);
 		this.setLocationRelativeTo(null);
 		this.add(draw);
     

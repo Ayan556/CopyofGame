@@ -111,8 +111,8 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
         };
         private int row = 0;
         private int col = 0;
-        private final int KEY_W = 60;
-        private final int KEY_H = 60;
+        private final int KEY_W = 80;
+        private final int KEY_H = 80;
         private final int SPACING = 10;
 
         String getSelectedKey() { return layout[row][col]; }
