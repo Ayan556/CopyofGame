@@ -94,7 +94,8 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
 
-            g2.drawImage(youDied, 1920, 1080 + yOffset, null);
+            // Draw the death screen background centered in the window
+            g2.drawImage(youDied, xOffset, yOffset, null);
 
             g2.setColor(new Color(199, 193, 159));
             g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
