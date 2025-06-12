@@ -33,8 +33,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private int wave;
 	private int enemiesToSpawn;
 	private int enemiesSpawnedThisWave;
-	private boolean waveInProgress;
-	private boolean paused, resume;
+        private boolean waveInProgress;
+        private boolean paused, resume;
+        // Track whether the Game Over sound effect has already been played
+        private boolean hasPlayedGameOverSound;
 	private int xOffset, yOffset;
 
 	// State fields
@@ -110,9 +112,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		wave = 1;
 		enemiesToSpawn = 2;
 		enemiesSpawnedThisWave = 0;
-		waveInProgress = false;
-		paused = false;
-		resume = true;
+                waveInProgress = false;
+                paused = false;
+                resume = true;
+                hasPlayedGameOverSound = false;
 
 		// Drawing panel handles rendering
 		draw = new DrawingPanel(screenSize.width, screenSize.height);
@@ -482,16 +485,26 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		if (!player.isAlive()) {
-			timer.stop();
-			player.deactivateAllPowerUps();
-			SoundPlayer.stopBackground();
-			HighscoreManager.addScore(username, score.getScore());
-			DeathScreen deathScreen = new DeathScreen();
-			deathScreen.setResult(username, score.getScore());
-			this.dispose();
-			return;
-		}
+                if (!player.isAlive()) {
+                        if (!hasPlayedGameOverSound) {
+                                try {
+                                        // Play the game over sound effect once when the player dies
+                                        SoundPlayer.playSound("GameOver.wav");
+                                } catch (Exception ex) {
+                                        // Log any issues playing the clip but continue showing the death screen
+                                        ex.printStackTrace();
+                                }
+                                hasPlayedGameOverSound = true;
+                        }
+
+                        timer.stop();
+                        player.deactivateAllPowerUps();
+                        HighscoreManager.addScore(username, score.getScore());
+                        DeathScreen deathScreen = new DeathScreen();
+                        deathScreen.setResult(username, score.getScore());
+                        this.dispose();
+                        return;
+                }
 
 		//Set moving for animation
 		if (keysPressed.isEmpty()) {
