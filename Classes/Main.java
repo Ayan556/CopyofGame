@@ -123,21 +123,21 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.add(draw);
-                // Overlay username input before game starts
-                usernameInput = new UsernameInputScreen(name -> {
-                        username = name;
-                        score.setUsername(name);
-                        usernameInput.close();
-                        // Return focus to the game window so joystick controls work
-                        SwingUtilities.invokeLater(() -> {
-                                Main.this.requestFocusInWindow();
-                                Main.this.requestFocus();
-                        });
-                });
-                this.setGlassPane(usernameInput);
-                usernameInput.setVisible(true);
-                usernameInput.requestFocusInWindow();
-
+    
+    // Overlay username input before game starts
+    usernameInput = new UsernameInputScreen(name -> {
+            username = name;
+            score.setUsername(name);
+            usernameInput.close();
+            // Return focus to the game window so joystick controls work
+            SwingUtilities.invokeLater(() -> {
+                    Main.this.requestFocusInWindow();
+                    Main.this.requestFocus();
+            });
+    });
+    this.setGlassPane(usernameInput);
+    usernameInput.setVisible(true);
+    usernameInput.requestFocusInWindow();
 		this.setVisible(true);
 //		SoundPlayer.playBackground("BackgroundMusic.wav");
 
