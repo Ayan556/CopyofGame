@@ -1,4 +1,8 @@
 DFF - 410
 VTR - 190
+WSD - 180
 SCF - 160
+AYT - 140
 DDF - 0
+EDF - 0
+SER - 0
