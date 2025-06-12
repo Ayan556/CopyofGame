@@ -127,26 +127,26 @@ public class Main extends JFrame implements ActionListener, KeyListener {
     
     // Overlay username input before game starts
     usernameInput = new UsernameInputScreen(name -> {
-            username = name;
-            score.setUsername(name);
-            usernameInput.close();
-            // Return focus to the game window so joystick controls work
-            SwingUtilities.invokeLater(() -> {
-                    Main.this.requestFocusInWindow();
-                    Main.this.requestFocus();
-            });
+		username = name;
+		score.setUsername(name);
+		usernameInput.close();
+		// Return focus to the game window so joystick controls work
+		SwingUtilities.invokeLater(() -> {
+				Main.this.requestFocusInWindow();
+				Main.this.requestFocus();
+		});
     });
     this.setGlassPane(usernameInput);
     usernameInput.setVisible(true);
     usernameInput.requestFocusInWindow();
-		this.setVisible(true);
-//		SoundPlayer.playBackground("BackgroundMusic.wav");
+	this.setVisible(true);
+	//SoundPlayer.playBackground("BackgroundMusic.wav");
 
-		// Input and timer
-		this.addKeyListener(this);
-		enemies = new ArrayList<>();
-		timer = new Timer(TIMESPEED, this);
-		//timer.start();
+	// Input and timer
+	this.addKeyListener(this);
+	enemies = new ArrayList<>();
+	timer = new Timer(TIMESPEED, this);
+	//timer.start();
 	}
 
 	/**
@@ -160,31 +160,31 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			// Collision with obstacles
 			for (Rectangle r : map.getObstacles()) {
-                                if (b.intersects(r)) {
-                                        if (b instanceof BouncingBullet) {
-                                                if (!((BouncingBullet) b).bounce(r)) {
-                                                        remove = true;
-                                                }
-                                        } else {
-                                                remove = true;
-                                        }
-                                        break;
-                                }
+				if (b.intersects(r)) {
+						if (b instanceof BouncingBullet) {
+								if (!((BouncingBullet) b).bounce(r)) {
+										remove = true;
+								}
+						} else {
+								remove = true;
+						}
+						break;
+				}
 			}
 
 			// Collision with walls
 			if (!remove) {
 				for (Rectangle wall : map.getWalls()) {
-                                        if (b.intersects(wall)) {
-                                                if (b instanceof BouncingBullet) {
-                                                        if (!((BouncingBullet) b).bounce(wall)) {
-                                                                remove = true;
-                                                        }
-                                                } else {
-                                                        remove = true;
-                                                }
-                                                break;
-                                        }
+					if (b.intersects(wall)) {
+							if (b instanceof BouncingBullet) {
+									if (!((BouncingBullet) b).bounce(wall)) {
+											remove = true;
+									}
+							} else {
+									remove = true;
+							}
+							break;
+					}
 				}
 			}
 
