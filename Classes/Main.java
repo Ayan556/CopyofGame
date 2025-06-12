@@ -13,6 +13,9 @@ import java.util.Set;
 import java.util.Random;
 import javax.sound.sampled.*;
 
+import java.io.*;
+
+
 /**
  * The main game engine class that handles the frame, game loop, input, and rendering.
  */
@@ -48,8 +51,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private Player player;
 	private MapGenerator map;
 	private Score score;
-	private DrawingPanel draw;
-	private Graphics2D g2;
+        private DrawingPanel draw;
+        private UsernameInputScreen usernameInput;
+        private Graphics2D g2;
+        private String username = "";
 
 	//enemy identifier
 	private int enemyNums;
@@ -118,6 +123,21 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.add(draw);
+                // Overlay username input before game starts
+                usernameInput = new UsernameInputScreen(name -> {
+                        username = name;
+                        score.setUsername(name);
+                        usernameInput.close();
+                        // Return focus to the game window so joystick controls work
+                        SwingUtilities.invokeLater(() -> {
+                                Main.this.requestFocusInWindow();
+                                Main.this.requestFocus();
+                        });
+                });
+                this.setGlassPane(usernameInput);
+                usernameInput.setVisible(true);
+                usernameInput.requestFocusInWindow();
+
 		this.setVisible(true);
 //		SoundPlayer.playBackground("BackgroundMusic.wav");
 
@@ -458,15 +478,16 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		if (!player.isAlive()) {
-			timer.stop();
-			player.deactivateAllPowerUps();
-			SoundPlayer.stopBackground();
-			DeathScreen deathScreen = new DeathScreen();
-			deathScreen.updateScore(score.score);
-			this.dispose();
-			return;
-		}
+                if (!player.isAlive()) {
+                        timer.stop();
+                        player.deactivateAllPowerUps();
+                        SoundPlayer.stopBackground();
+                        HighscoreManager.addScore(username, score.getScore());
+                        DeathScreen deathScreen = new DeathScreen();
+                        deathScreen.setResult(username, score.getScore());
+                        this.dispose();
+                        return;
+                }
 
 		//Set moving for animation
 		if (keysPressed.isEmpty()) {
@@ -765,21 +786,32 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 
-	private class Score {
-		//Score keeper
-		private int score;
+        private class Score {
+                //Score keeper
+                private int score;
+                private String name = "";
 
-		Score() {
-			this.score = 0;
-		}
+                Score() {
+                        this.score = 0;
+                }
 
-		public void updateScore(int increase) {
-			score += increase;
-		}
+                public void setUsername(String name) {
+                        this.name = name;
+                }
 
-		public void drawScore(Graphics2D g, int x, int y) {
-			g.setFont(customFont.deriveFont(Font.PLAIN, 200));
-			g.drawString(String.valueOf(score), x, y);
-		}
-	}
+                public int getScore() {
+                        return score;
+                }
+
+                public void updateScore(int increase) {
+                        score += increase;
+                }
+
+                public void drawScore(Graphics2D g, int x, int y) {
+                        g.setFont(customFont.deriveFont(Font.PLAIN, 40));
+                        g.drawString(name, x, y - 50);
+                        g.setFont(customFont.deriveFont(Font.PLAIN, 200));
+                        g.drawString(String.valueOf(score), x, y);
+                }
+        }
 }
