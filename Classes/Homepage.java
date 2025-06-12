@@ -15,12 +15,13 @@ public class Homepage extends JFrame implements KeyListener {
 	public static final int GAME_WIDTH = 1600;
 	public static final int GAME_HEIGHT = 900;
 	int button;
-	boolean instructions, credit;
-	private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
-	private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
-	private BufferedImage play = ResourceLoader.loadImage("playselected.png");
-	private BufferedImage rules = ResourceLoader.loadImage("instselected.png");
-	private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
+        boolean instructions, credit;
+        private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
+        private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
+        private BufferedImage play = ResourceLoader.loadImage("playselected.png");
+        private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
+        private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
+        private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
 	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
@@ -48,15 +49,15 @@ public class Homepage extends JFrame implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W) {
-			if (button != 1) {
-				button--;
-			}
-			repaint();
-		} else if (e.getKeyCode() == KeyEvent.VK_S) {
-			if (button != 4) button++;
-			repaint();
-		}
+                if (e.getKeyCode() == KeyEvent.VK_W) {
+                        if (button != 1) {
+                                button--;
+                        }
+                        repaint();
+                } else if (e.getKeyCode() == KeyEvent.VK_S) {
+                        if (button != 5) button++;
+                        repaint();
+                }
 
 		if (e.getKeyCode() == KeyEvent.VK_L) {
 			switch (button) {
@@ -72,17 +73,22 @@ public class Homepage extends JFrame implements KeyListener {
 					repaint();
 					break;
 
-				case 3:
-					if (credit) credit = false;
-					else credit = true;
-					repaint();
-					break;
+                                case 3:
+                                        if (credit) credit = false;
+                                        else credit = true;
+                                        repaint();
+                                        break;
 
-				case 4:
-					System.exit(0);
-					break;
-			}
-		}
+                                case 4:
+                                        this.dispose();
+                                        new ScoresScreen();
+                                        break;
+
+                                case 5:
+                                        System.exit(0);
+                                        break;
+                        }
+                }
 	}
 
 	public void keyTyped(KeyEvent e) {}
@@ -129,7 +135,10 @@ public class Homepage extends JFrame implements KeyListener {
 						g2.drawImage(credits, 0, 0, 1500, 850, null);
 						break;
 					case 4:
-						g2.drawImage(quit, 0, 0, 1500, 850, null);
+                                                g2.drawImage(scores, 0, 0, 1500, 850, null);
+                                                break;
+                                        case 5:
+                                                g2.drawImage(quit, 0, 0, 1500, 850, null);
 				}
 			}
 		}
