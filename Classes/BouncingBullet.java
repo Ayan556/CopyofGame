@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 
 public class BouncingBullet extends Bullet {
 
+    /** Number of wall/obstacle bounces left before this bullet disappears. */
+    private int bouncesRemaining = 2;
+
     // Legacy bullet images used for shotgun power-up
     private static final BufferedImage bulletLeft  = ResourceLoader.loadImage("BulletLeft.png");
     private static final BufferedImage bulletRight = ResourceLoader.loadImage("BulletRight.png");
@@ -30,14 +33,29 @@ public class BouncingBullet extends Bullet {
         setSpeedY(-getSpeedY());
     }
 
-    public void bounce(Rectangle r) {
+    /**
+     * Handles bouncing logic when this bullet collides with a wall or obstacle.
+     *
+     * @param r the rectangle that was hit
+     * @return {@code true} if the bullet should continue moving,
+     *         {@code false} if it has exceeded its bounce limit
+     */
+    public boolean bounce(Rectangle r) {
+        if (bouncesRemaining <= 0) {
+            return false;
+        }
+
         int overlapX = Math.min(this.x + this.width, r.x + r.width) - Math.max(this.x, r.x);
         int overlapY = Math.min(this.y + this.height, r.y + r.height) - Math.max(this.y, r.y);
+
         if (overlapX <= overlapY) {
             bounceX();
         }
         if (overlapY <= overlapX) {
             bounceY();
         }
+
+        bouncesRemaining--;
+        return true;
     }
 }

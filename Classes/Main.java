@@ -160,27 +160,31 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			// Collision with obstacles
 			for (Rectangle r : map.getObstacles()) {
-				if (b.intersects(r)) {
-					if (b instanceof BouncingBullet) {
-						((BouncingBullet) b).bounce(r);
-					} else {
-						remove = true;
-					}
-					break;
-				}
+                                if (b.intersects(r)) {
+                                        if (b instanceof BouncingBullet) {
+                                                if (!((BouncingBullet) b).bounce(r)) {
+                                                        remove = true;
+                                                }
+                                        } else {
+                                                remove = true;
+                                        }
+                                        break;
+                                }
 			}
 
 			// Collision with walls
 			if (!remove) {
 				for (Rectangle wall : map.getWalls()) {
-					if (b.intersects(wall)) {
-						if (b instanceof BouncingBullet) {
-							((BouncingBullet) b).bounce(wall);
-						} else {
-							remove = true;
-						}
-						break;
-					}
+                                        if (b.intersects(wall)) {
+                                                if (b instanceof BouncingBullet) {
+                                                        if (!((BouncingBullet) b).bounce(wall)) {
+                                                                remove = true;
+                                                        }
+                                                } else {
+                                                        remove = true;
+                                                }
+                                                break;
+                                        }
 				}
 			}
 
