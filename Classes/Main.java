@@ -57,7 +57,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// Assets
 	private BufferedImage background = ResourceLoader.loadImage("BackgroundMap.png");
 	private BufferedImage obstacle = ResourceLoader.loadImage("Obstacle.png");
-	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon2.png");
+	private BufferedImage shotgunIcon = ResourceLoader.loadImage("ShotgunIcon.png");
 	private BufferedImage speedIcon = ResourceLoader.loadImage("SpeedBoostIcon.png");
 	private BufferedImage pauseBackground = ResourceLoader.loadImage("PauseBG.png");
 	private BufferedImage heartsSheet = ResourceLoader.loadImage("HealthBar.png");
