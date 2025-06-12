@@ -9,7 +9,9 @@ public class Bullet extends Rectangle {
 
 	private int vx, vy;       // Velocity components (direction and speed)
 	private int panW, panH;   // Dimensions of the game panel (for bounds checking)
-        private BufferedImage bulletImage;  // Individual bullet image for direction
+        // Image used when rendering this bullet
+        // Protected so subclasses like BouncingBullet can swap graphics
+        protected BufferedImage bulletImage;
 
         // Static resources - single sprite sheet containing all bullet directions
         private static final BufferedImage bulletSheet = ResourceLoader.loadImage("bulletSprites.png");
