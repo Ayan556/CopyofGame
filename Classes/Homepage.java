@@ -21,14 +21,27 @@ import java.io.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import java.awt.BorderLayout;
+
 public class Homepage extends JFrame implements KeyListener {
 	public static final int GAME_WIDTH = 1920;
 	public static final int GAME_HEIGHT = 1080;
-	int button;
-	boolean instructions, credit, score;
-	ArrayList<String> scoreList;
-	private int scrollIndex = 0;
-	private static final int VISIBLE_LINES = 10;
+        int button;
+        boolean instructions, credit;
+
+        // True when the leaderboard panel is visible
+        private boolean showingLeaderboard;
+
+        // Reusable leaderboard panel
+        private LeaderboardPanel leaderboardPanel;
+
+        // Main drawing panel reference so we can request focus back
+        private DrawingPanel drawingPanel;
+
+        // Legacy fields kept for reference but no longer used
+        ArrayList<String> scoreList;
+        private int scrollIndex = 0;
+        private static final int VISIBLE_LINES = 10;
 
 	ArrayList<String> creditLines;
 
@@ -45,12 +58,11 @@ public class Homepage extends JFrame implements KeyListener {
 	Homepage() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		button = 1;
-		SoundPlayer.playBackground("CyberpunkMusic.wav");
+                SoundPlayer.playBackground("CyberpunkMusic.wav");
 
-		instructions = false;
-		credit = false;
-
-		score = false;
+                instructions = false;
+                credit = false;
+                showingLeaderboard = false;
 
 		creditLines = new ArrayList<String>();
 		creditLines.add("Game Directed and Created By:");
@@ -70,70 +82,97 @@ public class Homepage extends JFrame implements KeyListener {
 		this.setUndecorated(true);
 		this.setLocationRelativeTo(null);
 
-		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
-		drawingPanel.setFocusable(true);
-		drawingPanel.requestFocusInWindow();
-		drawingPanel.addKeyListener(this);
-		this.add(drawingPanel);
-		this.setVisible(true);
-	}
+                drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
+                drawingPanel.setLayout(new BorderLayout());
+                drawingPanel.setFocusable(true);
+                drawingPanel.requestFocusInWindow();
+                drawingPanel.addKeyListener(this);
 
-	private void loadScores() {
-		scoreList = new ArrayList<>();
-		File file = new File("highscores.txt");
-		if (!file.exists()) return;
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (!line.isBlank()) scoreList.add(line);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+                // Setup leaderboard panel within the homepage so we can
+                // swap to it without creating a new window or stopping music
+                leaderboardPanel = new LeaderboardPanel();
+                leaderboardPanel.setOpaque(false);
+                leaderboardPanel.setVisible(false);
+                drawingPanel.add(leaderboardPanel, BorderLayout.CENTER);
+
+                this.add(drawingPanel);
+                this.setVisible(true);
+        }
+
+        // Legacy score loading method kept for reference
+        private void loadScores() {
+                scoreList = new ArrayList<>();
+                File file = new File("highscores.txt");
+                if (!file.exists()) return;
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                                if (!line.isBlank()) scoreList.add(line);
+                        }
+                } catch (IOException e) {
+                        e.printStackTrace();
+                }
+        }
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W) {
-			if (button != 1) {
-				button--;
-			}
-			repaint();
-		} else if (e.getKeyCode() == KeyEvent.VK_S) {
-			if (button != 5) button++;
-			repaint();
-		}
+                // When the leaderboard is showing, delegate key events
+                if (showingLeaderboard) {
+                        if (e.getKeyCode() == KeyEvent.VK_L) {
+                                // Hide leaderboard and return to menu
+                                showingLeaderboard = false;
+                                leaderboardPanel.setVisible(false);
+                                drawingPanel.requestFocusInWindow();
+                                repaint();
+                        } else {
+                                // Allow scrolling within the leaderboard
+                                leaderboardPanel.keyPressed(e);
+                        }
+                        return;
+                }
 
-		if (e.getKeyCode() == KeyEvent.VK_L) {
-			switch (button) {
-				case 1:
-					SoundPlayer.stopBackground();
-					this.dispose();
-					new Main();
-					break;
+                if (e.getKeyCode() == KeyEvent.VK_W) {
+                        if (button != 1) {
+                                button--;
+                        }
+                        repaint();
+                } else if (e.getKeyCode() == KeyEvent.VK_S) {
+                        if (button != 5) button++;
+                        repaint();
+                }
 
-				case 2:
-					if (instructions) instructions = false;
-					else instructions = true;
-					repaint();
-					break;
+                if (e.getKeyCode() == KeyEvent.VK_L) {
+                        switch (button) {
+                                case 1:
+                                        SoundPlayer.stopBackground();
+                                        this.dispose();
+                                        new Main();
+                                        break;
 
-				case 3:
-					if (credit) credit = false;
-					else credit = true;
-					repaint();
-					break;
+                                case 2:
+                                        if (instructions) instructions = false;
+                                        else instructions = true;
+                                        repaint();
+                                        break;
 
-				case 4:
-					SoundPlayer.stopBackground();
-					Homepage.this.dispose();
-					new ScoresScreen();
-					break;
-				case 5:
-					System.exit(0);
-					break;
-			}
-		}
+                                case 3:
+                                        if (credit) credit = false;
+                                        else credit = true;
+                                        repaint();
+                                        break;
+
+                                case 4:
+                                        // Show the leaderboard without stopping the music
+                                        showingLeaderboard = true;
+                                        leaderboardPanel.loadScores();
+                                        leaderboardPanel.setVisible(true);
+                                        repaint();
+                                        break;
+                                case 5:
+                                        System.exit(0);
+                                        break;
+                        }
+                }
 	}
 
 	public void keyTyped(KeyEvent e) {}
@@ -179,28 +218,11 @@ public class Homepage extends JFrame implements KeyListener {
 
 					counter++;
 				}
-			} else if (score) {
-				loadScores();
-
-				g2.setColor(Color.BLACK);
-				g2.fillRect(0, 0, screenWidth, screenHeight);
-				g2.drawImage(scoresBG, 0, 0, screenWidth, screenHeight, null);
-
-				int rectW = 800;
-				int rectH = 600;
-				int rectX = (getWidth() - rectW) / 2;
-				int rectY = (getHeight() - rectH) / 2;
-				g2.setColor(new Color(0, 0, 0, 180));
-				g2.fillRect(rectX, rectY, rectW, rectH);
-				g2.setColor(Color.WHITE);
-				g2.setFont(customFont.deriveFont(Font.PLAIN, 50));
-				int lineHeight = g2.getFontMetrics().getHeight();
-				for (int i = 0; i < VISIBLE_LINES; i++) {
-					int idx = scrollIndex + i;
-					if (idx >= scoreList.size()) break;
-					String line = scoreList.get(idx);
-					g2.drawString(line, rectX + 40, rectY + 80 + i * lineHeight);
-				}
+                        } else if (showingLeaderboard) {
+                                // Darken the background and draw the leaderboard backdrop
+                                g2.setColor(Color.BLACK);
+                                g2.fillRect(0, 0, screenWidth, screenHeight);
+                                g2.drawImage(scoresBG, 0, 0, screenWidth, screenHeight, null);
 			} else {
 				switch (button) {
 					case 1:
