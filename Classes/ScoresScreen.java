@@ -85,7 +85,7 @@ public class ScoresScreen extends JFrame implements KeyListener {
 
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
-            g2.drawImage(background, xOffset, yOffset, GAME_WIDTH, GAME_HEIGHT, null);
+            g2.drawImage(background, 0, 0, screenWidth, screenHeight, null);
 
             int rectW = 800;
             int rectH = 600;

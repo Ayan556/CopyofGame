@@ -10,6 +10,12 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -17,14 +23,19 @@ public class Homepage extends JFrame implements KeyListener {
 	public static final int GAME_WIDTH = 1920;
 	public static final int GAME_HEIGHT = 1080;
 	int button;
-    boolean instructions, credit;
-    private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
-    private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
-    private BufferedImage play = ResourceLoader.loadImage("playselected.png");
-    private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
-    private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
-    private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
+	boolean instructions, credit, score;
+	ArrayList<String> scoreList;
+	private int scrollIndex = 0;
+	private static final int VISIBLE_LINES = 10;
+
+	private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
+	private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
+	private BufferedImage play = ResourceLoader.loadImage("playselected.png");
+	private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
+	private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
+	private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
 	private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
+	private BufferedImage scoresBG = ResourceLoader.loadImage("scoresBackground.jpg");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
 	Homepage() {
@@ -49,17 +60,31 @@ public class Homepage extends JFrame implements KeyListener {
 		this.setVisible(true);
 	}
 
+	private void loadScores() {
+		scoreList = new ArrayList<>();
+		File file = new File("highscores.txt");
+		if (!file.exists()) return;
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (!line.isBlank()) scoreList.add(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_W) {
-                        if (button != 1) {
-                                button--;
-                        }
-                        repaint();
-                } else if (e.getKeyCode() == KeyEvent.VK_S) {
-                        if (button != 5) button++;
-                        repaint();
-                }
+		if (e.getKeyCode() == KeyEvent.VK_W) {
+			if (button != 1) {
+				button--;
+			}
+			repaint();
+		} else if (e.getKeyCode() == KeyEvent.VK_S) {
+			if (button != 5) button++;
+			repaint();
+		}
 
 		if (e.getKeyCode() == KeyEvent.VK_L) {
 			switch (button) {
@@ -76,21 +101,20 @@ public class Homepage extends JFrame implements KeyListener {
 					break;
 
 				case 3:
-						if (credit) credit = false;
-						else credit = true;
-						repaint();
-						break;
+					if (credit) credit = false;
+					else credit = true;
+					repaint();
+					break;
 
 				case 4:
-						this.dispose();
-						new ScoresScreen();
-						break;
-
+					score = !score;
+					repaint();
+					break;
 				case 5:
-						System.exit(0);
-						break;
-					}
-                }
+					System.exit(0);
+					break;
+			}
+		}
 	}
 
 	public void keyTyped(KeyEvent e) {}
@@ -116,31 +140,52 @@ public class Homepage extends JFrame implements KeyListener {
 
 			g2.setColor(Color.BLACK);
 			g2.fillRect(0, 0, screenWidth, screenHeight);
-			g2.drawImage(bg, 0 + xOffset, 0, 1920 + xOffset, 1080, null);
+			g2.drawImage(bg, 0, 0, screenWidth, screenHeight, null);
 
 			if (instructions) {
-				g2.drawImage(instruction, -10, 0, 1920 + xOffset, 1080, null);
+				g2.drawImage(instruction, 0, 0, screenWidth, screenHeight, null);
 			} else if (credit) {
 				g2.setColor(Color.WHITE);
 				g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
 				g2.drawString("Game Directed and Created By: Ayan, Candice, Minjin, Dominik", 310 + xOffset, 520 + yOffset);
-			}	else {
+			} else if (score) {
+				loadScores();
 
+				g2.setColor(Color.BLACK);
+				g2.fillRect(0, 0, screenWidth, screenHeight);
+				g2.drawImage(scoresBG, 0, 0, screenWidth, screenHeight, null);
+
+				int rectW = 800;
+				int rectH = 600;
+				int rectX = (getWidth() - rectW) / 2;
+				int rectY = (getHeight() - rectH) / 2;
+				g2.setColor(new Color(0, 0, 0, 180));
+				g2.fillRect(rectX, rectY, rectW, rectH);
+				g2.setColor(Color.WHITE);
+				g2.setFont(customFont.deriveFont(Font.PLAIN, 50));
+				int lineHeight = g2.getFontMetrics().getHeight();
+				for (int i = 0; i < VISIBLE_LINES; i++) {
+					int idx = scrollIndex + i;
+					if (idx >= scoreList.size()) break;
+					String line = scoreList.get(idx);
+					g2.drawString(line, rectX + 40, rectY + 80 + i * lineHeight);
+				}
+			} else {
 				switch (button) {
 					case 1:
-						g2.drawImage(play, 0, 0, 1920, 1080, null);
+						g2.drawImage(play, 0, 0, screenWidth, screenHeight, null);
 						break;
 					case 2:
-						g2.drawImage(rules, 0, 0, 1920, 1080, null);
+						g2.drawImage(rules, 0, 0, screenWidth, screenHeight, null);
 						break;
 					case 3:
-						g2.drawImage(credits, 0, 0, 1920, 1080, null);
+						g2.drawImage(credits, 0, 0, screenWidth, screenHeight, null);
 						break;
 					case 4:
-						g2.drawImage(scores, 0, 0, 1920, 1080, null);
+						g2.drawImage(scores, 0, 0, screenWidth, screenHeight, null);
 						break;
 					case 5:
-						g2.drawImage(quit, 0, 0, 1920, 1080, null);
+						g2.drawImage(quit, 0, 0, screenWidth, screenHeight, null);
 				}
 			}
 		}

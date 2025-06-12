@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Random;
 import javax.sound.sampled.*;
-
 import java.io.*;
 
 
@@ -69,7 +68,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	private BufferedImage shieldFull = ResourceLoader.loadImage("FullShield.png");
 	private BufferedImage shieldEmpty = ResourceLoader.loadImage("EmptyShield.png");
 	private BufferedImage bandageIcon = ResourceLoader.loadImage("MedKit.png");
-	private BufferedImage shieldPotionIcon = ResourceLoader.loadImage("ShieldPotion.png");
+	private BufferedImage shieldIcon = ResourceLoader.loadImage("FullShield.png");
 	private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
 
@@ -118,35 +117,35 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		// Drawing panel handles rendering
 		draw = new DrawingPanel(screenSize.width, screenSize.height);
 
-    this.setSize(screenSize.width, screenSize.height);
-    this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-    this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    this.setUndecorated(true);
-    this.setLocationRelativeTo(null);
-    this.add(draw);
-    
-    // Overlay username input before game starts
-    usernameInput = new UsernameInputScreen(name -> {
-		username = name;
-		score.setUsername(name);
-		usernameInput.close();
-		// Return focus to the game window so joystick controls work
-		SwingUtilities.invokeLater(() -> {
+		this.setSize(screenSize.width, screenSize.height);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setUndecorated(true);
+		this.setLocationRelativeTo(null);
+		this.add(draw);
+
+		// Overlay username input before game starts
+		usernameInput = new UsernameInputScreen(name -> {
+			username = name;
+			score.setUsername(name);
+			usernameInput.close();
+			// Return focus to the game window so joystick controls work
+			SwingUtilities.invokeLater(() -> {
 				Main.this.requestFocusInWindow();
 				Main.this.requestFocus();
+			});
 		});
-    });
-    this.setGlassPane(usernameInput);
-    usernameInput.setVisible(true);
-    usernameInput.requestFocusInWindow();
-	this.setVisible(true);
-	//SoundPlayer.playBackground("BackgroundMusic.wav");
+		this.setGlassPane(usernameInput);
+		usernameInput.setVisible(true);
+		usernameInput.requestFocusInWindow();
+		this.setVisible(true);
+		SoundPlayer.playBackground("BackgroundMusic.wav");
 
-	// Input and timer
-	this.addKeyListener(this);
-	enemies = new ArrayList<>();
-	timer = new Timer(TIMESPEED, this);
-	//timer.start();
+		// Input and timer
+		this.addKeyListener(this);
+		enemies = new ArrayList<>();
+		timer = new Timer(TIMESPEED, this);
+		timer.start();
 	}
 
 	/**
@@ -161,14 +160,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			// Collision with obstacles
 			for (Rectangle r : map.getObstacles()) {
 				if (b.intersects(r)) {
-						if (b instanceof BouncingBullet) {
-								if (!((BouncingBullet) b).bounce(r)) {
-										remove = true;
-								}
-						} else {
-								remove = true;
+					if (b instanceof BouncingBullet) {
+						if (!((BouncingBullet) b).bounce(r)) {
+							remove = true;
 						}
-						break;
+					} else {
+						remove = true;
+					}
+					break;
 				}
 			}
 
@@ -176,14 +175,14 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			if (!remove) {
 				for (Rectangle wall : map.getWalls()) {
 					if (b.intersects(wall)) {
-							if (b instanceof BouncingBullet) {
-									if (!((BouncingBullet) b).bounce(wall)) {
-											remove = true;
-									}
-							} else {
-									remove = true;
+						if (b instanceof BouncingBullet) {
+							if (!((BouncingBullet) b).bounce(wall)) {
+								remove = true;
 							}
-							break;
+						} else {
+							remove = true;
+						}
+						break;
 					}
 				}
 			}
@@ -342,7 +341,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		int y2 = tile2.y + (tile2.height - size) / 2;
 
 		healItems.add(new HealItem(x1, y1, size, new Bandage(), bandageIcon, java.awt.Color.WHITE));
-		healItems.add(new HealItem(x2, y2, size, new ShieldPotion(), shieldPotionIcon, java.awt.Color.WHITE));
+		healItems.add(new HealItem(x2, y2, size, new ShieldPotion(), shieldIcon, java.awt.Color.WHITE));
 	}
 
 	private void dealDamage() {
@@ -741,7 +740,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			g2.drawString("x" + bandageCount, bar1X + iconSize - 15, drawY + iconSize - 5);
 
 			drawY += iconSize + 30;
-			g2.drawImage(shieldPotionIcon, bar1X, drawY, iconSize, iconSize, null);
+			g2.drawImage(shieldIcon, bar1X, drawY, iconSize, iconSize, null);
 			g2.drawString("x" + shieldPotionCount, bar1X + iconSize - 15, drawY + iconSize - 5);
 
 			int waveX = transX + worldW + 20;
@@ -751,7 +750,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 			g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
 			g2.setColor(Color.WHITE);
-			g2.drawString("Wave " + wave, waveX, waveY);
+			g2.drawString("Wave " + wave, waveX, waveY + 80);
 
 			if (!waveInProgress) {
 				g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
@@ -791,32 +790,32 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 
-        private class Score {
-                //Score keeper
-                private int score;
-                private String name = "";
+	private class Score {
+		//Score keeper
+		private int score;
+		private String name = "";
 
-                Score() {
-                        this.score = 0;
-                }
+		Score() {
+			this.score = 0;
+		}
 
-                public void setUsername(String name) {
-                        this.name = name;
-                }
+		public void setUsername(String name) {
+			this.name = name;
+		}
 
-                public int getScore() {
-                        return score;
-                }
+		public int getScore() {
+			return score;
+		}
 
-                public void updateScore(int increase) {
-                        score += increase;
-                }
+		public void updateScore(int increase) {
+			score += increase;
+		}
 
-                public void drawScore(Graphics2D g, int x, int y) {
-                        g.setFont(customFont.deriveFont(Font.PLAIN, 40));
-                        g.drawString(name, x, y - 50);
-                        g.setFont(customFont.deriveFont(Font.PLAIN, 200));
-                        g.drawString(String.valueOf(score), x, y);
-                }
-        }
+		public void drawScore(Graphics2D g, int x, int y) {
+			g.setFont(customFont.deriveFont(Font.PLAIN, 100));
+			g.drawString(name, x, y);
+			g.setFont(customFont.deriveFont(Font.PLAIN, 100));
+			g.drawString(String.valueOf(score), x, y + 50);
+		}
+	}
 }

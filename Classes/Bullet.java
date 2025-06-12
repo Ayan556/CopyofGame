@@ -9,16 +9,16 @@ public class Bullet extends Rectangle {
 
 	private int vx, vy;       // Velocity components (direction and speed)
 	private int panW, panH;   // Dimensions of the game panel (for bounds checking)
-  // Image used when rendering this bullet
-  // Protected so subclasses like BouncingBullet can swap graphics
-  protected BufferedImage bulletImage;
+	// Image used when rendering this bullet
+	// Protected so subclasses like BouncingBullet can swap graphics
+	protected BufferedImage bulletImage;
 
 
-  // Static resources - single sprite sheet containing all bullet directions
-  private static final BufferedImage bulletSheet = ResourceLoader.loadImage("bulletSprites.png");
-  private static final int sheetCols = 4;
-  private static final int frameW = bulletSheet.getWidth() / sheetCols;
-  private static final int frameH = bulletSheet.getHeight();
+	// Static resources - single sprite sheet containing all bullet directions
+	private static final BufferedImage bulletSheet = ResourceLoader.loadImage("bulletSprites.png");
+	private static final int sheetCols = 4;
+	private static final int frameW = bulletSheet.getWidth() / sheetCols;
+	private static final int frameH = bulletSheet.getHeight();
 
 
 
@@ -33,20 +33,20 @@ public class Bullet extends Rectangle {
 	 * @param panH      Height of the game panel
 	 * @param direction Integer direction: 1=left, 2=right, 3=up, 4=down
 	 */
-        public Bullet(int x, int y, int w, int h, int panW, int panH, int direction) {
-                super(x, y, w, h);  // Initialize position and size via Rectangle superclass
+	public Bullet(int x, int y, int w, int h, int panW, int panH, int direction) {
+		super(x, y, w, h);  // Initialize position and size via Rectangle superclass
 
-                // Determine column in sprite sheet based on direction
-                int col = 0;
+		// Determine column in sprite sheet based on direction
+		int col = 0;
 
-                switch (direction) {
-                        case 1 -> { vx = -8; vy = 0; col = 3; } // left
-                        case 2 -> { vx = 8; vy = 0; col = 2; }  // right
-                        case 3 -> { vx = 0; vy = -8; col = 1; } // up
-                        case 4 -> { vx = 0; vy = 8; col = 0; }  // down
-                }
+		switch (direction) {
+			case 1 -> { vx = -8; vy = 0; col = 3; } // left
+			case 2 -> { vx = 8; vy = 0; col = 2; }  // right
+			case 3 -> { vx = 0; vy = -8; col = 1; } // up
+			case 4 -> { vx = 0; vy = 8; col = 0; }  // down
+		}
 
-                bulletImage = bulletSheet.getSubimage(col * frameW, 0, frameW, frameH);
+		bulletImage = bulletSheet.getSubimage(col * frameW, 0, frameW, frameH);
 
 		this.panW = panW;
 		this.panH = panH;

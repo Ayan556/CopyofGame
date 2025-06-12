@@ -36,7 +36,7 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
         setFocusable(true);
     }
 
-     /**
+    /**
      * Deactivates the input screen so it no longer consumes key events.
      */
     public void close() {
@@ -56,7 +56,7 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
         g2.fillRect(0, 0, getWidth(), getHeight());
 
         // Draw username placeholders
-        g2.setFont(font.deriveFont(Font.PLAIN, 80));
+        g2.setFont(font.deriveFont(Font.PLAIN, 100));
         g2.setColor(Color.WHITE);
         StringBuilder display = new StringBuilder();
         for (int i = 0; i < MAX_LENGTH; i++) {
@@ -83,7 +83,7 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
     }
     private void handleSelection() {
         String label = keyboard.getSelectedKey();
-        if ("BACK".equals(label)) {
+        if ("DELETE".equals(label)) {
             if (input.length() > 0) input.setLength(input.length() - 1);
         } else if ("ENTER".equals(label)) {
             if (input.length() == MAX_LENGTH) {
@@ -107,7 +107,7 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
                 {"Q","W","E","R","T","Y","U","I","O","P"},
                 {"A","S","D","F","G","H","J","K","L"},
                 {"Z","X","C","V","B","N","M"},
-                {"BACK","ENTER"}
+                {"DELETE","ENTER"}
         };
         private int row = 0;
         private int col = 0;

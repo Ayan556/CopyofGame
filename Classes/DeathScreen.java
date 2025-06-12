@@ -19,8 +19,8 @@ public class DeathScreen extends JFrame implements KeyListener{
     private String username;
     private int retry;
     private BufferedImage youDied = ResourceLoader.loadImage("deathScreen.jpg");
-    private BufferedImage yes = ResourceLoader.loadImage("PlayAgainYes.png");
-    private BufferedImage no = ResourceLoader.loadImage("PlayAgainNo.png");
+    private BufferedImage yes = ResourceLoader.loadImage("playAgainYes.png");
+    private BufferedImage no = ResourceLoader.loadImage("playAgainNo.png");
     private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
     public DeathScreen() {
@@ -95,18 +95,18 @@ public class DeathScreen extends JFrame implements KeyListener{
             g2.fillRect(0, 0, screenWidth, screenHeight);
 
             // Draw the death screen background centered in the window
-            g2.drawImage(youDied, xOffset, yOffset, null);
+            g2.drawImage(youDied, 0, 0, screenWidth, screenHeight, null);
 
-            g2.setColor(new Color(199, 193, 159));
-            g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
-            g2.drawString(username + " - " + score, 310 + xOffset, 520 + yOffset);
+            g2.setColor(Color.WHITE);
+            g2.setFont(customFont.deriveFont(Font.PLAIN, 150));
+            g2.drawString(username + " - " + score, 520 + xOffset, 450 + yOffset);
 
             switch (retry) {
                 case 1:
-                    g2.drawImage(yes, 280 + xOffset, 600 + yOffset, null);
+                    g2.drawImage(yes, 0, 100, screenWidth, screenHeight, null);
                     break;
                 case 2:
-                    g2.drawImage(no, 280 + xOffset, 600 + yOffset, null);
+                    g2.drawImage(no, 0, 100, screenWidth, screenHeight, null);
                     break;
             }
         }
