@@ -33,11 +33,11 @@ public class Homepage extends JFrame implements KeyListener {
 		instructions = false;
 		credit = false;
 
-		this.setSize(screenSize.width, screenSize.height);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setUndecorated(true);
-		this.setLocationRelativeTo(null);
+                this.setSize(screenSize.width, screenSize.height);
+                this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                this.setUndecorated(true);
+                this.setLocationRelativeTo(null);
 
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height);
 		drawingPanel.setFocusable(true);

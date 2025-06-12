@@ -118,12 +118,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		// Drawing panel handles rendering
 		draw = new DrawingPanel(screenSize.width, screenSize.height);
 
-		this.setSize(screenSize.width, screenSize.height);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setUndecorated(true);
-		this.setLocationRelativeTo(null);
-		this.add(draw);
+                this.setSize(screenSize.width, screenSize.height);
+                this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                this.setUndecorated(true);
+                this.setLocationRelativeTo(null);
+
+                this.add(draw);
     
     // Overlay username input before game starts
     usernameInput = new UsernameInputScreen(name -> {
