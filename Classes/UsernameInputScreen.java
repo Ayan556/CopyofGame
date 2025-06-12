@@ -36,6 +36,15 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
         setFocusable(true);
     }
 
+    /**
+     * Deactivates the input screen so it no longer consumes key events.
+     */
+    public void close() {
+        setVisible(false);
+        setFocusable(false);
+        removeKeyListener(this);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

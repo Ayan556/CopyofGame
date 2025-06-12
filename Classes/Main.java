@@ -127,8 +127,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                 usernameInput = new UsernameInputScreen(name -> {
                         username = name;
                         score.setUsername(name);
-                        usernameInput.setVisible(false);
-                        draw.requestFocusInWindow();
+                        usernameInput.close();
+                        // Return focus to the game window so input works
+                        Main.this.requestFocusInWindow();
                 });
                 this.setGlassPane(usernameInput);
                 usernameInput.setVisible(true);
