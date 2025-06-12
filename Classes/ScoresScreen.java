@@ -25,6 +25,11 @@ public class ScoresScreen extends JFrame implements KeyListener {
         this.setUndecorated(true);
         this.setLocationRelativeTo(null);
 
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        if (gd.isFullScreenSupported()) {
+            gd.setFullScreenWindow(this);
+        }
+
         loadScores();
 
         DrawingPanel panel = new DrawingPanel(screenSize.width, screenSize.height);
