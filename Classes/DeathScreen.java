@@ -99,7 +99,7 @@ public class DeathScreen extends JFrame implements KeyListener{
 
             g2.setColor(Color.WHITE);
             g2.setFont(customFont.deriveFont(Font.PLAIN, 150));
-            g2.drawString(username + " - " + score, 520 + xOffset, 450 + yOffset);
+            g2.drawString(username + " - " + score, 320 + xOffset, 450 + yOffset);
 
             switch (retry) {
                 case 1:
