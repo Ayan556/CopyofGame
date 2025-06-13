@@ -15,7 +15,7 @@ public class Bullet extends Rectangle {
 
 
 	// Static resources - single sprite sheet containing all bullet directions
-	private static final BufferedImage bulletSheet = ResourceLoader.loadImage("bulletSprites.png");
+	private static final BufferedImage bulletSheet = ResourceLoader.loadImage("BulletSprites.png");
 	private static final int sheetCols = 4;
 	private static final int frameW = bulletSheet.getWidth() / sheetCols;
 	private static final int frameH = bulletSheet.getHeight();

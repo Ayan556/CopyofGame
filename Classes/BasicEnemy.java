@@ -17,8 +17,8 @@ public class BasicEnemy extends Enemy {
 	private int spriteCol = 0;
 	private int spriteW = 75, spriteH = 75;
 	private boolean moving;
-	BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("enemyWalk.png");
-	BufferedImage idleSpriteSheet = ResourceLoader.loadImage("enemyIdle.png");
+	BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("EnemyWalk.png");
+	BufferedImage idleSpriteSheet = ResourceLoader.loadImage("EnemyIdle.png");
 
 	/**
 	 * Constructs a BasicEnemy with given parameters and sets default health and shield.

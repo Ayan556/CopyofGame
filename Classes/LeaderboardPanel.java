@@ -43,8 +43,7 @@ public class LeaderboardPanel extends JPanel implements KeyListener {
     }
 
     /**
-     * Loads scores from highscores.txt. Ensures the file is sorted and
-     * trimmed via {@link HighscoreManager#sortScores()} first.
+     * Loads scores from highscores.txt. Ensures the file is sorted
      */
     public final void loadScores() {
         HighscoreManager.sortScores();

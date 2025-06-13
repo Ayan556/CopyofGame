@@ -45,14 +45,14 @@ public class Homepage extends JFrame implements KeyListener {
 
     ArrayList<String> creditLines;
 
-    private BufferedImage instruction = ResourceLoader.loadImage("instructions.jpg");
-    private BufferedImage credits = ResourceLoader.loadImage("creditsselected.png");
-    private BufferedImage play = ResourceLoader.loadImage("playselected.png");
-    private BufferedImage rules = ResourceLoader.loadImage("instructionsSelected.png");
-    private BufferedImage scores = ResourceLoader.loadImage("scoresSelected.png");
-    private BufferedImage quit = ResourceLoader.loadImage("quitselected.png");
-    private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.jpg");
-    private BufferedImage scoresBG = ResourceLoader.loadImage("scoresBackground.jpg");
+    private BufferedImage instruction = ResourceLoader.loadImage("Instructions4K.png");
+    private BufferedImage credits = ResourceLoader.loadImage("SelectedCredit.png");
+    private BufferedImage play = ResourceLoader.loadImage("SelectedPlay.png");
+    private BufferedImage rules = ResourceLoader.loadImage("SelectedInstructions.png");
+    private BufferedImage scores = ResourceLoader.loadImage("SelectedScores.png");
+    private BufferedImage quit = ResourceLoader.loadImage("SelectedQuit.png");
+    private BufferedImage bg = ResourceLoader.loadImage("TitleBackground4K.png");
+    private BufferedImage scoresBG = ResourceLoader.loadImage("LeaderboardBackground4K.png");
     private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
     Homepage() {

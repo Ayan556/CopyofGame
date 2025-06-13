@@ -21,8 +21,8 @@ public class Player extends Character {
     private boolean shotgun;
     private LinkedList<InventoryPowerUp> powerUps = new LinkedList<>();
     private LinkedList<InventoryHeal> heals = new LinkedList<>();
-    BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("playerWalk.png");
-    BufferedImage idleSpriteSheet = ResourceLoader.loadImage("playerIdle.png");
+    BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("PlayerWalk.png");
+    BufferedImage idleSpriteSheet = ResourceLoader.loadImage("PlayerIdle.png");
 
     // --- Damage feedback fields ---
     /** Current alpha value for the damage screen effect */

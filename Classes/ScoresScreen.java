@@ -12,7 +12,7 @@ public class ScoresScreen extends JFrame implements KeyListener {
     public static final int GAME_WIDTH = 1920;
     public static final int GAME_HEIGHT = 1080;
 
-    private final BufferedImage background = ResourceLoader.loadImage("scoresBackground.jpg");
+    private final BufferedImage background = ResourceLoader.loadImage("LeaderboardBackground.jpg");
     private final LeaderboardPanel leaderboard;
 
     public ScoresScreen() {

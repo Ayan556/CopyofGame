@@ -10,8 +10,8 @@ public class BossEnemy extends Enemy {
 	private int frame;
 	private int spriteCol = 0;
 	private int spriteW = 75, spriteH = 75;
-	BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("bossWalking.png");
-	BufferedImage idleSpriteSheet = ResourceLoader.loadImage("bossIdle.png");
+	BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("BossWalking.png");
+	BufferedImage idleSpriteSheet = ResourceLoader.loadImage("BossIdle.png");
 
 	BossEnemy(int x, int y, int width, int height, int num, int level) {
 		super(x, y, width, height, 10 + (level * 3), 10 + (level * 2), num, 1.5 + (0.1 * level));

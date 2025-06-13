@@ -18,9 +18,9 @@ public class DeathScreen extends JFrame implements KeyListener{
     private int score;
     private String username;
     private int retry;
-    private BufferedImage youDied = ResourceLoader.loadImage("deathScreen.jpg");
-    private BufferedImage yes = ResourceLoader.loadImage("playAgainYes.png");
-    private BufferedImage no = ResourceLoader.loadImage("playAgainNo.png");
+    private BufferedImage youDied = ResourceLoader.loadImage("DeathScreen4K.png");
+    private BufferedImage yes = ResourceLoader.loadImage("PlayAgainYes.png");
+    private BufferedImage no = ResourceLoader.loadImage("PlayAgainNo.png");
     private Font customFont = FontLoader.loadFont("Game-Font.ttf");
 
     public DeathScreen() {
@@ -99,7 +99,7 @@ public class DeathScreen extends JFrame implements KeyListener{
 
             g2.setColor(Color.WHITE);
             g2.setFont(customFont.deriveFont(Font.PLAIN, 150));
-            g2.drawString(username + " - " + score, 320 + xOffset, 450 + yOffset);
+            g2.drawString(username + " - " + score, 385 + xOffset, 450 + yOffset);
 
             switch (retry) {
                 case 1:
