@@ -4,10 +4,10 @@ This project contains the source code for the game. No compiled class files are 
 
 ## Building
 
-The project expects Java 21. To compile all sources into the `out` directory run:
+The project expects Java 23. To compile all sources into the `out` directory run:
 
 ```bash
-javac --release 21 -d out Classes/*.java
+javac --release 23 -d out Classes/*.java
 ```
 
 If you previously built the game using a newer JDK, remove the `out` directory first to avoid "bad class file" version errors.
