@@ -24,6 +24,14 @@ public class Player extends Character {
     BufferedImage walkingSpriteSheet = ResourceLoader.loadImage("playerWalk.png");
     BufferedImage idleSpriteSheet = ResourceLoader.loadImage("playerIdle.png");
 
+    // --- Damage feedback fields ---
+    /** Current alpha value for the damage screen effect */
+    private float damageEffectAlpha;
+    /** Timestamp of the last time damage feedback was triggered */
+    private long lastDamageTime;
+    /** Cooldown to avoid repeated triggering of feedback (ms) */
+    private static final int DAMAGE_COOLDOWN = 300;
+
     /**
      * Constructs a Player object with defined attributes and starting position.
      *
@@ -48,6 +56,39 @@ public class Player extends Character {
 
     public void setMoving(boolean moving) {
         this.moving = moving;
+    }
+
+    /**
+     * Overrides Character.updateHealth to add player specific feedback when
+     * damage is taken. A damage sound plays and the screen overlay is triggered
+     * with a short cooldown to prevent duplicate effects.
+     */
+    @Override
+    public void updateHealth(int damage) {
+        super.updateHealth(damage);
+
+        long now = System.currentTimeMillis();
+        if (now - lastDamageTime > DAMAGE_COOLDOWN) {
+            SoundPlayer.playSound("DamageNoise.wav");
+            damageEffectAlpha = 150f;
+            lastDamageTime = now;
+        }
+    }
+
+    /**
+     * Fades the damage overlay effect each game tick.
+     * @param deltaMs milliseconds since last tick
+     */
+    public void tickDamageEffect(int deltaMs) {
+        if (damageEffectAlpha > 0) {
+            float step = 150f * deltaMs / 1000f;
+            damageEffectAlpha = Math.max(0f, damageEffectAlpha - step);
+        }
+    }
+
+    /** Returns current alpha value for damage overlay. */
+    public int getDamageEffectAlpha() {
+        return (int) damageEffectAlpha;
     }
 
     /**
