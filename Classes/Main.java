@@ -528,9 +528,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
 		dealDamage();
 		aliveDead();
-		checkPowerUpPickup();
-		checkHealPickup();
-		player.updatePowerUps();
+                checkPowerUpPickup();
+                checkHealPickup();
+                player.updatePowerUps();
+                // Fade out damage visual effect
+                player.tickDamageEffect(TIMESPEED);
 
 
 		// Spawn enemies for current wave
@@ -773,25 +775,39 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 				else g2.drawString("Wave " + (wave-1) + " Completed, Move Joystick to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
 			}
 
-			if (paused) {
-				g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
-				g2.setColor(Color.WHITE);
-				g2.drawString("Paused", transX + (int)(380 * scale), transY + (int)(400 * scale));
+                        if (paused) {
+                                g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
+                                g2.setColor(Color.WHITE);
+                                g2.drawString("Paused", transX + (int)(380 * scale), transY + (int)(400 * scale));
 
-				if (resume) {
-					g2.setColor(Color.WHITE);
-					g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
-					g2.setColor(Color.GRAY);
-					g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
-				} else {
-					g2.setColor(Color.GRAY);
-					g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
-					g2.setColor(Color.WHITE);
-					g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
-				}
-			}
-		}
-	}
+                                if (resume) {
+                                        g2.setColor(Color.WHITE);
+                                        g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
+                                        g2.setColor(Color.GRAY);
+                                        g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
+                                } else {
+                                        g2.setColor(Color.GRAY);
+                                        g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
+                                        g2.setColor(Color.WHITE);
+                                        g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
+                                }
+                        }
+
+                        // Semi-transparent red border when taking damage
+                        int alpha = player.getDamageEffectAlpha();
+                        if (alpha > 0) {
+                                Composite oldC = g2.getComposite();
+                                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
+                                g2.setColor(Color.RED);
+                                int b = 50; // thickness of border
+                                g2.fillRect(0, 0, getWidth(), b); // top
+                                g2.fillRect(0, getHeight() - b, getWidth(), b); // bottom
+                                g2.fillRect(0, b, b, getHeight() - 2 * b); // left
+                                g2.fillRect(getWidth() - b, b, b, getHeight() - 2 * b); // right
+                                g2.setComposite(oldC);
+                        }
+                }
+        }
 
 	/** Helper class for displaying power-up icons with counts and timers */
 	private static class DisplayEntry {
