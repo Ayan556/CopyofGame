@@ -1,24 +1,16 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import javax.swing.Timer;
 import javax.swing.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Random;
 import javax.sound.sampled.*;
 import java.io.*;
-
 
 /**
  * The main game engine class that handles the frame, game loop, input, and rendering.
  */
-public class Main extends JFrame implements ActionListener, KeyListener {
+public class Main extends JPanel implements ActionListener, KeyListener {
 
 	// Constants
 	public static final int GAME_WIDTH = 900;
@@ -51,11 +43,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	// Game objects
 	private Player player;
 	private MapGenerator map;
-	private Score score;
-	private DrawingPanel draw;
+	Score score;
 	private UsernameInputScreen usernameInput;
 	private Graphics2D g2;
-	private String username = "";
+	String username = "";
+	private static SwitchScreens switchScreens;
 
 	//enemy identifier
 	private int enemyNums;
@@ -84,7 +76,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	 * Entry point for the program.
 	 */
 	public static void main(String[] args) {
-		new Homepage();
+		switchScreens = new SwitchScreens();
 	}
 
 	/**
@@ -117,32 +109,30 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		resume = true;
 		hasPlayedGameOverSound = false;
 
-		// Drawing panel handles rendering
-		draw = new DrawingPanel(screenSize.width, screenSize.height);
-
-		this.setSize(screenSize.width, screenSize.height);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setUndecorated(true);
-		this.setLocationRelativeTo(null);
-		this.add(draw);
-
 		// Overlay username input before game starts
 		usernameInput = new UsernameInputScreen(name -> {
 			username = name;
 			score.setUsername(name);
 			usernameInput.close();
-			// Return focus to the game window so joystick controls work
+			// Use invokeLater to ensure focus happens after UI updates
 			SwingUtilities.invokeLater(() -> {
+				Main.this.setFocusable(true);
 				Main.this.requestFocusInWindow();
-				Main.this.requestFocus();
 			});
 		});
-		this.setGlassPane(usernameInput);
+
 		usernameInput.setVisible(true);
 		usernameInput.requestFocusInWindow();
-		this.setVisible(true);
-		SoundPlayer.playBackground("BackgroundMusic.wav");
+
+		int screenWidth = screenSize.width;
+		int screenHeight = screenSize.height;
+		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+		this.setBackground(Color.BLACK);
+
+		this.setFocusable(true);
+		setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+		setFocusable(true);
+		requestFocusInWindow();
 
 		// Input and timer
 		this.addKeyListener(this);
@@ -417,8 +407,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 			return;
 		} else if (e.getKeyCode() == KeyEvent.VK_L && paused) {
 			SoundPlayer.stopBackground();
-			this.dispose();
-			new Homepage();
+			switchScreens.showHomepage();
 			return;
 		}
 
@@ -485,17 +474,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-
 		if (!player.isAlive()) {
-
-			SoundPlayer.stopBackground();
-			SoundPlayer.playSound("GameOver.wav");
 			timer.stop();
 			player.deactivateAllPowerUps();
-			HighscoreManager.addScore(username, score.getScore());
-			DeathScreen deathScreen = new DeathScreen();
-			deathScreen.setResult(username, score.getScore());
-			this.dispose();
+			HighscoreManager.addScore(username, score.getScore());;
+			switchScreens.showDeathScreen(username, score.getScore());
 			return;
 		}
 
@@ -601,203 +584,194 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 		repaint();
 	}
 
-	/**
-	 * Inner class for drawing the game.
-	 */
-	private class DrawingPanel extends JPanel {
-		private int screenWidth, screenHeight;
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		public DrawingPanel(int screenWidth, int screenHeight) {
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
-			this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-			this.setBackground(Color.BLACK);
+		// Scale the game world to always fit inside the panel
+		double scale = Math.min(getWidth() / (double) GAME_WIDTH,
+				getHeight() / (double) GAME_HEIGHT);
+		int worldW = (int) (GAME_WIDTH * scale);
+		int worldH = (int) (GAME_HEIGHT * scale);
+		int transX = (getWidth() - worldW) / 2;
+		int transY = (getHeight() - worldH) / 2;
+		xOffset = (int) (transX / scale);
+		yOffset = (int) (transY / scale);
+
+		java.awt.geom.AffineTransform oldTransform = g2.getTransform();
+		// Only scale the world - offsets handle centering
+		g2.scale(scale, scale);
+
+
+		// Draw background
+		g2.drawImage(background, xOffset, yOffset, null);
+
+		// Draw obstacles
+		for (Rectangle tile : map.getObstacles()) {
+			g2.drawImage(obstacle, tile.x + xOffset, tile.y + yOffset, null);
 		}
 
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			g2 = (Graphics2D) g;
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		// Draw power-ups
+		for (PowerUpItem item : powerUpItems) {
+			item.draw(g2, xOffset, yOffset);
+		}
+		// Draw heals
+		for (HealItem item : healItems) {
+			item.draw(g2, xOffset, yOffset);
+		}
 
-			// Scale the game world to always fit inside the panel
-			double scale = Math.min(getWidth() / (double) GAME_WIDTH,
-					getHeight() / (double) GAME_HEIGHT);
-			int worldW = (int) (GAME_WIDTH * scale);
-			int worldH = (int) (GAME_HEIGHT * scale);
-			int transX = (getWidth() - worldW) / 2;
-			int transY = (getHeight() - worldH) / 2;
-			xOffset = (int) (transX / scale);
-			yOffset = (int) (transY / scale);
+		// Draw bullets
+		for (Bullet b : bullets) {
+			b.draw(g2, xOffset, yOffset);
+		}
 
-			java.awt.geom.AffineTransform oldTransform = g2.getTransform();
-			// Only scale the world - offsets handle centering
-			g2.scale(scale, scale);
+		// Draw player
+		player.drawCharacter(g2, xOffset, yOffset);
 
+		//Draw Enemies
+		for (Enemy e : enemies) {
+			e.drawCharacter(g2, xOffset, yOffset);
+		}
 
-			// Draw background
-			g2.drawImage(background, xOffset, yOffset, null);
+		// Reset transform so HUD elements remain constant size
+		g2.setTransform(oldTransform);
 
-			// Draw obstacles
-			for (Rectangle tile : map.getObstacles()) {
-				g2.drawImage(obstacle, tile.x + xOffset, tile.y + yOffset, null);
+		int barLength = 150;
+		int spacing = 20; // space between bars
+
+		int barY = getHeight() / 10; // Fixed top margin for HUD
+		int bar1X = 20; // left margin for HUD elements
+		int bar2X = bar1X;
+
+		int heartBaseSize = 0;
+		int heartsHeight = 0;
+		int shieldSize = 0;
+		int shieldY = barY; // initialized for scope
+		if (heartsSheet != null) {
+			int rowHeight = heartsSheet.getHeight() / 5;
+			int rowWidth = heartsSheet.getWidth();
+			int destW = barLength;
+			heartBaseSize = (int) ((rowHeight / (double) rowWidth) * destW);
+
+			// Scale hearts slightly larger so they visually match shields
+			double HEART_SCALE = 1.3;
+			heartsHeight = (int) (heartBaseSize * HEART_SCALE);
+			int heartsWidth = (int) (destW * HEART_SCALE);
+
+			// Draw heart-based health indicator
+			int heartsX = bar1X;
+			int heartsY = barY;
+			int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
+			g2.drawImage(heartsSheet, heartsX + 50, heartsY, heartsX + heartsWidth + 50, heartsY + heartsHeight,
+					0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
+
+			// Draw shield icons at base size
+			shieldSize = heartBaseSize;
+			int shieldX = bar2X;
+			shieldY = barY + heartsHeight + spacing;
+			for (int i = 0; i < 5; i++) {
+				BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
+				g2.drawImage(img, shieldX + i * shieldSize + 72, shieldY - 10, shieldSize, shieldSize, null);
 			}
+		}
 
-			// Draw power-ups
-			for (PowerUpItem item : powerUpItems) {
-				item.draw(g2, xOffset, yOffset);
+		// Draw power-up and heal inventory
+		int iconSize = 60;
+		int invY = shieldY + shieldSize + spacing + 40;
+
+		int speedCount = 0, shotgunCount = 0;
+		boolean speedActive = false, shotgunActive = false;
+		int speedRemain = 0, shotgunRemain = 0;
+		for (Player.InventoryPowerUp ip : player.getPowerUps()) {
+			if (ip.powerUp instanceof SpeedBoost) {
+				speedCount++;
+				if (ip.active) { speedActive = true; speedRemain = ip.remaining; }
+			} else if (ip.powerUp instanceof Shotgun) {
+				shotgunCount++;
+				if (ip.active) { shotgunActive = true; shotgunRemain = ip.remaining; }
 			}
-			// Draw heals
-			for (HealItem item : healItems) {
-				item.draw(g2, xOffset, yOffset);
-			}
+		}
 
-			// Draw bullets
-			for (Bullet b : bullets) {
-				b.draw(g2, xOffset, yOffset);
-			}
+		int bandageCount = 0, shieldPotionCount = 0;
+		for (Player.InventoryHeal ih : player.getHeals()) {
+			if (ih.heal instanceof Bandage) bandageCount++; else if (ih.heal instanceof ShieldPotion) shieldPotionCount++;
+		}
 
-			// Draw player
-			player.drawCharacter(g2, xOffset, yOffset);
+		g2.setFont(customFont.deriveFont(Font.PLAIN, 50));
+		g2.setColor(Color.WHITE);
+		g2.drawString("Power-Ups", bar1X + 60, invY - 10);
+		int drawY = invY;
+		g2.drawImage(speedIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+		g2.drawString("x" + speedCount, bar1X + iconSize + 45, drawY + iconSize - 5);
+		if (speedActive) g2.drawString(String.valueOf(speedRemain / 100), bar1X, drawY + iconSize + 15);
 
-			//Draw Enemies
-			for (Enemy e : enemies) {
-				e.drawCharacter(g2, xOffset, yOffset);
-			}
+		drawY += iconSize + 30;
+		g2.drawImage(shotgunIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+		g2.drawString("x" + shotgunCount, bar1X + iconSize + 45, drawY + iconSize - 5);
+		if (shotgunActive) g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + iconSize + 15);
 
-			// Reset transform so HUD elements remain constant size
-			g2.setTransform(oldTransform);
+		drawY += iconSize + 40;
+		g2.drawString("Heals", bar1X + 60, drawY - 10);
+		g2.drawImage(bandageIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+		g2.drawString("x" + bandageCount, bar1X + iconSize + 45, drawY + iconSize - 5);
 
-			int barLength = 150;
-			int spacing = 20; // space between bars
+		drawY += iconSize + 30;
+		g2.drawImage(shieldIcon, bar1X + 60, drawY, iconSize, iconSize, null);
+		g2.drawString("x" + shieldPotionCount, bar1X + iconSize + 45, drawY + iconSize - 5);
 
-			int barY = getHeight() / 10; // Fixed top margin for HUD
-			int bar1X = 20; // left margin for HUD elements
-			int bar2X = bar1X;
+		int waveX = transX + worldW + 20;
+		int waveY = transY + (int)(200 * scale);
 
-			int heartBaseSize = 0;
-			int heartsHeight = 0;
-			int shieldSize = 0;
-			int shieldY = barY; // initialized for scope
-			if (heartsSheet != null) {
-				int rowHeight = heartsSheet.getHeight() / 5;
-				int rowWidth = heartsSheet.getWidth();
-				int destW = barLength;
-				heartBaseSize = (int) ((rowHeight / (double) rowWidth) * destW);
+		score.drawScore(g2, waveX, waveY-70);
 
-				// Scale hearts slightly larger so they visually match shields
-				double HEART_SCALE = 1.3;
-				heartsHeight = (int) (heartBaseSize * HEART_SCALE);
-				int heartsWidth = (int) (destW * HEART_SCALE);
+		g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
+		g2.setColor(Color.WHITE);
+		g2.drawString("Wave " + wave, waveX, waveY + 80);
 
-				// Draw heart-based health indicator
-				int heartsX = bar1X;
-				int heartsY = barY;
-				int rowIndex = Math.max(0, Math.min(4, 5 - player.getHealth()));
-				g2.drawImage(heartsSheet, heartsX + 50, heartsY, heartsX + heartsWidth + 50, heartsY + heartsHeight,
-						0, rowIndex * rowHeight, rowWidth, (rowIndex + 1) * rowHeight, null);
+		if (!waveInProgress) {
+			g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
+			if (wave == 1) g2.drawString("Move Joystick to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
+			else g2.drawString("Wave " + (wave-1) + " Completed, Move Joystick to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
+		}
 
-				// Draw shield icons at base size
-				shieldSize = heartBaseSize;
-				int shieldX = bar2X;
-				shieldY = barY + heartsHeight + spacing;
-				for (int i = 0; i < 5; i++) {
-					BufferedImage img = i < player.getShield() ? shieldFull : shieldEmpty;
-					g2.drawImage(img, shieldX + i * shieldSize + 72, shieldY - 10, shieldSize, shieldSize, null);
-				}
-			}
-
-			// Draw power-up and heal inventory
-			int iconSize = 60;
-			int invY = shieldY + shieldSize + spacing + 40;
-
-			int speedCount = 0, shotgunCount = 0;
-			boolean speedActive = false, shotgunActive = false;
-			int speedRemain = 0, shotgunRemain = 0;
-			for (Player.InventoryPowerUp ip : player.getPowerUps()) {
-				if (ip.powerUp instanceof SpeedBoost) {
-					speedCount++;
-					if (ip.active) { speedActive = true; speedRemain = ip.remaining; }
-				} else if (ip.powerUp instanceof Shotgun) {
-					shotgunCount++;
-					if (ip.active) { shotgunActive = true; shotgunRemain = ip.remaining; }
-				}
-			}
-
-			int bandageCount = 0, shieldPotionCount = 0;
-			for (Player.InventoryHeal ih : player.getHeals()) {
-				if (ih.heal instanceof Bandage) bandageCount++; else if (ih.heal instanceof ShieldPotion) shieldPotionCount++;
-			}
-
-			g2.setFont(customFont.deriveFont(Font.PLAIN, 50));
+		if (paused) {
+			g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
 			g2.setColor(Color.WHITE);
-			g2.drawString("Power-Ups", bar1X + 60, invY - 10);
-			int drawY = invY;
-			g2.drawImage(speedIcon, bar1X + 60, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + speedCount, bar1X + iconSize + 45, drawY + iconSize - 5);
-			if (speedActive) g2.drawString(String.valueOf(speedRemain / 100), bar1X, drawY + iconSize + 15);
+			g2.drawString("Paused", transX + (int)(380 * scale), transY + (int)(400 * scale));
 
-			drawY += iconSize + 30;
-			g2.drawImage(shotgunIcon, bar1X + 60, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + shotgunCount, bar1X + iconSize + 45, drawY + iconSize - 5);
-			if (shotgunActive) g2.drawString(String.valueOf(shotgunRemain / 100), bar1X, drawY + iconSize + 15);
-
-			drawY += iconSize + 40;
-			g2.drawString("Heals", bar1X + 60, drawY - 10);
-			g2.drawImage(bandageIcon, bar1X + 60, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + bandageCount, bar1X + iconSize + 45, drawY + iconSize - 5);
-
-			drawY += iconSize + 30;
-			g2.drawImage(shieldIcon, bar1X + 60, drawY, iconSize, iconSize, null);
-			g2.drawString("x" + shieldPotionCount, bar1X + iconSize + 45, drawY + iconSize - 5);
-
-			int waveX = transX + worldW + 20;
-			int waveY = transY + (int)(200 * scale);
-
-			score.drawScore(g2, waveX, waveY-70);
-
-			g2.setFont(customFont.deriveFont(Font.PLAIN, 80));
-			g2.setColor(Color.WHITE);
-			g2.drawString("Wave " + wave, waveX, waveY + 80);
-
-			if (!waveInProgress) {
-				g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
-				if (wave == 1) g2.drawString("Move Joystick to Begin", transX + (int)(250 * scale), transY + (int)(450 * scale));
-				else g2.drawString("Wave " + (wave-1) + " Completed, Move Joystick to Continue", transX + (int)(50 * scale), transY + (int)(450 * scale));
-			}
-
-			if (paused) {
-				g2.drawImage(pauseBackground, transX, transY, worldW, worldH, null);
+			if (resume) {
 				g2.setColor(Color.WHITE);
-				g2.drawString("Paused", transX + (int)(380 * scale), transY + (int)(400 * scale));
-
-				if (resume) {
-					g2.setColor(Color.WHITE);
-					g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
-					g2.setColor(Color.GRAY);
-					g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
-				} else {
-					g2.setColor(Color.GRAY);
-					g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
-					g2.setColor(Color.WHITE);
-					g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
-				}
-			}
-
-			// Semi-transparent red border when taking damage
-			int alpha = player.getDamageEffectAlpha();
-			if (alpha > 0) {
-				Composite oldC = g2.getComposite();
-				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
-				g2.setColor(Color.RED);
-				int b = 50; // thickness of border
-				g2.fillRect(0, 0, getWidth(), b); // top
-				g2.fillRect(0, getHeight() - b, getWidth(), b); // bottom
-				g2.fillRect(0, b, b, getHeight() - 2 * b); // left
-				g2.fillRect(getWidth() - b, b, b, getHeight() - 2 * b); // right
-				g2.setComposite(oldC);
+				g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
+				g2.setColor(Color.GRAY);
+				g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
+			} else {
+				g2.setColor(Color.GRAY);
+				g2.drawString("Resume", transX + (int)(380 * scale), transY + (int)(500 * scale));
+				g2.setColor(Color.WHITE);
+				g2.drawString("Exit", transX + (int)(380 * scale), transY + (int)(550 * scale));
 			}
 		}
+
+		// Semi-transparent red border when taking damage
+		int alpha = player.getDamageEffectAlpha();
+		if (alpha > 0) {
+			Composite oldC = g2.getComposite();
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f));
+			g2.setColor(Color.RED);
+			int b = 50; // thickness of border
+			g2.fillRect(0, 0, getWidth(), b); // top
+			g2.fillRect(0, getHeight() - b, getWidth(), b); // bottom
+			g2.fillRect(0, b, b, getHeight() - 2 * b); // left
+			g2.fillRect(getWidth() - b, b, b, getHeight() - 2 * b); // right
+			g2.setComposite(oldC);
+		}
+	}
+
+	public void setUsername(String name) {
+		this.username = name;
+		this.score.setUsername(name);
 	}
 
 	/** Helper class for displaying power-up icons with counts and timers */

@@ -41,7 +41,7 @@ public class ScoresScreen extends JFrame implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_L) {
             this.dispose();
-            new Homepage();
+            new Homepage(new SwitchScreens());
         } else {
             // Delegate scrolling keys to the leaderboard panel
             leaderboard.keyPressed(e);

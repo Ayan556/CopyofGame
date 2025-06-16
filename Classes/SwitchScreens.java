@@ -1,73 +1,130 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
+import javax.swing.*;
 
-/**
- * Full-screen frame that shows the leaderboard using {@link LeaderboardPanel}.
- * Press 'L' to return to the {@link Homepage}.
- */
-public class ScoresScreen extends JFrame implements KeyListener {
-    public static final int GAME_WIDTH = 1920;
-    public static final int GAME_HEIGHT = 1080;
+public class SwitchScreens extends JFrame {
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
+    private Main main;
+    private Homepage homepage;
+    private DeathScreen deathScreen;
+    private UsernameInputScreen userInput;
 
-    private final BufferedImage background = ResourceLoader.loadImage("LeaderboardBackground4K.png");
-    private final LeaderboardPanel leaderboard;
+    public static final String HOMEPAGE = "Homepage";
+    public static final String MAIN = "Main";
+    public static final String DEATH = "Death";
+    public static final String USER_INPUT = "UserInput";
 
-    public ScoresScreen() {
+    public SwitchScreens() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setTitle("Neon Rebellion");
         this.setSize(screenSize.width, screenSize.height);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setUndecorated(true);
-        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        leaderboard = new LeaderboardPanel();
-        leaderboard.setOpaque(false); // allow background to be visible
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
 
-        DrawingPanel panel = new DrawingPanel(screenSize.width, screenSize.height);
-        panel.setLayout(new BorderLayout());
-        panel.setFocusable(true);
-        panel.requestFocusInWindow();
-        panel.addKeyListener(this);
-        panel.add(leaderboard, BorderLayout.CENTER);
+        homepage = new Homepage(this);
+        deathScreen = new DeathScreen(this);
 
-        this.add(panel);
+        // Initialize but don't create Main yet
+        main = null;
+
+        cardPanel.add(homepage, HOMEPAGE);
+        cardPanel.add(deathScreen, DEATH);
+
+        // Set names for components
+        homepage.setName(HOMEPAGE);
+        deathScreen.setName(DEATH);
+
+        this.add(cardPanel);
+        this.pack();
         this.setVisible(true);
+
+        showHomepage();
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_L) {
-            this.dispose();
-            new Homepage();
-        } else {
-            // Delegate scrolling keys to the leaderboard panel
-            leaderboard.keyPressed(e);
+    public void showUsernameInput() {
+        SoundPlayer.playBackground("BackgroundMusic.wav");
+        if (userInput == null) {
+            userInput = new UsernameInputScreen(name -> {
+                if (name == null || name.trim().isEmpty()) {
+                    name = "P1"; // Default username
+                }
+
+                // Initialize main game only after username is entered
+                this.main = new Main();
+                this.main.setUsername(name);
+                cardPanel.add(main, MAIN);
+                cardLayout.show(cardPanel, MAIN);
+
+                // Ensure focus
+                SwingUtilities.invokeLater(() -> {
+                    this.main.requestFocusInWindow();
+                    main.setFocusable(true);
+                });
+            });
+
+            userInput.setName(USER_INPUT);
+            cardPanel.add(userInput, USER_INPUT);
         }
+
+        cardLayout.show(cardPanel, USER_INPUT);
+        SwingUtilities.invokeLater(() -> {
+            userInput.requestFocusInWindow();
+        });
     }
 
-    @Override public void keyReleased(KeyEvent e) {}
-    @Override public void keyTyped(KeyEvent e) {}
+    public void startGame() {
+        showUsernameInput(); // Start with username input first
+    }
 
-    private class DrawingPanel extends JPanel {
-        private final int screenWidth, screenHeight;
-        public DrawingPanel(int w, int h) {
-            this.screenWidth = w;
-            this.screenHeight = h;
-            setPreferredSize(new Dimension(w, h));
+    public void showHomepage() {
+        if (main != null) {
+            cardPanel.remove(main);
+            main = null;
         }
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Fill background and draw the image centered
-            g2.setColor(Color.BLACK);
-            g2.fillRect(0, 0, screenWidth, screenHeight);
-            g2.drawImage(background, 0, 0, screenWidth, screenHeight, null);
+        if (userInput != null) {
+            cardPanel.remove(userInput);
+            userInput = null;
         }
+
+        cardLayout.show(cardPanel, HOMEPAGE);
+        SwingUtilities.invokeLater(() -> {
+            SoundPlayer.playBackground("CyberpunkMusic.wav");
+            homepage.requestFocusInWindow();
+        });
+    }
+
+    public void showDeathScreen(String username, int score) {
+        if (main != null) {
+            cardPanel.remove(main);
+            main = null;
+        }
+
+        if (userInput != null) {
+            cardPanel.remove(userInput);
+            userInput = null;
+        }
+
+        deathScreen.setResult(username, score);
+        cardLayout.show(cardPanel, DEATH);
+        SwingUtilities.invokeLater(() -> {
+            SoundPlayer.stopBackground();
+            SoundPlayer.playSound("GameOver.wav");
+            deathScreen.requestFocusInWindow();
+        });
+    }
+
+    // Modified getComponentByName to work with CardLayout
+    private Component getComponentByName(String name) {
+        for (Component comp : cardPanel.getComponents()) {
+            if (name.equals(comp.getName())) {
+                return comp;
+            }
+        }
+        return null;
     }
 }
