@@ -52,7 +52,7 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Darken the background
-        g2.setColor(new Color(0, 0, 0, 150));
+        g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
         // Draw username placeholders
