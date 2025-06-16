@@ -1,6 +1,5 @@
 import javax.sound.sampled.*;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class SoundPlayer {
     private static Clip backgroundClip;
@@ -32,15 +31,20 @@ public class SoundPlayer {
      */
     public static void playBackground(String filename) {
         stopBackground();
-        try (InputStream is = SoundPlayer.class.getResourceAsStream("/Audio/" + filename)) {
-            if (is == null) {
+        // Using getAudioInputStream(URL) avoids the "mark/reset not supported"
+        // error that can occur when passing an InputStream for resources
+        // inside a jar.
+        try {
+            java.net.URL url = SoundPlayer.class.getResource("/Audio/" + filename);
+            if (url == null) {
                 throw new IOException("Audio not found: /Audio/" + filename);
             }
-            AudioInputStream ais = AudioSystem.getAudioInputStream(is);
-            backgroundClip = AudioSystem.getClip();
-            backgroundClip.open(ais);
-            setVolume(backgroundClip, DEFAULT_VOLUME);
-            backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
+            try (AudioInputStream ais = AudioSystem.getAudioInputStream(url)) {
+                backgroundClip = AudioSystem.getClip();
+                backgroundClip.open(ais);
+                setVolume(backgroundClip, DEFAULT_VOLUME);
+                backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
         } catch (Exception e) {
             System.err.println("Error playing background audio: " + filename);
             e.printStackTrace();
@@ -78,16 +82,18 @@ public class SoundPlayer {
      * @return the Clip that is playing, or null if an error occurred
      */
     public static Clip playSound(String filename) {
-        try (InputStream is = SoundPlayer.class.getResourceAsStream("/Audio/" + filename)) {
-            if (is == null) {
+        try {
+            java.net.URL url = SoundPlayer.class.getResource("/Audio/" + filename);
+            if (url == null) {
                 throw new IOException("Audio not found: /Audio/" + filename);
             }
-            AudioInputStream ais = AudioSystem.getAudioInputStream(is);
-            Clip clip = AudioSystem.getClip();
-            clip.open(ais);
-            setVolume(clip, DEFAULT_VOLUME);
-            clip.start();
-            return clip;
+            try (AudioInputStream ais = AudioSystem.getAudioInputStream(url)) {
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
+                setVolume(clip, DEFAULT_VOLUME);
+                clip.start();
+                return clip;
+            }
         } catch (Exception e) {
             System.err.println("Error playing audio: " + filename);
             e.printStackTrace();
