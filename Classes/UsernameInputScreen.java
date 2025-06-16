@@ -14,8 +14,9 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
     public static final int INPUT_DOWN = KeyEvent.VK_S;
     public static final int INPUT_LEFT = KeyEvent.VK_A;
     public static final int INPUT_RIGHT = KeyEvent.VK_D;
-    public static final int INPUT_SELECT = KeyEvent.VK_L;
-
+    public static final int INPUT_SELECT1 = KeyEvent.VK_L;
+    public static final int INPUT_SELECT2 = KeyEvent.VK_U;
+    public static final int INPUT_SELECT3 = KeyEvent.VK_J;
     private static final int MAX_LENGTH = 3;
     private final VirtualKeyboard keyboard = new VirtualKeyboard();
     private final StringBuilder input = new StringBuilder(MAX_LENGTH);
@@ -78,7 +79,7 @@ public class UsernameInputScreen extends JPanel implements KeyListener {
         else if (code == INPUT_DOWN) keyboard.moveDown();
         else if (code == INPUT_LEFT) keyboard.moveLeft();
         else if (code == INPUT_RIGHT) keyboard.moveRight();
-        else if (code == INPUT_SELECT) handleSelection();
+        else if (code == INPUT_SELECT1 || code == INPUT_SELECT2 || code == INPUT_SELECT3) handleSelection();
         repaint();
     }
     private void handleSelection() {

@@ -117,7 +117,7 @@ public class Homepage extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (showingLeaderboard) {
-            if (e.getKeyCode() == KeyEvent.VK_L) {
+            if (e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) {
                 showingLeaderboard = false;
                 leaderboardPanel.setVisible(false);
                 this.requestFocusInWindow();
@@ -142,7 +142,7 @@ public class Homepage extends JPanel implements KeyListener {
             }
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_L) {
+        if (e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) {
             switch (button) {
                 case 1:
                     switchScreens.startGame();
