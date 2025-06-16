@@ -44,7 +44,7 @@ public class DeathScreen extends JPanel implements KeyListener{
         } else if (code == KeyEvent.VK_D) {
             retry = 2;
             repaint();
-        } else if (code == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) {
+        } else if (code == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_J) {
             if (retry == 1) {
                 switchScreens.startGame(); // Restart the game
             } else if (retry == 2) {
