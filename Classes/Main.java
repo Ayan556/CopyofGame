@@ -397,7 +397,7 @@ public class Main extends JPanel implements ActionListener, KeyListener {
 			paused = true;
 			repaint();
 			return;
-		} else if (e.getKeyCode() == KeyEvent.VK_L && paused && resume) {
+		} else if ((e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J)&& paused && resume) {
 			paused = false;
 			if (waveInProgress) {
 				timer.start();
@@ -405,7 +405,7 @@ public class Main extends JPanel implements ActionListener, KeyListener {
 			SoundPlayer.resumeBackground();
 			repaint();
 			return;
-		} else if (e.getKeyCode() == KeyEvent.VK_L && paused) {
+		} else if ((e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) && paused) {
 			SoundPlayer.stopBackground();
 			switchScreens.showHomepage();
 			return;
