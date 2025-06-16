@@ -250,9 +250,20 @@ public class Player extends Character {
      * @param type the class of heal to use
      */
     public void useHeal(Class<? extends Heal> type) {
+        if (this.health >= 5 && this.shield >= 5) {
+            return; // already at full health and shield
+        }
+
         for (int i = 0; i < heals.size(); i++) {
             InventoryHeal ih = heals.get(i);
             if (type.isInstance(ih.heal)) {
+                if (ih.heal instanceof Bandage && this.health >= 5) {
+                    return; // can't heal health when already full
+                }
+                if (ih.heal instanceof ShieldPotion && this.shield >= 5) {
+                    return; // can't heal shield when already full
+                }
+
                 ih.heal.apply(this);
                 heals.remove(i);
                 break;
