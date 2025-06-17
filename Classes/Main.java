@@ -397,7 +397,7 @@ public class Main extends JPanel implements ActionListener, KeyListener {
 			paused = true;
 			repaint();
 			return;
-		} else if ((e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J)&& paused && resume) {
+		} else if (e.getKeyCode() == KeyEvent.VK_L && paused && resume) {
 			paused = false;
 			if (waveInProgress) {
 				timer.start();
@@ -405,7 +405,7 @@ public class Main extends JPanel implements ActionListener, KeyListener {
 			SoundPlayer.resumeBackground();
 			repaint();
 			return;
-		} else if ((e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) && paused) {
+		} else if (e.getKeyCode() == KeyEvent.VK_L && paused) {
 			SoundPlayer.stopBackground();
 			switchScreens.showHomepage();
 			return;
@@ -538,7 +538,7 @@ public class Main extends JPanel implements ActionListener, KeyListener {
 			if (wave % 5 == 0) {
 				enemies.add(new BossEnemy(spawnX, spawnY, enemySize, enemySize, enemyNums, wave));
 			} else {
-				enemies.add(new BasicEnemy(spawnX, spawnY, enemySize, enemySize, 2.5, enemyNums, GAME_WIDTH, GAME_HEIGHT));
+				enemies.add(new BasicEnemy(spawnX, spawnY, enemySize, enemySize, 2.0, enemyNums, GAME_WIDTH, GAME_HEIGHT));
 			}
 			enemyNums++;
 			enemiesSpawnedThisWave++;

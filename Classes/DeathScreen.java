@@ -44,7 +44,7 @@ public class DeathScreen extends JPanel implements KeyListener{
         } else if (code == KeyEvent.VK_D) {
             retry = 2;
             repaint();
-        } else if (code == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_J) {
+        } else if (code == KeyEvent.VK_L) {
             if (retry == 1) {
                 switchScreens.startGame(); // Restart the game
             } else if (retry == 2) {
@@ -75,7 +75,7 @@ public class DeathScreen extends JPanel implements KeyListener{
 
         g2.setColor(Color.WHITE);
         g2.setFont(customFont.deriveFont(Font.PLAIN, 150));
-        g2.drawString(username + " - " + score, screenWidth/3 + xOffset, 450 + yOffset);
+        g2.drawString(username + " - " + score, screenWidth/3 + xOffset - 210, 450 + yOffset);
 
         switch (retry) {
             case 1:

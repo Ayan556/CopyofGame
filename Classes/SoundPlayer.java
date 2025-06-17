@@ -4,7 +4,7 @@ import java.io.IOException;
 public class SoundPlayer {
     private static Clip backgroundClip;
     // Volume scale between 0.0 (mute) and 1.0 (full volume)
-    private static final float DEFAULT_VOLUME = 0.5f;
+    private static final float DEFAULT_VOLUME = 10f;
 
     /**
      * Adjusts the volume of the provided clip. If the clip does not support

@@ -93,6 +93,17 @@ public class Homepage extends JPanel implements KeyListener {
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, getWidth(), getHeight());
             g2.drawImage(scoresBG, 0, 0, getWidth(), getHeight(), null);
+
+            // Draw selection hint in the bottom-right corner
+            String selectText = "Joystick to scroll up/down the leaderboard";
+            float baseSize = 80f * getWidth() / GAME_WIDTH;
+            g2.setFont(customFont.deriveFont(Font.PLAIN, baseSize));
+            g2.setColor(Color.WHITE);
+            FontMetrics fm = g2.getFontMetrics();
+            int textWidth = fm.stringWidth(selectText);
+            int x = getWidth() - textWidth - 20;
+            int y = getHeight() - 20;
+            g2.drawString(selectText, x, y);
         } else {
             switch (button) {
                 case 1:
@@ -111,13 +122,24 @@ public class Homepage extends JPanel implements KeyListener {
                     g2.drawImage(quit, 0, 0, getWidth(), getHeight(), null);
                     break;
             }
+
+            // Draw selection hint in the bottom-right corner
+            String selectText = "Press Z to select";
+            float baseSize = 80f * getWidth() / GAME_WIDTH;
+            g2.setFont(customFont.deriveFont(Font.PLAIN, baseSize));
+            g2.setColor(Color.WHITE);
+            FontMetrics fm = g2.getFontMetrics();
+            int textWidth = fm.stringWidth(selectText);
+            int x = getWidth() - textWidth - 20;
+            int y = getHeight() - 20;
+            g2.drawString(selectText, x, y);
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (showingLeaderboard) {
-            if (e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) {
+            if (e.getKeyCode() == KeyEvent.VK_L) {
                 showingLeaderboard = false;
                 leaderboardPanel.setVisible(false);
                 this.requestFocusInWindow();
@@ -142,7 +164,7 @@ public class Homepage extends JPanel implements KeyListener {
             }
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_L || e.getKeyCode() == KeyEvent.VK_U || e.getKeyCode() == KeyEvent.VK_J) {
+        if (e.getKeyCode() == KeyEvent.VK_L) {
             switch (button) {
                 case 1:
                     switchScreens.startGame();
