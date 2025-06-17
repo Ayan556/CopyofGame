@@ -88,51 +88,53 @@ public class BossEnemy extends Enemy {
 				this.directionFacing = 4;
 				setMoving(false);
 			}
-                } else {
-                        double dx = p.x - this.x;
-                        double dy = p.y - this.y;
-                        double dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist == 0) return;
+		} else {
+			double dx = p.x - this.x;
+			double dy = p.y - this.y;
+			double dist = Math.sqrt(dx * dx + dy * dy);
+			if (dist == 0) return;
 
-                        double moveDX = (dx / dist) * speed;
-                        double moveDY = (dy / dist) * speed;
+			moveX = (int)((dx / dist) * speed);
+			moveY = (int)((dy / dist) * speed);
 
-                        int originalX = this.x;
-                        int originalY = this.y;
-                        double originalPreciseX = this.preciseX;
-                        double originalPreciseY = this.preciseY;
+			int originalX = this.x;
+			int originalY = this.y;
 
-                        moveVector(moveDX, moveDY, panelWidth, panelHeight);
-                        if (collides(map)) {
-                                this.preciseX = originalPreciseX;
-                                this.preciseY = originalPreciseY;
-                                this.x = originalX;
-                                this.y = originalY;
+			// Diagonal
+			this.x += moveX;
+			this.y += moveY;
+			if (collides(map)) {
+				this.x = originalX;
+				this.y = originalY;
 
-                                moveVector(moveDX, 0, panelWidth, panelHeight);
-                                if (collides(map)) {
-                                        this.preciseX = originalPreciseX;
-                                        this.x = originalX;
-                                }
+				//X movement only
+				if (dx == 0) moveX = 0;
+				else if (dx < 0) moveX = (int) -speed;
+				else moveX = (int) speed;
 
-                                moveVector(0, moveDY, panelWidth, panelHeight);
-                                if (collides(map)) {
-                                        this.preciseY = originalPreciseY;
-                                        this.y = originalY;
-                                }
-                        }
+				this.x += moveX;
+				if (collides(map)) this.x = originalX;
 
-                        int movedX = this.x - originalX;
-                        int movedY = this.y - originalY;
+				//Y movement only
+				if (dy == 0) moveY = 0;
+				else if (dy < 0) moveY = (int) -speed;
+				else moveY = (int) speed;
 
-                        if (movedX != 0 || movedY != 0) {
-                                changeDirection(originalX, originalY);
-                                setMoving(true);
-                        } else {
-                                setMoving(false);
-                        }
-                }
-        }
+				this.y += moveY;
+				if (collides(map)) this.y = originalY;
+			}
+
+			int movedX = this.x - originalX;
+			int movedY = this.y - originalY;
+
+			if (movedX != 0 || movedY != 0) {
+				changeDirection(originalX, originalY);
+				setMoving(true);
+			} else {
+				setMoving(false);
+			}
+		}
+	}
 
 	/**
 	 * Change the direction of the enemy

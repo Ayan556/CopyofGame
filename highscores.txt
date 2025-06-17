@@ -1,5 +1,6 @@
 CAN - 1270
 AYN - 1170
+TTT - 490
 WOO - 450
 JJJ - 390
 RRX - 390
