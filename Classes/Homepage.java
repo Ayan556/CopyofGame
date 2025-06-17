@@ -111,6 +111,17 @@ public class Homepage extends JPanel implements KeyListener {
                     g2.drawImage(quit, 0, 0, getWidth(), getHeight(), null);
                     break;
             }
+
+            // Draw selection hint in the bottom-right corner
+            String selectText = "Press Z to select";
+            float baseSize = 40f * getWidth() / GAME_WIDTH;
+            g2.setFont(customFont.deriveFont(Font.PLAIN, baseSize));
+            g2.setColor(Color.WHITE);
+            FontMetrics fm = g2.getFontMetrics();
+            int textWidth = fm.stringWidth(selectText);
+            int x = getWidth() - textWidth - 20;
+            int y = getHeight() - 20;
+            g2.drawString(selectText, x, y);
         }
     }
 
